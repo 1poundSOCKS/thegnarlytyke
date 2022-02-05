@@ -2,10 +2,13 @@
   margin: 0;
   padding: 0;
 }
-h1 {
-  width:100%;
-  color:white;
-  background-color:black;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: xx-large;
+.mainheader {
+  text-align: center;
+  font-family: six caps;
+  background: #e0591b;
+  background-size: 100%;
+  color: white;
+  letter-spacing: .2em;
+  font-size: 6rem;
+  text-shadow: .07em .07em 0 #0a5f16, .1em .1em 0 white;
 }
