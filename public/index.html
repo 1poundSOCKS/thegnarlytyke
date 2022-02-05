@@ -5,5 +5,46 @@
 </head>
 <body>
   <h1 class="mainheader">the gnarly tyke</h1>
+  <div>
+    <h2 class="area-name">Scar Buttress at Baildon Bank</h2>
+  </div>
+  <div style="width: 50%; margin: auto">
+    <table class="route-table" id="route-table">
+      <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Grade</th>
+          </tr>
+      </thead>
+      <tbody id="route-table-body">
+        <script>
+          let topoData = {
+            "image_file": "",
+            "crag": "Baildon Bank",
+            "area": "Scar Buttress",
+            "routes" : [
+              { "name": "Scar Wall", "type": "Trad", "grade": "E5 6b" },
+              { "name": "Scar", "type": "Trad", "grade": "E2 5b" },
+              { "name": "The Flakes", "type": "Trad", "grade": "E3 5c" },
+              { "name": "Intrepid", "type": "Trad", "grade": "E6 6a" }
+            ]
+          }
+          topoData.routes.forEach((route, index) => {
+            let rowHTML = 
+            `<tr>
+              <td>${index+1}</td>
+              <td>${route.name}</td>
+              <td>${route.type}</td>
+              <td>${route.grade}</td>
+            </tr>
+            `;
+            document.write(rowHTML);
+          });
+        </script>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
