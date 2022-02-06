@@ -9,10 +9,13 @@
     <h2 class="area-name">Scar Buttress at Baildon Bank</h2>
   </div>
   <div>
-
+    <img id="topo-image" src="images/scar-wall.jpg" style="display:none;">
   </div>
-  <div style="width: 80%; margin: auto">
-    <table class="route-table" id="route-table">
+  <div style="margin-top: 2%;">
+    <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
+  </div>
+  <div style="margin-top: 2%;">
+    <table class="route-table" id="route-table" style="width: 80%; margin: auto">
       <thead>
           <tr>
             <th></th>
@@ -45,5 +48,22 @@
       </tbody>
     </table>
   </div>
+  <script>
+    window.onload = function() {
+      DrawTopo();
+    }
+    window.onresize = () => {
+      DrawTopo();
+    }
+    let DrawTopo = () => {
+      var canvas = document.getElementById("topo-canvas");
+      var ctx = canvas.getContext("2d");
+      var img = document.getElementById("topo-image");
+      const imageWidthToHeightRatio = img.height / img.width;
+      canvas.width = window.innerWidth * 80 / 100;
+      canvas.height = canvas.width * imageWidthToHeightRatio;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    }
+    </script>
 </body>
 </html>
