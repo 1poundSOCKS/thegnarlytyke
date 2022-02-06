@@ -23,7 +23,7 @@
   border-top: 5px solid black;
 }
 table, th, td {
-  border: 2px solid black;
+  border-top: 2px solid black;
  }
  table {
    margin-top: 20px;
@@ -37,11 +37,12 @@ table, th, td {
    text-align: left;
    background-color: #e0591b;
    color: white;
+   font-family: six caps;
  }
  tr:hover { 
    background: #0a5f16; 
  }
  tr:active { 
-   background: blue; 
+   background: #0a5f16; 
  }
  
