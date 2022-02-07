@@ -63,6 +63,34 @@
       canvas.width = window.innerWidth * 80 / 100;
       canvas.height = canvas.width * imageWidthToHeightRatio;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const labels = [
+      { "value": 1, "x": 30, "y": 80 },
+      { "value": 2, "x": 45, "y": 80 },
+      { "value": 3, "x": 55, "y": 80 },
+      { "value": 4, "x": 62, "y": 80 }
+      ]
+      labels.forEach( label => {
+        DrawLabel(ctx, label.x, label.y, label.value);
+      });
+    }
+    let DrawLabel = (ctx, xPos, yPos, index) => {
+      const xPosOnCanvas = ctx.canvas.width * xPos / 100;
+      const yPosOnCanvas = ctx.canvas.height * yPos / 100;
+      const size = ctx.canvas.width * 1.2 / 100;
+      const fontSize = size * 2;
+      ctx.beginPath();
+      ctx.arc(xPosOnCanvas, yPosOnCanvas, size, 0, 2 * Math.PI, false);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(xPosOnCanvas, yPosOnCanvas, size, 0, 2 * Math.PI, false);
+      ctx.lineWidth = size * 10 / 100;
+      ctx.strokeStyle = "#000000";
+      ctx.stroke();
+      ctx.font = `bold ${fontSize}px serif`;
+      ctx.fon
+      ctx.fillStyle = "#000000";
+      ctx.fillText(index, xPosOnCanvas - (size / 2), yPosOnCanvas + (size * 3 / 4));
     }
     </script>
 </body>
