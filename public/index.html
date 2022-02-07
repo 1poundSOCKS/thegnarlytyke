@@ -63,34 +63,62 @@
       canvas.width = window.innerWidth * 80 / 100;
       canvas.height = canvas.width * imageWidthToHeightRatio;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const labels = [
-      { "value": 1, "x": 30, "y": 80 },
-      { "value": 2, "x": 45, "y": 80 },
-      { "value": 3, "x": 55, "y": 80 },
-      { "value": 4, "x": 62, "y": 80 }
+      const lines = [
+      { "start": { "x": 30, "y": 80 }, "end": { "x": 34, "y": 15 } },
+      { "start": { "x": 44, "y": 80 }, "end": { "x": 48, "y": 12 } },
+      { "start": { "x": 56, "y": 80 }, "end": { "x": 55, "y": 12 } },
+      { "start": { "x": 62, "y": 82 }, "end": { "x": 62, "y": 15 } }
       ]
+      lines.forEach( line => {
+        DrawLine(ctx, line);
+      });
+      const labels = lines.map((line, index) => { 
+        return {"value": index + 1, "pos": line.start };
+      });
       labels.forEach( label => {
-        DrawLabel(ctx, label.x, label.y, label.value);
+        DrawLabel(ctx, label);
       });
     }
-    let DrawLabel = (ctx, xPos, yPos, index) => {
-      const xPosOnCanvas = ctx.canvas.width * xPos / 100;
-      const yPosOnCanvas = ctx.canvas.height * yPos / 100;
+    let DrawLabel = (ctx, label) => {
+      const canvasPos = MapToCanvas(ctx.canvas, label.pos);
       const size = ctx.canvas.width * 1.2 / 100;
       const fontSize = size * 2;
       ctx.beginPath();
-      ctx.arc(xPosOnCanvas, yPosOnCanvas, size, 0, 2 * Math.PI, false);
+      ctx.setLineDash([]);
+      ctx.arc(canvasPos.x, canvasPos.y, size, 0, 2 * Math.PI, false);
       ctx.fillStyle = "#FFFFFF";
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(xPosOnCanvas, yPosOnCanvas, size, 0, 2 * Math.PI, false);
+      ctx.arc(canvasPos.x, canvasPos.y, size, 0, 2 * Math.PI, false);
       ctx.lineWidth = size * 10 / 100;
       ctx.strokeStyle = "#000000";
       ctx.stroke();
       ctx.font = `bold ${fontSize}px serif`;
-      ctx.fon
       ctx.fillStyle = "#000000";
-      ctx.fillText(index, xPosOnCanvas - (size / 2), yPosOnCanvas + (size * 3 / 4));
+      ctx.fillText(label.value, canvasPos.x - (size / 2), canvasPos.y + (size * 3 / 4));
+    }
+    let DrawLine = (ctx, line) => {
+      const startPosOnCanvas =  MapToCanvas(ctx.canvas, line.start);
+      const endPosOnCanvas =  MapToCanvas(ctx.canvas, line.end);
+      const lineWidth = ctx.canvas.width / 200;
+      const lineDash = ctx.canvas.width * 1 / 100;
+      ctx.strokeStyle = 'white';
+      ctx.beginPath();
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = '#FFFF';
+      ctx.setLineDash([lineDash, lineDash]);
+      ctx.moveTo(startPosOnCanvas.x, startPosOnCanvas.y);
+      ctx.lineTo(endPosOnCanvas.x, endPosOnCanvas.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.lineWidth = lineWidth * 75 / 100;
+      ctx.strokeStyle = '#0a5f16';
+      ctx.moveTo(startPosOnCanvas.x, startPosOnCanvas.y);
+      ctx.lineTo(endPosOnCanvas.x, endPosOnCanvas.y);
+      ctx.stroke();
+    }
+    let MapToCanvas = (canvas, pos) => {
+      return { "x": canvas.width * pos.x / 100, "y": canvas.height * pos.y / 100 };
     }
     </script>
 </body>
