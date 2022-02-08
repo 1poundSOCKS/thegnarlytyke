@@ -1,48 +1,44 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: six caps;
 }
 .main-header {
   text-align: center;
-  font-family: six caps;
-  background: #e0591b;
-  background-size: 100%;
+  background: #662608;
   color: white;
   letter-spacing: .2em;
-  font-size: 6rem;
-  text-shadow: .07em .07em 0 #0a5f16, .1em .1em 0 white;
+  font-size: 4rem;
 }
 .area-name {
   text-align: center;
-  font-family: six caps;
-  background: #e0591b;
+  background: #662608;
   background-size: 100%;
   color: white;
   letter-spacing: .2em;
-  font-size: 3rem;
+  font-size: 2rem;
   border-top: 5px solid black;
 }
 table, th, td {
   border-top: 2px solid black;
- }
- table {
-   margin-top: 20px;
-   margin-left: 10%;
-   width: 80%;
-   border-collapse: collapse;
-   font-size: x-large;
-   font-family: six caps;
-  }
- th {
-   text-align: left;
-   background-color: #e0591b;
-   color: white;
-   font-family: six caps;
- }
- tr:hover { 
-   background: #0a5f16; 
- }
- tr:active { 
-   background: #0a5f16; 
- }
- 
+}
+table {
+  margin-top: 20px;
+  margin-left: 10%;
+  width: 80%;
+  border-collapse: collapse;
+  font-size: x-large;
+}
+th {
+  text-align: left;
+  background-color: #662608;
+  color: white;
+}
+tr:hover { 
+  color: white;
+  background: #04410c; 
+}
+tr:active { 
+  color: white;
+  background: #662608; 
+}
