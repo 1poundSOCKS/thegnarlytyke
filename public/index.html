@@ -9,46 +9,44 @@
     <h2 class="area-name">Scar Buttress at Baildon Bank</h2>
   </div>
   <div>
-    <div>
-      <img id="topo-image" src="./images/scar-wall-resize.jpg" style="display:none;">
-    </div>
-    <div style="margin-top: 2%;">
-      <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
-    </div>
-    <div style="margin-top: 2%;">
-      <table class="route-table" id="route-table" style="width: 80%; margin: auto">
-        <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Grade</th>
+    <img id="topo-image" src="./images/scar-wall-resize.jpg" style="display:none;">
+  </div>
+  <div style="margin-top: 2%;">
+    <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
+  </div>
+  <div style="margin-top: 2%;">
+    <table class="route-table" id="route-table" style="width: 80%; margin: auto">
+      <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Grade</th>
+          </tr>
+      </thead>
+      <tbody id="route-table-body">
+        <script>
+          let routes = 
+          [
+            { "name": "Scar Wall", "type": "Trad", "grade": "E5 6b" },
+            { "name": "Scar", "type": "Trad", "grade": "E2 5b" },
+            { "name": "The Flakes", "type": "Trad", "grade": "E3 5c" },
+            { "name": "Intrepid", "type": "Trad", "grade": "E6 6a" }
+          ];
+          routes.forEach((route, index) => {
+            let rowHTML = 
+            `<tr>
+              <td>${index+1}</td>
+              <td>${route.name}</td>
+              <td>${route.type}</td>
+              <td>${route.grade}</td>
             </tr>
-        </thead>
-        <tbody id="route-table-body">
-          <script>
-            let routes = 
-            [
-              { "name": "Scar Wall", "type": "Trad", "grade": "E5 6b" },
-              { "name": "Scar", "type": "Trad", "grade": "E2 5b" },
-              { "name": "The Flakes", "type": "Trad", "grade": "E3 5c" },
-              { "name": "Intrepid", "type": "Trad", "grade": "E6 6a" }
-            ];
-            routes.forEach((route, index) => {
-              let rowHTML = 
-              `<tr>
-                <td>${index+1}</td>
-                <td>${route.name}</td>
-                <td>${route.type}</td>
-                <td>${route.grade}</td>
-              </tr>
-              `;
-              document.write(rowHTML);
-            });
-          </script>
-        </tbody>
-      </table>
-    </div>
+            `;
+            document.write(rowHTML);
+          });
+        </script>
+      </tbody>
+    </table>
   </div>
   <script>
     window.onload = function() {
@@ -58,14 +56,12 @@
       DrawCanvas();
     }
     let DrawCanvas = () => {
-      var canvas = document.getElementById("topo-canvas");
-      var ctx = canvas.getContext("2d");
-      var img = document.getElementById("topo-image");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 0.6;
-      const imageScale = canvas.height / img.height;
+      let canvas = document.getElementById("topo-canvas");
+      let img = document.getElementById("topo-image");
+      const imageScale = ResizeCanvas(canvas, img);
       const imageWidthOnCanvas = img.width * imageScale;
-      const imageShiftRight = canvas.width / 2 - imageWidthOnCanvas / 2;
+      const imageShiftRight = (canvas.width - imageWidthOnCanvas) / 2;
+      var ctx = canvas.getContext("2d");
       ctx.drawImage(img, imageShiftRight, 0, imageWidthOnCanvas, canvas.height);
       const lines = [
       { "start": { "x": 0.30, "y": 0.80 }, "end": { "x": 0.34, "y": 0.15 } },
@@ -89,20 +85,30 @@
         DrawLabel(ctx, label);
       });
     }
+    let ResizeCanvas = (canvas, img) => {
+      canvas.width = document.documentElement.clientWidth;
+      const widthScale = document.documentElement.clientWidth * 0.8 / img.width;
+      const heightScale = document.documentElement.clientHeight * 0.5 / img.height;
+      const imageScale = Math.min(widthScale, heightScale);
+      const imageHeightOnCanvas = img.height * imageScale;
+      canvas.height = imageHeightOnCanvas;
+      return imageScale;
+    }
     let DrawLine = (ctx, line) => {
       const lineWidth = ctx.canvas.height * 0.01;
       const lineDash = ctx.canvas.height * 0.01;
       ctx.strokeStyle = 'white';
       ctx.beginPath();
       ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = '#FFFF';
-      ctx.setLineDash([lineDash, lineDash]);
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.setLineDash([]);
       ctx.moveTo(line.start.x, line.start.y);
       ctx.lineTo(line.end.x, line.end.y);
       ctx.stroke();
       ctx.beginPath();
-      ctx.lineWidth = lineWidth * 0.75;
+      ctx.lineWidth = lineWidth;
       ctx.strokeStyle = '#0a5f16';
+      ctx.setLineDash([lineDash * 2, lineDash]);
       ctx.moveTo(line.start.x, line.start.y);
       ctx.lineTo(line.end.x, line.end.y);
       ctx.stroke();
@@ -123,9 +129,6 @@
       ctx.font = `bold ${fontSize}px serif`;
       ctx.fillStyle = "#000000";
       ctx.fillText(label.value, label.pos.x - (size * 0.5), label.pos.y + (size * 0.75));
-    }
-    let MapToCanvas = (canvas, pos) => {
-      return { "x": canvas.width * pos.x, "y": canvas.height * pos.y };
     }
     </script>
 </body>
