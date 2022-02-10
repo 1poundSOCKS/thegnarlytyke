@@ -8,9 +8,6 @@
   <div>
     <h2 class="area-name">Scar Buttress at Baildon Bank</h2>
   </div>
-  <div>
-    <img id="topo-image" src="./images/scar-wall-resize.jpg" style="display:none;">
-  </div>
   <div style="margin-top: 2%;">
     <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
   </div>
@@ -49,15 +46,19 @@
     </table>
   </div>
   <script>
+    let topoImage = null;
     window.onload = function() {
-      DrawCanvas();
+      LoadImage('./images/scar-wall-resize.jpg')
+      .then(loadedImage => {
+        topoImage = loadedImage;
+        DrawCanvas(topoImage);
+      });
     }
     window.onresize = () => {
-      DrawCanvas();
+      DrawCanvas(topoImage);
     }
-    let DrawCanvas = () => {
+    let DrawCanvas = (img) => {
       let canvas = document.getElementById("topo-canvas");
-      let img = document.getElementById("topo-image");
       const imageScale = ResizeCanvas(canvas, img);
       const imageWidthOnCanvas = img.width * imageScale;
       const imageShiftRight = (canvas.width - imageWidthOnCanvas) / 2;
@@ -85,6 +86,12 @@
         DrawLabel(ctx, label);
       });
     }
+    let LoadImage = (url) => new Promise( (resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = (err) => reject(err);
+      img.src = url;
+    });
     let ResizeCanvas = (canvas, img) => {
       canvas.width = document.documentElement.clientWidth;
       const widthScale = document.documentElement.clientWidth * 0.8 / img.width;
