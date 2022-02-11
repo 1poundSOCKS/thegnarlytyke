@@ -6,7 +6,7 @@
 <body>
   <h1 class="main-header">the gnarly tyke</h1>
   <div>
-    <h2 class="area-name">Scar Buttress at Baildon Bank</h2>
+    <h2 class="area-name">Baildon Bank</h2>
   </div>
   <div style="margin-top: 2%;">
     <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
@@ -25,6 +25,7 @@
         <script>
           let routes = 
           [
+            { "name": "Conch", "type": "Trad", "grade": "HS 4b" },
             { "name": "Scar Wall", "type": "Trad", "grade": "E5 6b" },
             { "name": "Scar", "type": "Trad", "grade": "E2 5b" },
             { "name": "The Flakes", "type": "Trad", "grade": "E3 5c" },
@@ -46,30 +47,47 @@
     </table>
   </div>
   <script>
-    let topoImage = null;
+    let workingTopoData = null;
+    const topoData = [
+      {
+        "imageFile": "./images/conch-area-resize.jpg",
+        "routes": [ 
+          { "start": { "x": 0.42, "y": 0.85 }, "end": { "x": 0.6, "y": 0.15 } }
+        ]
+      },
+      {
+        "imageFile": "./images/scar-wall-resize.jpg",
+        "routes": [
+          { "start": { "x": 0.30, "y": 0.80 }, "end": { "x": 0.34, "y": 0.15 } },
+          { "start": { "x": 0.44, "y": 0.80 }, "end": { "x": 0.48, "y": 0.12 } },
+          { "start": { "x": 0.56, "y": 0.80 }, "end": { "x": 0.55, "y": 0.12 } },
+          { "start": { "x": 0.62, "y": 0.82 }, "end": { "x": 0.62, "y": 0.15 } }
+        ]
+      }
+    ];
     window.onload = function() {
-      LoadImage('./images/scar-wall-resize.jpg')
-      .then(loadedImage => {
-        topoImage = loadedImage;
-        DrawCanvas(topoImage);
+      let loaders = topoData.map(topo => LoadImage(topo.imageFile));
+      Promise.all(loaders).then(images => {
+        workingTopoData = topoData.map( (topo, index) => {
+          return { routes: topo.routes, image: images[index] };
+        });
+        DrawCanvas(workingTopoData);
       });
     }
     window.onresize = () => {
-      DrawCanvas(topoImage);
+      DrawCanvas(workingTopoData);
     }
-    let DrawCanvas = (img) => {
+    let DrawCanvas = (topoData) => {
       let canvas = document.getElementById("topo-canvas");
-      const imageScale = ResizeCanvas(canvas, img);
-      const imageWidthOnCanvas = img.width * imageScale;
-      const imageShiftRight = (canvas.width - imageWidthOnCanvas) / 2;
+      const imageScales = ResizeCanvas(canvas, topoData.map(topo => topo.image));
+      const imageRenders = GetRenderData(canvas, topoData, imageScales);
+      imageRenders.forEach( (imageRender) => {
+        DrawTopoImage(canvas, imageRender.image, imageRender.width, imageRender.position, imageRender.routes);
+      });
+    }
+    let DrawTopoImage = (canvas, img, imageWidthOnCanvas, imageShiftRight, lines) => {
       var ctx = canvas.getContext("2d");
       ctx.drawImage(img, imageShiftRight, 0, imageWidthOnCanvas, canvas.height);
-      const lines = [
-      { "start": { "x": 0.30, "y": 0.80 }, "end": { "x": 0.34, "y": 0.15 } },
-      { "start": { "x": 0.44, "y": 0.80 }, "end": { "x": 0.48, "y": 0.12 } },
-      { "start": { "x": 0.56, "y": 0.80 }, "end": { "x": 0.55, "y": 0.12 } },
-      { "start": { "x": 0.62, "y": 0.82 }, "end": { "x": 0.62, "y": 0.15 } }
-      ]
       const transformedLines = lines.map(line => {
         return {
           "start": { "x": line.start.x * imageWidthOnCanvas + imageShiftRight, "y": line.start.y * canvas.height}, 
@@ -82,9 +100,9 @@
       const labels = lines.map((line, index) => { 
         return {"value": index + 1, "pos": { "x": line.start.x * imageWidthOnCanvas + imageShiftRight, "y": line.start.y * canvas.height } };
       });
-      labels.forEach( label => {
-        DrawLabel(ctx, label);
-      });
+      // labels.forEach( label => {
+      //   DrawLabel(ctx, label);
+      // });
     }
     let LoadImage = (url) => new Promise( (resolve, reject) => {
       const img = new Image();
@@ -92,14 +110,17 @@
       img.onerror = (err) => reject(err);
       img.src = url;
     });
-    let ResizeCanvas = (canvas, img) => {
+    let ResizeCanvas = (canvas, images) => {
       canvas.width = document.documentElement.clientWidth;
-      const widthScale = document.documentElement.clientWidth * 0.8 / img.width;
-      const heightScale = document.documentElement.clientHeight * 0.5 / img.height;
-      const imageScale = Math.min(widthScale, heightScale);
-      const imageHeightOnCanvas = img.height * imageScale;
-      canvas.height = imageHeightOnCanvas;
-      return imageScale;
+      canvas.height = document.documentElement.clientHeight * 0.5;
+      return images.map(image => canvas.height / image.height);
+    }
+    let GetRenderData = (canvas, topos, imageScales) => {
+      let imageWidths = topos.map( (topo, index) => topo.image.width * imageScales[index]);
+      return [
+        { image: topos[0].image, width: imageWidths[0], position: canvas.width / 2 - imageWidths[0] - 10, routes: topos[0].routes },
+        { image: topos[1].image, width: imageWidths[1], position: canvas.width / 2 + 10, routes: topos[1].routes }
+      ];
     }
     let DrawLine = (ctx, line) => {
       const lineWidth = ctx.canvas.height * 0.01;
