@@ -52,16 +52,16 @@
       {
         "imageFile": "./images/conch-area-resize.jpg",
         "routes": [ 
-          { "start": { "x": 0.42, "y": 0.85 }, "end": { "x": 0.6, "y": 0.15 } }
+          { "label": 1, "points": { "start": { "x": 0.42, "y": 0.85 }, "end": { "x": 0.6, "y": 0.15 } } }
         ]
       },
       {
         "imageFile": "./images/scar-wall-resize.jpg",
         "routes": [
-          { "start": { "x": 0.30, "y": 0.80 }, "end": { "x": 0.34, "y": 0.15 } },
-          { "start": { "x": 0.44, "y": 0.80 }, "end": { "x": 0.48, "y": 0.12 } },
-          { "start": { "x": 0.56, "y": 0.80 }, "end": { "x": 0.55, "y": 0.12 } },
-          { "start": { "x": 0.62, "y": 0.82 }, "end": { "x": 0.62, "y": 0.15 } }
+          { "label": 2, "points": { "start": { "x": 0.30, "y": 0.80 }, "end": { "x": 0.34, "y": 0.15 } } },
+          { "label": 3, "points": { "start": { "x": 0.44, "y": 0.80 }, "end": { "x": 0.48, "y": 0.12 } } },
+          { "label": 4, "points": { "start": { "x": 0.56, "y": 0.80 }, "end": { "x": 0.55, "y": 0.12 } } },
+          { "label": 5, "points": { "start": { "x": 0.62, "y": 0.82 }, "end": { "x": 0.62, "y": 0.15 } } }
         ]
       }
     ];
@@ -69,7 +69,7 @@
       let loaders = topoData.map(topo => LoadImage(topo.imageFile));
       Promise.all(loaders).then(images => {
         workingTopoData = topoData.map( (topo, index) => {
-          return { routes: topo.routes, image: images[index] };
+          return { image: images[index], routes: topo.routes };
         });
         DrawCanvas(workingTopoData);
       });
@@ -85,24 +85,19 @@
         DrawTopoImage(canvas, imageRender.image, imageRender.width, imageRender.position, imageRender.routes);
       });
     }
-    let DrawTopoImage = (canvas, img, imageWidthOnCanvas, imageShiftRight, lines) => {
-      var ctx = canvas.getContext("2d");
+    let DrawTopoImage = (canvas, img, imageWidthOnCanvas, imageShiftRight, routes) => {
+      let ctx = canvas.getContext("2d");
       ctx.drawImage(img, imageShiftRight, 0, imageWidthOnCanvas, canvas.height);
-      const transformedLines = lines.map(line => {
-        return {
-          "start": { "x": line.start.x * imageWidthOnCanvas + imageShiftRight, "y": line.start.y * canvas.height}, 
-          "end": { "x": line.end.x * imageWidthOnCanvas + imageShiftRight, "y": line.end.y * canvas.height}
-          };
+      const transformedRoutes = TransformRoutes(routes, imageWidthOnCanvas, canvas.height, imageShiftRight);
+      transformedRoutes.forEach( route => {
+        DrawLine(ctx, route.points);
       });
-      transformedLines.forEach( line => {
-        DrawLine(ctx, line);
+      const labels = transformedRoutes.map( route => { 
+        return { value: route.label, pos: route.points.start };
       });
-      const labels = lines.map((line, index) => { 
-        return {"value": index + 1, "pos": { "x": line.start.x * imageWidthOnCanvas + imageShiftRight, "y": line.start.y * canvas.height } };
+      labels.forEach( label => {
+        DrawLabel(ctx, label);
       });
-      // labels.forEach( label => {
-      //   DrawLabel(ctx, label);
-      // });
     }
     let LoadImage = (url) => new Promise( (resolve, reject) => {
       const img = new Image();
@@ -114,6 +109,16 @@
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight * 0.5;
       return images.map(image => canvas.height / image.height);
+    }
+    let TransformRoutes = (routes, imageWidth, imageHeight, imageShiftX) => {
+      return routes.map(route => {
+        return {
+          label: route.label, points: { 
+            start: { x: route.points.start.x * imageWidth + imageShiftX, y: route.points.start.y * imageHeight}, 
+            end: { x: route.points.end.x * imageWidth + imageShiftX, y: route.points.end.y * imageHeight}
+          }
+        };
+      });
     }
     let GetRenderData = (canvas, topos, imageScales) => {
       let imageWidths = topos.map( (topo, index) => topo.image.width * imageScales[index]);
