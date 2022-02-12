@@ -81,8 +81,7 @@
       let canvas = document.getElementById("topo-canvas");
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight * 0.5;
-      const imageScales = GetImageScales(canvas, topoData.map(topo => topo.image), 1.0);
-      const imageRenders = GetRenderData(canvas, topoData, imageScales);
+      const imageRenders = GetRenderData(canvas, topoData, 0.8, 20);
       RenderImages(canvas, imageRenders);
     }
     let RenderImages = (canvas, imageRenders) => {
@@ -111,34 +110,71 @@
       img.onerror = (err) => reject(err);
       img.src = url;
     });
+    let GetRenderData = (canvas, topos, scale, space) => {
+      topos = AddImageSizes(topos, canvas, scale);
+      topos = AddImagePositions(topos, canvas);
+      topos = AddSpaceBetweenImages(topos, space);
+      return CentreImagesOnCanvas(topos, canvas);
+    }
     let GetImageScales = (canvas, images, imageHeightScale) => {
       return images.map(image => canvas.height / image.height * imageHeightScale);
     }
-    let GetRenderData = (canvas, topos, imageScales) => {
-      let imageSizes = topos.map( (topo, index) => {
+    let AddImageSizes = (topos, canvas, heightScale) => {
+      return topos.map( (topo, index) => {
+        const imageHeight = canvas.height * heightScale;
+        const widthScale = canvas.height / imageHeight;
         return {
-          width: topo.image.width * imageScales[index],
-          height: topo.image.height * imageScales[index]
+          image: topo.image,
+          width: topo.image.width * widthScale,
+          height: imageHeight,
+          routes: topo.routes
         };
       });
-      return [
-        {
-          image: topos[0].image, 
-          width: imageSizes[0].width, 
-          height: imageSizes[0].height, 
-          x: canvas.width / 2 - imageSizes[0].width - 10, 
-          y: (canvas.height - imageSizes[0].height) / 2,
-          routes: topos[0].routes
-        },
-        {
-          image: topos[1].image,
-          width: imageSizes[1].width,
-          height: imageSizes[1].height,
-          x: canvas.width / 2 + 10,
-          y: (canvas.height - imageSizes[1].height) / 2,
-          routes: topos[1].routes
-        }
-      ];
+    }
+    let AddImagePositions = (topos, canvas) => {
+      let position = 0;
+      return topos.map( imageSize => {
+        const thisPosition = position;
+        position += imageSize.width;
+        return {
+          image: imageSize.image,
+          width: imageSize.width,
+          height: imageSize.height,
+          routes: imageSize.routes,
+          x: thisPosition,
+          y: (canvas.height - imageSize.height) / 2
+        };
+      });
+    }
+    let AddSpaceBetweenImages = (topos, space) => {
+      let shift = 0;
+      return topos.map( image => {
+        const thisShift = shift;
+        shift += space;
+        return {
+          image: image.image,
+          width: image.width,
+          height: image.height,
+          routes: image.routes,
+          x: image.x + thisShift,
+          y: image.y
+        };
+      });
+    }
+    let CentreImagesOnCanvas = (topos, canvas) => {
+      const lastImage = topos[topos.length - 1];
+      let totalImageBoundX = lastImage.x + lastImage.width;
+      let centreShiftX = ( canvas.width - totalImageBoundX ) / 2;
+      return topos.map( image => {
+        return {
+          image: image.image,
+          width: image.width,
+          height: image.height,
+          routes: image.routes,
+          x: image.x + centreShiftX,
+          y: image.y
+        };
+      });
     }
     let TransformRoutes = (routes, width, imageHeight, x, y) => {
       return routes.map(route => {
