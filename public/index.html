@@ -81,28 +81,30 @@
       let canvas = document.getElementById("topo-canvas");
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight * 0.5;
-      const imageRenders = GetRenderData(canvas, topoData, 0.8, 20);
-      RenderImages(canvas, imageRenders);
+      const images = GetRenderData(canvas, topoData, 0.8, 20);
+      RenderImages(canvas, images);
+      DrawImageBox(canvas, images[0], 4);
+      DrawImageBox(canvas, images[1], 4);
     }
-    let RenderImages = (canvas, imageRenders) => {
-      imageRenders.forEach( (imageRender) => {
-        DrawTopoImage(canvas, imageRender.image, imageRender.width, imageRender.height, imageRender.x, imageRender.y, imageRender.routes);
-      });
+    let RenderImages = (canvas, images) => {
+      images.forEach( image => DrawTopoImage(canvas, image) );
     }
-    let DrawTopoImage = (canvas, img, imageWidth, imageHeight, x, y, routes) => {
+    let DrawTopoImage = (canvas, image) => {
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(img, x, y, imageWidth, imageHeight);
-      const transformedRoutes = TransformRoutes(routes, imageWidth, imageHeight, x, y);
-      transformedRoutes.forEach( route => {
-        DrawLine(ctx, route.points, imageHeight * 0.01);
-      });
-      const labels = transformedRoutes.map( route => { 
-        return { value: route.label, pos: route.points.start };
-      });
-      labels.forEach( label => {
-        const size = imageHeight * 0.02;
-        DrawLabel(ctx, label, size);
-      });
+      ctx.drawImage(image.image, image.x, image.y, image.width, image.height);
+      const transformedRoutes = TransformRoutes(image.routes, image.width, image.height, image.x, image.y);
+      transformedRoutes.forEach( route => DrawLine(ctx, route.points, image.height * 0.01) );
+      const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
+      labels.forEach( label => DrawLabel(ctx, label, image.height * 0.02) );
+    }
+    let DrawImageBox = (canvas, image, width) => {
+      var ctx = canvas.getContext("2d");
+      ctx.beginPath();
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = width;
+      const halfWidth = width / 2;
+      ctx.rect(image.x - halfWidth, image.y - halfWidth, image.width + width, image.height + width);
+      ctx.stroke();
     }
     let LoadImage = (url) => new Promise( (resolve, reject) => {
       const img = new Image();
