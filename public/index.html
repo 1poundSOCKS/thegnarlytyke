@@ -79,16 +79,18 @@
     }
     let DrawCanvas = (topoData) => {
       let canvas = document.getElementById("topo-canvas");
-      const imageScales = ResizeCanvas(canvas, topoData.map(topo => topo.image));
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = document.documentElement.clientHeight * 0.5;
+      const imageScales = GetImageScales(canvas, topoData.map(topo => topo.image), 1);
       const imageRenders = GetRenderData(canvas, topoData, imageScales);
       imageRenders.forEach( (imageRender) => {
-        DrawTopoImage(canvas, imageRender.image, imageRender.width, imageRender.position, imageRender.routes);
+        DrawTopoImage(canvas, imageRender.image, imageRender.width, imageRender.height, imageRender.position, imageRender.routes);
       });
     }
-    let DrawTopoImage = (canvas, img, imageWidthOnCanvas, imageShiftRight, routes) => {
+    let DrawTopoImage = (canvas, img, imageWidth, imageHeight, imageShiftRight, routes) => {
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(img, imageShiftRight, 0, imageWidthOnCanvas, canvas.height);
-      const transformedRoutes = TransformRoutes(routes, imageWidthOnCanvas, canvas.height, imageShiftRight);
+      ctx.drawImage(img, imageShiftRight, 0, imageWidth, imageHeight);
+      const transformedRoutes = TransformRoutes(routes, imageWidth, imageHeight, imageShiftRight);
       transformedRoutes.forEach( route => {
         DrawLine(ctx, route.points);
       });
@@ -105,10 +107,8 @@
       img.onerror = (err) => reject(err);
       img.src = url;
     });
-    let ResizeCanvas = (canvas, images) => {
-      canvas.width = document.documentElement.clientWidth;
-      canvas.height = document.documentElement.clientHeight * 0.5;
-      return images.map(image => canvas.height / image.height);
+    let GetImageScales = (canvas, images, imageHeightScale) => {
+      return images.map(image => canvas.height / image.height * imageHeightScale);
     }
     let TransformRoutes = (routes, imageWidth, imageHeight, imageShiftX) => {
       return routes.map(route => {
@@ -121,10 +121,13 @@
       });
     }
     let GetRenderData = (canvas, topos, imageScales) => {
-      let imageWidths = topos.map( (topo, index) => topo.image.width * imageScales[index]);
+      // let imageWidths = topos.map( (topo, index) => topo.image.width * imageScales[index]);
+      let imageSizes = topos.map( (topo, index) => {
+        return { width: topo.image.width * imageScales[index], height: topo.image.height * imageScales[index] };
+      });
       return [
-        { image: topos[0].image, width: imageWidths[0], position: canvas.width / 2 - imageWidths[0] - 10, routes: topos[0].routes },
-        { image: topos[1].image, width: imageWidths[1], position: canvas.width / 2 + 10, routes: topos[1].routes }
+        { image: topos[0].image, width: imageSizes[0].width, height: imageSizes[0].height, position: canvas.width / 2 - imageSizes[0].width - 10, routes: topos[0].routes },
+        { image: topos[1].image, width: imageSizes[1].width, height: imageSizes[1].height, position: canvas.width / 2 + 10, routes: topos[1].routes }
       ];
     }
     let DrawLine = (ctx, line) => {
