@@ -122,7 +122,7 @@
     let AddImageSizes = (topos, canvas, heightScale) => {
       return topos.map( (topo, index) => {
         const imageHeight = canvas.height * heightScale;
-        const widthScale = canvas.height / imageHeight;
+        const widthScale = imageHeight / topo.image.height;
         return {
           image: topo.image,
           width: topo.image.width * widthScale,
