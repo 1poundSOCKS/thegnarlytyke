@@ -47,7 +47,7 @@
     </table>
   </div>
   <script>
-    let workingTopoData = null;
+    let lastRenderedTopos = null;
     const topoData = [
       {
         "imageFile": "./images/conch-area-resize.jpg",
@@ -65,17 +65,22 @@
         ]
       }
     ];
+    let lastRenderData = null;
     window.onload = function() {
       let loaders = topoData.map(topo => LoadImage(topo.imageFile));
       Promise.all(loaders).then(images => {
         workingTopoData = topoData.map( (topo, index) => {
           return { image: images[index], routes: topo.routes };
         });
+        RemoveMouseSupport();
         DrawCanvas(workingTopoData);
+        AddMouseSupport();
       });
     }
     window.onresize = () => {
+      RemoveMouseSupport();
       DrawCanvas(workingTopoData);
+      AddMouseSupport();
     }
     let DrawCanvas = (topoData) => {
       let canvas = document.getElementById("topo-canvas");
@@ -83,8 +88,28 @@
       canvas.height = document.documentElement.clientHeight * 0.5;
       const images = GetRenderData(canvas, topoData, 0.8, 20);
       RenderImages(canvas, images);
-      DrawImageBox(canvas, images[0], 4);
-      DrawImageBox(canvas, images[1], 4);
+      lastRenderedTopos = images;
+    }
+    let AddMouseSupport = () => {
+      let canvas = document.getElementById("topo-canvas");
+      canvas.onmousemove = event => {
+        lastRenderedTopos.forEach( topo => {
+          if ( ! lastRenderedTopos ) return;
+          var rect = canvas.getBoundingClientRect();
+          const mouseX = event.clientX - rect.left;
+          const mouseY = event.clientY - rect.top;
+          if ( mouseX >= topo.x && mouseX < (topo.x + topo.width) && mouseY >= topo.y && mouseY < (topo.y + topo.height) ) {
+            DrawImageBox(canvas, topo, 4, '#000000');
+          }
+          else {
+            DrawImageBox(canvas, topo, 6, '#FFFFFF');
+          }
+        });
+      }
+    }
+    let RemoveMouseSupport = () => {
+      let canvas = document.getElementById("topo-canvas");
+      canvas.onmousemove = null;
     }
     let RenderImages = (canvas, images) => {
       images.forEach( image => DrawTopoImage(canvas, image) );
@@ -97,10 +122,10 @@
       const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
       labels.forEach( label => DrawLabel(ctx, label, image.height * 0.02) );
     }
-    let DrawImageBox = (canvas, image, width) => {
+    let DrawImageBox = (canvas, image, width, color) => {
       var ctx = canvas.getContext("2d");
       ctx.beginPath();
-      ctx.strokeStyle = '#000000';
+      ctx.strokeStyle = color;
       ctx.lineWidth = width;
       const halfWidth = width / 2;
       ctx.rect(image.x - halfWidth, image.y - halfWidth, image.width + width, image.height + width);
