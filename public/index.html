@@ -12,7 +12,7 @@
     <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
   </div>
   <div style="margin-top: 2%;">
-    <table class="route-table" id="route-table" style="width: 80%; margin: auto">
+    <table class="route-table" id="route-table" style="margin: auto">
       <thead>
           <tr>
             <th></th>
@@ -99,10 +99,10 @@
           const mouseX = event.clientX - rect.left;
           const mouseY = event.clientY - rect.top;
           if ( mouseX >= topo.x && mouseX < (topo.x + topo.width) && mouseY >= topo.y && mouseY < (topo.y + topo.height) ) {
-            DrawImageBox(canvas, topo, 4, '#000000');
+            DrawImageBox(canvas, topo, 8, '#000000');
           }
           else {
-            DrawImageBox(canvas, topo, 6, '#FFFFFF');
+            DrawImageBox(canvas, topo, 10, '#FFFFFF');
           }
         });
       }
