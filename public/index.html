@@ -123,9 +123,13 @@
       let canvas = document.getElementById("topo-canvas");
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight * 0.5;
-      const images = GetRenderData(canvas, topoData, 0.8, 20);
-      RenderImages(canvas, images);
-      return images;
+      selectedTopo = selectedTopo ? selectedTopo : { id: topoData[0].id };
+      topoData = topoData.map(topo => {
+        return { id: topo.id, image: topo.image, routes: topo.routes, displayRoutes: topo.id == selectedTopo.id };
+      });
+      const topos = GetRenderData(canvas, topoData, 0.8, 20);
+      RenderTopos(canvas, topos);
+      return topos;
     }
     let AddMouseSupport = () => {
       let canvas = document.getElementById("topo-canvas");
@@ -139,32 +143,28 @@
             currentSelectedTopo = topo;
           }
         });
-        selectedTopo = currentSelectedTopo ? currentSelectedTopo : selectedTopo;
-        lastRenderedTopos.forEach( topo => {
-          if( topo == selectedTopo ) {
-            DrawImageBox(canvas, selectedTopo, 8, '#000000');
-            document.getElementById('route-table-body').innerHTML = GetRouteTableHTML();
-          }
-          else {
-            DrawImageBox(canvas, topo, 10, '#FFFFFF');
-          }
-        });
+        if( currentSelectedTopo && currentSelectedTopo != selectedTopo ) {
+          selectedTopo = currentSelectedTopo;
+          DrawPage();
+        }
       }
     }
     let RemoveMouseSupport = () => {
       let canvas = document.getElementById("topo-canvas");
       canvas.onmousemove = null;
     }
-    let RenderImages = (canvas, images) => {
+    let RenderTopos = (canvas, images) => {
       images.forEach( image => DrawTopoImage(canvas, image) );
     }
     let DrawTopoImage = (canvas, image) => {
       let ctx = canvas.getContext("2d");
       ctx.drawImage(image.image, image.x, image.y, image.width, image.height);
-      const transformedRoutes = TransformRoutes(image.routes, image.width, image.height, image.x, image.y);
-      transformedRoutes.forEach( route => DrawLine(ctx, route.points, image.height * 0.01) );
-      const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
-      labels.forEach( label => DrawLabel(ctx, label, image.height * 0.02) );
+      if( image.displayRoutes ) {
+        const transformedRoutes = TransformRoutes(image.routes, image.width, image.height, image.x, image.y);
+        transformedRoutes.forEach( route => DrawLine(ctx, route.points, image.height * 0.01) );
+        const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
+        labels.forEach( label => DrawLabel(ctx, label, image.height * 0.02) );
+      }
     }
     let DrawImageBox = (canvas, image, width, color) => {
       var ctx = canvas.getContext("2d");
@@ -199,7 +199,8 @@
           image: topo.image,
           width: topo.image.width * widthScale,
           height: imageHeight,
-          routes: topo.routes
+          routes: topo.routes,
+          displayRoutes: topo.displayRoutes
         };
       });
     }
@@ -213,9 +214,10 @@
           image: topo.image,
           width: topo.width,
           height: topo.height,
-          routes: topo.routes,
           x: thisPosition,
-          y: (canvas.height - topo.height) / 2
+          y: (canvas.height - topo.height) / 2,
+          routes: topo.routes,
+          displayRoutes: topo.displayRoutes
         };
       });
     }
@@ -229,9 +231,10 @@
           image: topo.image,
           width: topo.width,
           height: topo.height,
-          routes: topo.routes,
           x: topo.x + thisShift,
-          y: topo.y
+          y: topo.y,
+          routes: topo.routes,
+          displayRoutes: topo.displayRoutes
         };
       });
     }
@@ -245,9 +248,10 @@
           image: topo.image,
           width: topo.width,
           height: topo.height,
-          routes: topo.routes,
           x: topo.x + centreShiftX,
-          y: topo.y
+          y: topo.y,
+          routes: topo.routes,
+          displayRoutes: topo.displayRoutes
         };
       });
     }
