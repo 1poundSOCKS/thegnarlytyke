@@ -105,30 +105,27 @@
           return { id: topo.id, image: images[index], routes: topo.routes };
         });
         DrawPage();
-      });
+        AddMouseSupport();
+    });
     }
     window.onresize = () => {
       DrawPage();
     }
     let DrawPage = () => {
-      RemoveMouseSupport();
       let canvas = document.getElementById("topo-canvas");
       lastRenderedTopos = DrawCanvas(workingTopoData);
       selectedTopo = selectedTopo ? GetTopoById(lastRenderedTopos, selectedTopo.id) : lastRenderedTopos[0];
-      DrawImageBox(canvas, selectedTopo, 8, '#000000');
+      DrawTopoBox(canvas, selectedTopo, 8, '#000000');
       document.getElementById('route-table-body').innerHTML = GetRouteTableHTML();
-      AddMouseSupport();
     }
     let DrawCanvas = (topoData) => {
       let canvas = document.getElementById("topo-canvas");
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight * 0.5;
-      selectedTopo = selectedTopo ? selectedTopo : { id: topoData[0].id };
-      topoData = topoData.map(topo => {
-        return { id: topo.id, image: topo.image, routes: topo.routes, displayRoutes: topo.id == selectedTopo.id };
-      });
       const topos = GetRenderData(canvas, topoData, 0.8, 20);
       RenderTopos(canvas, topos);
+      selectedTopo = selectedTopo ? selectedTopo : topos[0];
+      DrawTopoRoutes(canvas, selectedTopo);
       return topos;
     }
     let AddMouseSupport = () => {
@@ -153,26 +150,27 @@
       let canvas = document.getElementById("topo-canvas");
       canvas.onmousemove = null;
     }
-    let RenderTopos = (canvas, images) => {
-      images.forEach( image => DrawTopoImage(canvas, image) );
+    let RenderTopos = (canvas, topos) => {
+      topos.forEach( topo => DrawTopoImage(canvas, topo) );
     }
-    let DrawTopoImage = (canvas, image) => {
+    let DrawTopoImage = (canvas, topo) => {
       let ctx = canvas.getContext("2d");
-      ctx.drawImage(image.image, image.x, image.y, image.width, image.height);
-      if( image.displayRoutes ) {
-        const transformedRoutes = TransformRoutes(image.routes, image.width, image.height, image.x, image.y);
-        transformedRoutes.forEach( route => DrawLine(ctx, route.points, image.height * 0.01) );
-        const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
-        labels.forEach( label => DrawLabel(ctx, label, image.height * 0.02) );
-      }
+      ctx.drawImage(topo.image, topo.x, topo.y, topo.width, topo.height);
     }
-    let DrawImageBox = (canvas, image, width, color) => {
+    let DrawTopoRoutes = (canvas, topo) => {
+      const transformedRoutes = TransformRoutes(topo);
+      let ctx = canvas.getContext("2d");
+      transformedRoutes.forEach( route => DrawLine(ctx, route.points, topo.height * 0.01) );
+      const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
+      labels.forEach( label => DrawLabel(ctx, label, topo.height * 0.02) );
+    }
+    let DrawTopoBox = (canvas, topo, width, color) => {
       var ctx = canvas.getContext("2d");
       ctx.beginPath();
       ctx.strokeStyle = color;
       ctx.lineWidth = width;
       const halfWidth = width / 2;
-      ctx.rect(image.x - halfWidth, image.y - halfWidth, image.width + width, image.height + width);
+      ctx.rect(topo.x - halfWidth, topo.y - halfWidth, topo.width + width, topo.height + width);
       ctx.stroke();
     }
     let LoadImage = (url) => new Promise( (resolve, reject) => {
@@ -194,14 +192,7 @@
       return topos.map( topo => {
         const imageHeight = canvas.height * heightScale;
         const widthScale = imageHeight / topo.image.height;
-        return {
-          id: topo.id,
-          image: topo.image,
-          width: topo.image.width * widthScale,
-          height: imageHeight,
-          routes: topo.routes,
-          displayRoutes: topo.displayRoutes
-        };
+        return Object.assign(topo, { width: topo.image.width * widthScale, height: imageHeight } );
       });
     }
     let AddImagePositions = (topos, canvas) => {
@@ -209,16 +200,7 @@
       return topos.map( topo => {
         const thisPosition = position;
         position += topo.width;
-        return {
-          id: topo.id,
-          image: topo.image,
-          width: topo.width,
-          height: topo.height,
-          x: thisPosition,
-          y: (canvas.height - topo.height) / 2,
-          routes: topo.routes,
-          displayRoutes: topo.displayRoutes
-        };
+        return Object.assign(topo, { x: thisPosition, y: (canvas.height - topo.height) / 2 } );
       });
     }
     let AddSpaceBetweenImages = (topos, space) => {
@@ -226,41 +208,21 @@
       return topos.map( topo => {
         const thisShift = shift;
         shift += space;
-        return {
-          id: topo.id,
-          image: topo.image,
-          width: topo.width,
-          height: topo.height,
-          x: topo.x + thisShift,
-          y: topo.y,
-          routes: topo.routes,
-          displayRoutes: topo.displayRoutes
-        };
+        return Object.assign(topo, { x: topo.x + thisShift } );
       });
     }
     let CentreImagesOnCanvas = (topos, canvas) => {
       const lastImage = topos[topos.length - 1];
       let totalImageBoundX = lastImage.x + lastImage.width;
       let centreShiftX = ( canvas.width - totalImageBoundX ) / 2;
-      return topos.map( topo => {
-        return {
-          id: topo.id,
-          image: topo.image,
-          width: topo.width,
-          height: topo.height,
-          x: topo.x + centreShiftX,
-          y: topo.y,
-          routes: topo.routes,
-          displayRoutes: topo.displayRoutes
-        };
-      });
+      return topos.map( topo => Object.assign(topo, { x: topo.x + centreShiftX }) );
     }
-    let TransformRoutes = (routes, width, imageHeight, x, y) => {
-      return routes.map(route => {
+    let TransformRoutes = (topo) => {
+      return topo.routes.map(route => {
         return {
           label: route.label, points: { 
-            start: { x: route.points.start.x * width + x, y: route.points.start.y * imageHeight + y}, 
-            end: { x: route.points.end.x * width + x, y: route.points.end.y * imageHeight + y}
+            start: { x: route.points.start.x * topo.width + topo.x, y: route.points.start.y * topo.height + topo.y}, 
+            end: { x: route.points.end.x * topo.width + topo.x, y: route.points.end.y * topo.height + topo.y}
           }
         };
       });
