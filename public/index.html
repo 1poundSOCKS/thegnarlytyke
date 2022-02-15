@@ -11,7 +11,8 @@
     { "name": "Scar Wall", "type": "Trad", "grade": "E5 6b" },
     { "name": "Scar", "type": "Trad", "grade": "E2 5b" },
     { "name": "The Flakes", "type": "Trad", "grade": "E3 5c" },
-    { "name": "Intrepid", "type": "Trad", "grade": "E6 6a" }
+    { "name": "Intrepid", "type": "Trad", "grade": "E6 6a" },
+    { "name": "Hades", "type": "Trad", "grade": "VS 4c" }
     ];
     const topos =
     [
@@ -35,6 +36,9 @@
     {
       "id": 2,
       "imageFile": "./images/hades-area-resize.jpg",
+      "routes": [
+      { "globalIndex": 5, "label": 1, "points": { "start": { "x": 0.74, "y": 0.90 }, "end": { "x": 0.75, "y": 0.22 } }  }
+      ]
     }
     ];
     let selectedTopo = null;
@@ -175,7 +179,9 @@
     let DrawTopoRoutes = (canvas, topo) => {
       const transformedRoutes = TransformRoutes(topo);
       let ctx = canvas.getContext("2d");
-      transformedRoutes.forEach( route => DrawLine(ctx, route.points, topo.height * 0.01) );
+      transformedRoutes.forEach( route => {
+        if( route.points.start && route.points.end ) DrawLine(ctx, route.points, topo.height * 0.01);
+      });
       const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
       labels.forEach( label => DrawLabel(ctx, label, topo.height * 0.02) );
     }
@@ -234,13 +240,16 @@
     }
     let TransformRoutes = (topo) => {
       if( !topo.routes ) return [];
-      return topo.routes.map(route => {
-        return {
-          label: route.label, points: { 
-            start: { x: route.points.start.x * topo.width + topo.x, y: route.points.start.y * topo.height + topo.y}, 
-            end: { x: route.points.end.x * topo.width + topo.x, y: route.points.end.y * topo.height + topo.y}
+      const routesToRender = topo.routes.filter(route => route.label && route.points && route.points.start);
+      return routesToRender.map(route => {
+        const tmpRoute = {
+          label: route.label,
+          points: { 
+            start: { x: route.points.start.x * topo.width + topo.x, y: route.points.start.y * topo.height + topo.y}
           }
-        };
+        }
+        tmpRoute.points.end = route.points.end ? { x: route.points.end.x * topo.width + topo.x, y: route.points.end.y * topo.height + topo.y} : null;
+        return tmpRoute;
       });
     }
     let DrawLine = (ctx, line, lineWidth) => {
