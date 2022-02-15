@@ -59,7 +59,8 @@
     <h2 class="area-name">Baildon Bank</h2>
   </div>
   <div style="margin-top: 2%;">
-    <canvas style="margin: auto; display: block" id="topo-canvas"></canvas>
+    <canvas style="margin: auto; display: block" id="select-topo-canvas"></canvas>
+    <canvas style="margin: auto; display: block" id="main-topo-canvas"></canvas>
   </div>
   <div style="margin-top: 2%;">
     <table class="route-table" id="route-table" style="margin: auto">
@@ -112,24 +113,37 @@
       DrawPage();
     }
     let DrawPage = () => {
-      let canvas = document.getElementById("topo-canvas");
-      lastRenderedTopos = DrawCanvas(workingTopoData);
+      let canvas = document.getElementById("select-topo-canvas");
+      lastRenderedTopos = DrawTopoSelection(canvas, workingTopoData);
       selectedTopo = selectedTopo ? GetTopoById(lastRenderedTopos, selectedTopo.id) : lastRenderedTopos[0];
       DrawTopoBox(canvas, selectedTopo, 8, '#000000');
+      let mainTopoCanvas = document.getElementById("main-topo-canvas");
+      const topo = {};
+      Object.assign(topo, selectedTopo);
+      DrawMainTopoCanvas(mainTopoCanvas, topo);
       document.getElementById('route-table-body').innerHTML = GetRouteTableHTML();
     }
-    let DrawCanvas = (topoData) => {
-      let canvas = document.getElementById("topo-canvas");
+    let DrawTopoSelection = (canvas, topoData) => {
       canvas.width = document.documentElement.clientWidth;
-      canvas.height = document.documentElement.clientHeight * 0.5;
+      canvas.height = 100;
       const topos = GetRenderData(canvas, topoData, 0.8, 20);
       RenderTopos(canvas, topos);
       selectedTopo = selectedTopo ? selectedTopo : topos[0];
-      DrawTopoRoutes(canvas, selectedTopo);
       return topos;
     }
+    let DrawMainTopoCanvas = (canvas, topo) => {
+      canvas.width = document.documentElement.clientWidth;
+      canvas.height = 400;
+      topo.x = 0;
+      topo.y = 0;
+      let topos = [topo];
+      topos =  AddImageSizes(topos, canvas, 1.0);
+      topos = CentreImagesOnCanvas(topos, canvas);
+      RenderTopos(canvas, topos);
+      DrawTopoRoutes(canvas, topos[0]);
+    }
     let AddMouseSupport = () => {
-      let canvas = document.getElementById("topo-canvas");
+      let canvas = document.getElementById("select-topo-canvas");
       canvas.onmousemove = event => {
         let currentSelectedTopo = null;
         lastRenderedTopos.forEach( topo => {
@@ -145,10 +159,6 @@
           DrawPage();
         }
       }
-    }
-    let RemoveMouseSupport = () => {
-      let canvas = document.getElementById("topo-canvas");
-      canvas.onmousemove = null;
     }
     let RenderTopos = (canvas, topos) => {
       topos.forEach( topo => DrawTopoImage(canvas, topo) );
@@ -212,8 +222,8 @@
       });
     }
     let CentreImagesOnCanvas = (topos, canvas) => {
-      const lastImage = topos[topos.length - 1];
-      let totalImageBoundX = lastImage.x + lastImage.width;
+      const lastTopo = topos[topos.length - 1];
+      let totalImageBoundX = lastTopo.x + lastTopo.width;
       let centreShiftX = ( canvas.width - totalImageBoundX ) / 2;
       return topos.map( topo => Object.assign(topo, { x: topo.x + centreShiftX }) );
     }
