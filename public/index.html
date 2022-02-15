@@ -31,6 +31,10 @@
       { "globalIndex": 3, "label": 3, "points": { "start": { "x": 0.56, "y": 0.80 }, "end": { "x": 0.55, "y": 0.12 } } },
       { "globalIndex": 4, "label": 4, "points": { "start": { "x": 0.62, "y": 0.82 }, "end": { "x": 0.62, "y": 0.15 } } }
       ]
+    },
+    {
+      "id": 2,
+      "imageFile": "./images/hades-area-resize.jpg",
     }
     ];
     let selectedTopo = null;
@@ -38,6 +42,7 @@
       return selectedTopo ? GetRoutesForTopo(selectedTopo) : [];
     }
     let GetRoutesForTopo = topo => {
+      if( !topo.routes ) return [];
       return topo.routes.map(route => {
         const routeInfo = routes[route.globalIndex];
         return {
@@ -228,6 +233,7 @@
       return topos.map( topo => Object.assign(topo, { x: topo.x + centreShiftX }) );
     }
     let TransformRoutes = (topo) => {
+      if( !topo.routes ) return [];
       return topo.routes.map(route => {
         return {
           label: route.label, points: { 
