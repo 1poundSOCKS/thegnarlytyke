@@ -111,19 +111,19 @@
     window.onload = function() {
       let loaders = topos.map(topo => LoadImage(topo.imageFile));
       Promise.all(loaders).then(images => {
-        workingTopoData = topos.map( (topo, index) => {
-          return { id: topo.id, image: images[index], routes: topo.routes };
+        topos.forEach( (topo, index) => {
+          topo.image = images[index];
         });
         DrawPage();
         AddMouseSupport();
-    });
+      });
     }
     window.onresize = () => {
       DrawPage();
     }
     let DrawPage = () => {
       let canvas = document.getElementById("select-topo-canvas");
-      lastRenderedTopos = DrawTopoSelection(canvas, workingTopoData);
+      lastRenderedTopos = DrawTopoSelection(canvas, topos);
       selectedTopo = selectedTopo ? GetTopoById(lastRenderedTopos, selectedTopo.id) : lastRenderedTopos[0];
       DrawTopoBox(canvas, selectedTopo, 8, '#000000');
       let mainTopoCanvas = document.getElementById("main-topo-canvas");
@@ -146,8 +146,8 @@
       topo.x = 0;
       topo.y = 0;
       let topos = [topo];
-      topos =  AddImageSizes(topos, canvas, 1.0);
-      topos = CentreImagesOnCanvas(topos, canvas);
+      AddImageSizes(topos, canvas, 1.0);
+      CentreImagesOnCanvas(topos, canvas);
       RenderTopos(canvas, topos);
       DrawTopoRoutes(canvas, topos[0]);
     }
@@ -208,36 +208,37 @@
       AddImageSizes(renderTopos, canvas, scale);
       AddImagePositions(renderTopos, canvas);
       AddSpaceBetweenImages(renderTopos, space);
-      return CentreImagesOnCanvas(renderTopos, canvas);
+      CentreImagesOnCanvas(renderTopos, canvas);
+      return renderTopos;
     }
     let AddImageSizes = (topos, canvas, heightScale) => {
-      return topos.map( topo => {
-        const imageHeight = canvas.height * heightScale;
-        const widthScale = imageHeight / topo.image.height;
-        return Object.assign(topo, { width: topo.image.width * widthScale, height: imageHeight } );
+      topos.forEach( topo => {
+        topo.height = canvas.height * heightScale;
+        topo.width = topo.image.width * topo.height / topo.image.height;
       });
     }
     let AddImagePositions = (topos, canvas) => {
       let position = 0;
-      return topos.map( topo => {
+      topos.forEach( topo => {
         const thisPosition = position;
         position += topo.width;
-        return Object.assign(topo, { x: thisPosition, y: (canvas.height - topo.height) / 2 } );
+        topo.x = thisPosition;
+        topo.y = (canvas.height - topo.height) / 2;
       });
     }
     let AddSpaceBetweenImages = (topos, space) => {
       let shift = 0;
-      return topos.map( topo => {
+      topos.forEach( topo => {
         const thisShift = shift;
         shift += space;
-        return Object.assign(topo, { x: topo.x + thisShift } );
+        topo.x += thisShift;
       });
     }
     let CentreImagesOnCanvas = (topos, canvas) => {
       const lastTopo = topos[topos.length - 1];
       let totalImageBoundX = lastTopo.x + lastTopo.width;
       let centreShiftX = ( canvas.width - totalImageBoundX ) / 2;
-      return topos.map( topo => Object.assign(topo, { x: topo.x + centreShiftX }) );
+      topos.forEach( topo => topo.x += centreShiftX );
     }
     let TransformRoutes = (topo) => {
       if( !topo.routes ) return [];
