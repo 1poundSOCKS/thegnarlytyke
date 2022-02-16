@@ -201,13 +201,14 @@
       img.src = url;
     });
     let GetRenderData = (canvas, topos, scale, space) => {
-      topos = AddImageSizes(topos, canvas, scale);
-      topos = AddImagePositions(topos, canvas);
-      topos = AddSpaceBetweenImages(topos, space);
-      return CentreImagesOnCanvas(topos, canvas);
-    }
-    let GetImageScales = (canvas, images, imageHeightScale) => {
-      return images.map(image => canvas.height / image.height * imageHeightScale);
+      let renderTopos = topos.map( topo => {
+        const topoCopy = {};
+        return Object.assign(topoCopy, topo);
+      });
+      AddImageSizes(renderTopos, canvas, scale);
+      AddImagePositions(renderTopos, canvas);
+      AddSpaceBetweenImages(renderTopos, space);
+      return CentreImagesOnCanvas(renderTopos, canvas);
     }
     let AddImageSizes = (topos, canvas, heightScale) => {
       return topos.map( topo => {
