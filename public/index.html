@@ -5,9 +5,9 @@
 </head>
 <body>
   <script src="./common.js"></script>
-  <h1 class="main-header">the gnarly tyke</h1>
+  <h1>the gnarly tyke</h1>
   <div>
-    <h2 class="area-name">Baildon Bank</h2>
+    <h2>Baildon Bank</h2>
   </div>
   <div style="margin-top: 2%;">
     <canvas style="margin: auto; display: block" id="select-topo-canvas"></canvas>
@@ -150,12 +150,6 @@
       ctx.rect(topo.x - halfWidth, topo.y - halfWidth, topo.width + width, topo.height + width);
       ctx.stroke();
     }
-    // let LoadImage = (url) => new Promise( (resolve, reject) => {
-    //   const img = new Image();
-    //   img.onload = () => resolve(img);
-    //   img.onerror = (err) => reject(err);
-    //   img.src = url;
-    // });
     let GetRenderData = (canvas, topos, scale, space) => {
       let renderTopos = topos.map( topo => {
         const topoCopy = {};

@@ -1,5 +1,4 @@
-let LoadImage = (location, filename) => new Promise( (resolve, reject) => {
-  const url = location + filename;
+let LoadImage = (url) => new Promise( (resolve, reject) => {
   const img = new Image();
   img.onload = () => resolve(img);
   img.onerror = (err) => reject(err);
@@ -7,7 +6,7 @@ let LoadImage = (location, filename) => new Promise( (resolve, reject) => {
 });
 
 let LoadTopoImages = (crag, location) => new Promise( (resolve, reject) => {
-  let loaders = crag.topos.map(topo => LoadImage(location, topo.imageFile));
+  let loaders = crag.topos.map(topo => LoadImage(location + topo.imageFile));
   Promise.all(loaders)
   .then(images => {
     crag.topos.forEach( (topo, index) => {

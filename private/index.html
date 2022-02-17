@@ -5,12 +5,18 @@
 </head>
 <body>
   <script src="../public/common.js"></script>
-  <h1 class="main-header">the gnarly tyke</h1>
+  <h1>the gnarly tyke</h1>
   <div>
-    <h2 class="area-name">Upload topo image</h2>
+    <h2>Add topo</h2>
+  </div>
+  <div>
+    <input type="file" id="myFile" name="filename" onchange="example()">
+  </div>
+  <div>
+    <button type="button" onclick="Upload()">Upload</button>
   </div>
   <div style="margin-top: 2%;">
-    <canvas style="margin: auto; display: block" id="main-topo-canvas"></canvas>
+    <canvas id="topo-canvas"></canvas>
   </div>
   <script>
     let _crag = null;
@@ -26,6 +32,26 @@
       if( _crag ) DrawPage(_crag);
     }
     let DrawPage = (crag) => {
+    }
+    let example = () => {
+      let element = document.getElementById('myFile');
+      var reader = new FileReader();
+      reader.onload = e => {
+        LoadImage(e.target.result)
+        .then( img => {
+          const canvas = document.getElementById("topo-canvas");
+          canvas.height = 500;
+          canvas.width = img.width * canvas.height / img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        });
+      }
+      reader.readAsDataURL(element.files[0]);
+    }
+    let Upload = () => {
+      const canvas = document.getElementById("topo-canvas");
+      const topoImageURL = canvas.toDataURL('image/jpeg', 0.1);
+      console.log(topoImageURL);
     }
     </script>
 </body>
