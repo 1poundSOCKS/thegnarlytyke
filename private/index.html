@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>the gnarly tyke</title>
+    <link rel="stylesheet" href="../public/stylesheets/default.css">
+</head>
+<body>
+  <script src="../public/common.js"></script>
+  <h1 class="main-header">the gnarly tyke</h1>
+  <div>
+    <h2 class="area-name">Upload topo image</h2>
+  </div>
+  <div style="margin-top: 2%;">
+    <canvas style="margin: auto; display: block" id="main-topo-canvas"></canvas>
+  </div>
+  <script>
+    let _crag = null;
+    window.onload = function() {
+      LoadCrag("../public/data/baildon_bank.json", "../public/images/")
+      .then( crag => {
+        _crag = crag;
+        _selectedTopoId = _crag.topos[0].id;
+        DrawPage(_crag);
+      });
+    }
+    window.onresize = () => {
+      if( _crag ) DrawPage(_crag);
+    }
+    let DrawPage = (crag) => {
+    }
+    </script>
+</body>
+</html>
