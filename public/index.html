@@ -4,32 +4,6 @@
     <link rel="stylesheet" href="stylesheets/default.css">
 </head>
 <body>
-  <script>
-    let _crag = null;
-    let routes = null;
-    let topos = null;
-    let selectedTopo = null;
-    let GetRoutesForSelectedTopo = () => {
-      return selectedTopo ? GetRoutesForTopo(selectedTopo) : [];
-    }
-    let GetRoutesForTopo = topo => {
-      if( !topo.routes ) return [];
-      return topo.routes.map(route => {
-        const routeInfo = routes[route.globalIndex];
-        return {
-          name: routeInfo.name,
-          type: routeInfo.type,
-          grade: routeInfo.grade,
-          label: route.label,
-          points: route.points
-        };
-      });
-    }
-    let GetTopoById = (topos, id) => {
-      const matchedTopos = topos.filter( topo => topo.id == id );
-      return ( matchedTopos.length > 0 ) ? matchedTopos[0] : null;
-    }
-  </script>
   <h1 class="main-header">the gnarly tyke</h1>
   <div>
     <h2 class="area-name">Baildon Bank</h2>
@@ -50,9 +24,12 @@
       </thead>
       <tbody id="route-table-body">
         <script>
-          let GetRouteTableHTML = () => {
+          let UpdateRouteTable = (topo) => {
+            document.getElementById('route-table-body').innerHTML = GetRouteTableHTML(topo);
+          }
+          let GetRouteTableHTML = (topo) => {
             let rowHTML = '';
-            GetRoutesForSelectedTopo().forEach((route, index) => {
+            GetRoutesForTopo(topo).forEach((route, index) => {
               rowHTML += 
               `<tr>
                 <td>${index+1}</td>
@@ -63,55 +40,66 @@
               `;
             });
             return rowHTML;
-            let UpdateRouteTable = () => {
-            GetRoutesForSelectedTopo().forEach((route, index) => {
-              document.write(GetRouteTableHTML());
-            });
           }
+          let GetRoutesForTopo = topo => {
+            if( !topo.routes ) return [];
+            return topo.routes.map(route => {
+              const routeInfo = _crag.routes[route.globalIndex];
+              return {
+                name: routeInfo.name,
+                type: routeInfo.type,
+                grade: routeInfo.grade,
+                label: route.label,
+                points: route.points
+              };
+            });
           }
         </script>
       </tbody>
     </table>
   </div>
   <script>
-    let lastRenderedTopos = null;
+    let _crag = null;
+    let _selectedTopoId = null;
+    let _lastRenderedTopos = null;
     window.onload = function() {
       fetch('./data/baildon_bank.json')
       .then(response => response.json())
       .then(data => {
         _crag = data;
-        topos = _crag.topos;
-        routes = _crag.routes;
-        let loaders = topos.map(topo => LoadImage(topo.imageFile));
+        let loaders = _crag.topos.map(topo => LoadImage(topo.imageFile));
         Promise.all(loaders).then(images => {
-          topos.forEach( (topo, index) => {
+          _crag.topos.forEach( (topo, index) => {
             topo.image = images[index];
           });
-          DrawPage();
-          AddMouseSupport();
+          _selectedTopoId = _crag.topos[0].id;
+          DrawPage(_crag);
+          AddMouseSupport(_crag);
         });
       });
     }
     window.onresize = () => {
-      DrawPage();
+      if( _crag ) DrawPage(_crag);
     }
-    let DrawPage = () => {
+    let DrawPage = (crag) => {
       let canvas = document.getElementById("select-topo-canvas");
-      lastRenderedTopos = DrawTopoSelection(canvas, topos);
-      selectedTopo = selectedTopo ? GetTopoById(lastRenderedTopos, selectedTopo.id) : lastRenderedTopos[0];
-      DrawTopoBox(canvas, selectedTopo, 8, '#000000');
-      let mainTopoCanvas = document.getElementById("main-topo-canvas");
-      const topo = {};
-      Object.assign(topo, selectedTopo);
-      DrawMainTopoCanvas(mainTopoCanvas, topo);
-      document.getElementById('route-table-body').innerHTML = GetRouteTableHTML();
+      _lastRenderedTopos = DrawTopoSelection(canvas, crag.topos);
+      if( _selectedTopoId != null ) {
+        const matchedTopos = _lastRenderedTopos.filter( topo => topo.id == _selectedTopoId );
+        const selectedTopo = ( matchedTopos.length > 0 ) ? matchedTopos[0] : null;
+        DrawTopoBox(canvas, selectedTopo, 8, '#000000');
+        let mainTopoCanvas = document.getElementById("main-topo-canvas");
+        const topo = {};
+        Object.assign(topo, selectedTopo);
+        DrawMainTopoCanvas(mainTopoCanvas, topo);
+        UpdateRouteTable(topo);
+      }
     }
     let DrawTopoSelection = (canvas, topoData) => {
       canvas.width = document.documentElement.clientWidth;
       canvas.height = 100;
       const topos = GetRenderData(canvas, topoData, 0.8, 20);
       RenderTopos(canvas, topos);
-      selectedTopo = selectedTopo ? selectedTopo : topos[0];
       return topos;
     }
     let DrawMainTopoCanvas = (canvas, topo) => {
@@ -125,21 +113,21 @@
       RenderTopos(canvas, topos);
       DrawTopoRoutes(canvas, topos[0]);
     }
-    let AddMouseSupport = () => {
+    let AddMouseSupport = (crag) => {
       let canvas = document.getElementById("select-topo-canvas");
       canvas.onmousemove = event => {
-        let currentSelectedTopo = null;
-        lastRenderedTopos.forEach( topo => {
+        let currentSelectedTopoId = null;
+        _lastRenderedTopos.forEach( topo => {
           var rect = canvas.getBoundingClientRect();
           const mouseX = event.clientX - rect.left;
           const mouseY = event.clientY - rect.top;
           if ( mouseX >= topo.x && mouseX < (topo.x + topo.width) && mouseY >= topo.y && mouseY < (topo.y + topo.height) ) {
-            currentSelectedTopo = topo;
+            currentSelectedTopoId = topo.id;
           }
         });
-        if( currentSelectedTopo && currentSelectedTopo != selectedTopo ) {
-          selectedTopo = currentSelectedTopo;
-          DrawPage();
+        if( currentSelectedTopoId != null && currentSelectedTopoId != _selectedTopoId ) {
+          _selectedTopoId = currentSelectedTopoId;
+          DrawPage(crag);
         }
       }
     }
