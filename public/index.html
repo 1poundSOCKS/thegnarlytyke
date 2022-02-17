@@ -5,42 +5,9 @@
 </head>
 <body>
   <script>
-    const routes = 
-    [
-    { "name": "Conch", "type": "Trad", "grade": "HS 4b" },
-    { "name": "Scar Wall", "type": "Trad", "grade": "E5 6b" },
-    { "name": "Scar", "type": "Trad", "grade": "E2 5b" },
-    { "name": "The Flakes", "type": "Trad", "grade": "E3 5c" },
-    { "name": "Intrepid", "type": "Trad", "grade": "E6 6a" },
-    { "name": "Hades", "type": "Trad", "grade": "VS 4c" }
-    ];
-    const topos =
-    [
-    {
-      "id": 0,
-      "imageFile": "./images/conch-area-resize.jpg",
-      "routes": [ 
-      { "globalIndex": 0, "label": 1, "points": { "start": { "x": 0.42, "y": 0.85 }, "end": { "x": 0.6, "y": 0.15 } } }
-      ]
-    },
-    {
-      "id": 1,
-      "imageFile": "./images/scar-wall-resize.jpg",
-      "routes": [
-      { "globalIndex": 1, "label": 1, "points": { "start": { "x": 0.30, "y": 0.80 }, "end": { "x": 0.34, "y": 0.15 } } },
-      { "globalIndex": 2, "label": 2, "points": { "start": { "x": 0.44, "y": 0.80 }, "end": { "x": 0.48, "y": 0.12 } } },
-      { "globalIndex": 3, "label": 3, "points": { "start": { "x": 0.56, "y": 0.80 }, "end": { "x": 0.55, "y": 0.12 } } },
-      { "globalIndex": 4, "label": 4, "points": { "start": { "x": 0.62, "y": 0.82 }, "end": { "x": 0.62, "y": 0.15 } } }
-      ]
-    },
-    {
-      "id": 2,
-      "imageFile": "./images/hades-area-resize.jpg",
-      "routes": [
-      { "globalIndex": 5, "label": 1, "points": { "start": { "x": 0.74, "y": 0.90 }, "end": { "x": 0.75, "y": 0.22 } }  }
-      ]
-    }
-    ];
+    let _crag = null;
+    let routes = null;
+    let topos = null;
     let selectedTopo = null;
     let GetRoutesForSelectedTopo = () => {
       return selectedTopo ? GetRoutesForTopo(selectedTopo) : [];
@@ -109,13 +76,20 @@
   <script>
     let lastRenderedTopos = null;
     window.onload = function() {
-      let loaders = topos.map(topo => LoadImage(topo.imageFile));
-      Promise.all(loaders).then(images => {
-        topos.forEach( (topo, index) => {
-          topo.image = images[index];
+      fetch('./data/baildon_bank.json')
+      .then(response => response.json())
+      .then(data => {
+        _crag = data;
+        topos = _crag.topos;
+        routes = _crag.routes;
+        let loaders = topos.map(topo => LoadImage(topo.imageFile));
+        Promise.all(loaders).then(images => {
+          topos.forEach( (topo, index) => {
+            topo.image = images[index];
+          });
+          DrawPage();
+          AddMouseSupport();
         });
-        DrawPage();
-        AddMouseSupport();
       });
     }
     window.onresize = () => {
