@@ -1,10 +1,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
     <title>the gnarly tyke</title>
-    <link rel="stylesheet" href="../public/stylesheets/default.css">
+    <link rel="stylesheet" href="stylesheets/default.css">
 </head>
 <body>
-  <script src="../public/common.js"></script>
+  <script src="./common.js"></script>
   <h1>the gnarly tyke</h1>
   <div>
     <h2>Add topo</h2>
@@ -21,7 +21,7 @@
   <script>
     let _crag = null;
     window.onload = function() {
-      LoadCrag("../public/data/baildon_bank.json", "../public/images/")
+      LoadCrag("./data/baildon_bank.json", "./images/")
       .then( crag => {
         _crag = crag;
         _selectedTopoId = _crag.topos[0].id;
@@ -50,7 +50,7 @@
     }
     let Upload = () => {
       const canvas = document.getElementById("topo-canvas");
-      const topoImageURL = canvas.toDataURL('image/jpeg', 0.1);
+      const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
       console.log(topoImageURL);
     }
     </script>
