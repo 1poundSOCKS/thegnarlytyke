@@ -48,10 +48,27 @@
       }
       reader.readAsDataURL(element.files[0]);
     }
-    let Upload = () => {
+    let Upload = async () => {
       const canvas = document.getElementById("topo-canvas");
       const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
       console.log(topoImageURL);
+      const req = { image: topoImageURL };
+      //const data = { value: "test" };
+      const response = await fetch('/upload_image', {
+        method: 'POST',
+        mode: 'same-origin',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'same-origin',
+        body: JSON.stringify(req)
+      });
+      const resData = await response.json();
+      console.log(resData);
+      return resData;
     }
     </script>
 </body>
