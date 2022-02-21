@@ -13,7 +13,10 @@
     <input type="file" id="myFile" name="filename" onchange="example()">
   </div>
   <div style="margin-top: 2%;">
-    <canvas id="topo-canvas"></canvas>
+    <canvas hidden id="topo-canvas"></canvas>
+  </div>
+  <div style="margin-top: 2%;">
+    <canvas id="topo-canvas-small"></canvas>
   </div>
   <div style="margin-top: 2%;">
     <button type="button" onclick="Upload()">Upload</button>
@@ -60,6 +63,11 @@
           canvas.width = img.width * canvas.height / img.height;
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const smallCanvas = document.getElementById("topo-canvas-small");
+          smallCanvas.height = 100;
+          smallCanvas.width = img.width * smallCanvas.height / img.height;
+          const smallCtx = smallCanvas.getContext("2d");
+          smallCtx.drawImage(img, 0, 0, smallCanvas.width, smallCanvas.height);
         });
       }
       reader.readAsDataURL(element.files[0]);
@@ -81,8 +89,6 @@
         body: JSON.stringify(req)
       });
       const resData = await response.json();
-      console.log(resData);
-      console.log(resData.topo.imageFile);
       document.getElementById('topoID').value = resData.topo.id;
       document.getElementById('topoFilename').value = resData.topo.imageFile;
       return resData;

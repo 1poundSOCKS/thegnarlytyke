@@ -4,8 +4,6 @@ import fs from 'fs';
 import path from 'path'
 import * as _crag from './crag.js'
 
-const imagesFolder = '../work/images';
-
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
@@ -35,7 +33,7 @@ app.post('/add_topo', (req, res) => {
 
 app.get('/get_image', (req, res) => {
   console.log('GET /get_image');
-  const imageFilename = path.resolve(imagesFolder, req.query.filename);
+  const imageFilename = _crag.GetFullImageFilename(req.query.filename);
   console.log(`returing image file '${imageFilename}'`);
   res.sendFile(imageFilename);
 });
@@ -49,9 +47,6 @@ app.listen(80);
 
 let AddTopo = async (imageData) => {
   if( !imageData ) throw 'image data not supplied';
-  let crag = await _crag.LoadCrag();
-  let topo = _crag.AddTopo(crag, imageData);
-  await _crag.SaveTopoImage(topo, imagesFolder);
-  await _crag.SaveCrag(crag);
+  const topo = _crag.AddTopo(imageData);
   return topo;
 }

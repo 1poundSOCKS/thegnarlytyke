@@ -2,45 +2,36 @@ import path from 'path'
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
-const defaultCragName = 'Baildon Bank';
 const dataFolder = '../work/data';
-const cragFilename = 'baildon_bank.json';
+const imagesFolder = '../work/images';
 
-export let CreateCrag = (cragName) => {
-  return {id: uuidv4(), name: cragName};
-}
-
-export let CreateTopo = (imageData) => {
+let CreateTopo = (imageData) => {
   return {id: uuidv4(), imageData: imageData};
 }
 
-export let AddTopo = (crag, imageData) => {
-  if( !crag.topos ) crag.topos = [];
-  const topoCount = crag.topos.push(CreateTopo(imageData));
-  return crag.topos[topoCount-1];
+let GetTopoFilename = (topo) => path.resolve(dataFolder, `${topo.id}.topo.json`);
+
+export let GetFullImageFilename = (filename) => path.resolve(imagesFolder, filename);
+
+export let AddTopo = async (imageData) => {
+  const topo = CreateTopo(imageData);
+  await SaveTopoImage(topo);
+  await SaveTopo(topo);
+  return topo;
 }
 
-export let LoadCrag = () => new Promise( (resolve, reject) => {
-  const filename = path.resolve(dataFolder, cragFilename);
-  console.log(`reading crag data from '${filename}'`);
-  fs.readFile(filename, 'utf-8', (err, data) => {
-    if (err) resolve(CreateCrag(defaultCragName));
-    else resolve(JSON.parse(data.toString()));
-  });
-});
-
-export let SaveCrag = (crag) => new Promise( (resolve, reject) => {
-  const filename = path.resolve(dataFolder, cragFilename);
-  console.log(`writing crag data to '${filename}'`);
-  fs.writeFile(filename, JSON.stringify(crag, null, 2), (err) => {
+export let SaveTopo = (topo) => new Promise( (resolve, reject) => {
+  const filename = GetTopoFilename(topo);
+  console.log(`writing topo data to '${filename}'`);
+  fs.writeFile(filename, JSON.stringify(topo, null, 2), (err) => {
     if (err) reject(err);
-    else resolve();
+    else resolve(filename);
   });
 });
 
-export let SaveTopoImage = (topo, folder) => new Promise( (resolve, reject) => {
+export let SaveTopoImage = (topo) => new Promise( (resolve, reject) => {
   const filename = `${topo.id}.jpg`;
-  const fullFilename = path.resolve(folder, filename);
+  const fullFilename = path.resolve(imagesFolder, filename);
   console.log(`saving image data to '${fullFilename}'`);
   const imageDataChunks = topo.imageData.split(",");
   console.log(`image header='${imageDataChunks[0]}'`);
@@ -51,7 +42,7 @@ export let SaveTopoImage = (topo, folder) => new Promise( (resolve, reject) => {
     if( err ) reject(err);
     else {
       topo.imageFile = filename;
-      resolve(fullFilename);
+      resolve(topo);
     }
   });
 });
