@@ -2,23 +2,25 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import path from 'path'
+import * as _crag from './crag.js'
 
-const uploadFolder = '../work/upload';
-const dataFolder = '../work/data';
 const imagesFolder = '../work/images';
-const cragFilename = 'baildon_bank.json';
 
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-app.post('/add_image_to_topo', (req, res) => {
-  console.log('request to add image to topo');
-  AddImageToTopo(req.body.image)
-  .then( () => {
+app.post('/add_topo', (req, res) => {
+  console.log('POST /add_topo');
+  AddTopo(req.body.imageData)
+  .then( topo => {
     res.send(JSON.stringify(
     {
-      result: "success"
+      result: "success",
+      topo: {
+        id: topo.id,
+        imageFile: topo.imageFile
+      }
     }));
   })
   .catch( err => {
@@ -31,61 +33,25 @@ app.post('/add_image_to_topo', (req, res) => {
     })
 });
 
+app.get('/get_image', (req, res) => {
+  console.log('GET /get_image');
+  const imageFilename = path.resolve(imagesFolder, req.query.filename);
+  console.log(`returing image file '${imageFilename}'`);
+  res.sendFile(imageFilename);
+});
+
 app.get('/editor', (req, res) => {
+  console.log('GET /editor');
   res.sendFile(path.resolve('public', 'editor.html'));
 });
 
 app.listen(80);
 
-let AddImageToTopo = async (imageData) => {
+let AddTopo = async (imageData) => {
   if( !imageData ) throw 'image data not supplied';
-  const uniqueID = Date.now();
-  const uploadFilename = `${uniqueID}.jpg`;
-  const uploadFullFilename = path.join(uploadFolder, uploadFilename);
-  const imagesFullFilename = path.join(imagesFolder, uploadFilename);
-  await SaveImage(imageData, uploadFullFilename);
-  await RenameFile(uploadFullFilename, imagesFullFilename);
-  let crag = await LoadCrag();
-  const topoCount = crag.topos.push({imageFile: uploadFilename});
-  crag.topos[topoCount-1].id = uniqueID;
-  await SaveCrag(crag);
+  let crag = await _crag.LoadCrag();
+  let topo = _crag.AddTopo(crag, imageData);
+  await _crag.SaveTopoImage(topo, imagesFolder);
+  await _crag.SaveCrag(crag);
+  return topo;
 }
-
-let SaveImage = (imageData, filename) => new Promise( ( resolve, reject) => {
-  console.log(`saving image data to '${filename}'`);
-  const imageDataChunks = imageData.split(",");
-  console.log(`image header='${imageDataChunks[0]}'`);
-  const base64ImageData = imageData.split(",")[1];
-  const buf = Buffer.from(base64ImageData, 'base64');
-  console.log(`image size=${buf.byteLength}`);
-  fs.writeFile(filename, buf,  "binary", err => {
-    if( err ) reject(err);
-    else resolve(filename);
-  });
-});
-
-let RenameFile = (oldPath, newPath) => new Promise( (resolve, reject) => {
-  console.log(`renaming file '${oldPath}' to '${newPath}'`);
-  fs.rename(oldPath, newPath, err => {
-    if (err) reject(err);
-    else resolve(newPath);
-  });
-});
-
-let LoadCrag = () => new Promise( (resolve, reject) => {
-  const filename = path.resolve(dataFolder, cragFilename);
-  console.log(`reading crag data from '${filename}'`);
-  fs.readFile(filename, 'utf-8', (err, data) => {
-    if (err) reject(err);
-    else resolve(JSON.parse(data.toString()));
-  });
-});
-
-let SaveCrag = (crag) => new Promise( (resolve, reject) => {
-  const filename = path.resolve(dataFolder, cragFilename);
-  console.log(`writing crag data to '${filename}'`);
-  fs.writeFile(filename, JSON.stringify(crag, null, 2), (err) => {
-    if (err) reject(err);
-    else resolve();
-  });
-});

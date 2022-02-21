@@ -42,3 +42,12 @@ tr:active {
   color: white;
   background: #662608; 
 }
+button {
+  font-size: x-large;
+}
+input {
+  font-size: x-large;
+}
+label {
+  font-size: x-large;
+}

@@ -103,6 +103,7 @@ dist
 # TernJS port file
 .tern-port
 
+# my project
 /work/upload/*
 /work/data/*
 /work/images/*

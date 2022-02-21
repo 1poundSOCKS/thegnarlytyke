@@ -9,14 +9,30 @@
   <div>
     <h2>Add topo</h2>
   </div>
-  <div>
+  <div style="margin-top: 2%;">
     <input type="file" id="myFile" name="filename" onchange="example()">
-  </div>
-  <div>
-    <button type="button" onclick="Upload()">Upload</button>
   </div>
   <div style="margin-top: 2%;">
     <canvas id="topo-canvas"></canvas>
+  </div>
+  <div style="margin-top: 2%;">
+    <button type="button" onclick="Upload()">Upload</button>
+  </div>
+  <div style="margin-top: 2%;">
+    <label>Topo ID:
+      <input id="topoID" size="50">
+    </label>
+  </div>
+  <div style="margin-top: 2%;">
+    <label>Topo filename:
+      <input id="topoFilename" size="50">
+    </label>
+  </div>
+  <div style="margin-top: 2%;">
+    <button type="button" onclick="Download()">Download</button>
+  </div>
+  <div style="margin-top: 2%;">
+    <canvas id="download-topo-canvas"></canvas>
   </div>
   <script>
     let _crag = null;
@@ -51,8 +67,8 @@
     let Upload = async () => {
       const canvas = document.getElementById("topo-canvas");
       const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
-      const req = { image: topoImageURL };
-      const response = await fetch('/add_image_to_topo', {
+      const req = { imageData: topoImageURL };
+      const response = await fetch('/add_topo', {
         method: 'POST',
         mode: 'same-origin',
         cache: 'no-cache',
@@ -66,7 +82,19 @@
       });
       const resData = await response.json();
       console.log(resData);
+      console.log(resData.topo.imageFile);
+      document.getElementById('topoID').value = resData.topo.id;
+      document.getElementById('topoFilename').value = resData.topo.imageFile;
       return resData;
+    }
+    let Download = async () => {
+      const imageFilename = document.getElementById('topoFilename').value;
+      const image = await LoadImage(`/get_image?filename=${imageFilename}`);
+      const canvas = document.getElementById("download-topo-canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(image, 0, 0);
     }
     </script>
 </body>
