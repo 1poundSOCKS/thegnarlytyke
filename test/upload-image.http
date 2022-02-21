@@ -1,0 +1,6 @@
+POST http://localhost:80/add_image_to_topo
+Content-Type: application/json
+
+{
+  "image": "6168278bb6c81140cde3b2ef"
+}

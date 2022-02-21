@@ -103,5 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
-server/upload/*
-server/work/images/*
+/work/upload/*
+/work/data/*
+/work/images/*
