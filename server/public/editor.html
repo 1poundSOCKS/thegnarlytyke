@@ -10,7 +10,7 @@
     <h2>Add topo</h2>
   </div>
   <div style="margin-top: 2%;">
-    <input type="file" id="myFile" name="filename" onchange="example()">
+    <input type="file" id="topo-image-files" name="filename" onchange="SelectTopoImageFiles()">
   </div>
   <div style="margin-top: 2%;">
     <canvas hidden id="topo-canvas"></canvas>
@@ -40,20 +40,11 @@
   <script>
     let _crag = null;
     window.onload = function() {
-      LoadCrag("./data/baildon_bank.json", "./images/")
-      .then( crag => {
-        _crag = crag;
-        _selectedTopoId = _crag.topos[0].id;
-        DrawPage(_crag);
-      });
     }
     window.onresize = () => {
-      if( _crag ) DrawPage(_crag);
     }
-    let DrawPage = (crag) => {
-    }
-    let example = () => {
-      let element = document.getElementById('myFile');
+    let SelectTopoImageFiles = () => {
+      let topoImageFiles = document.getElementById('topo-image-files');
       var reader = new FileReader();
       reader.onload = e => {
         LoadImage(e.target.result)
@@ -70,7 +61,7 @@
           smallCtx.drawImage(img, 0, 0, smallCanvas.width, smallCanvas.height);
         });
       }
-      reader.readAsDataURL(element.files[0]);
+      reader.readAsDataURL(topoImageFiles.files[0]);
     }
     let Upload = async () => {
       const canvas = document.getElementById("topo-canvas");
