@@ -34,7 +34,7 @@
   "topos": [
     {
       "id": 0,
-      "imageFile": "conch-area-resize.jpg",
+      "imageFile": "./images/conch-area-resize.jpg",
       "routes": [
         {
           "globalIndex": 0,
@@ -54,7 +54,7 @@
     },
     {
       "id": 1,
-      "imageFile": "scar-wall-resize.jpg",
+      "imageFile": "./images/scar-wall-resize.jpg",
       "routes": [
         {
           "globalIndex": 1,
@@ -116,7 +116,7 @@
     },
     {
       "id": 2,
-      "imageFile": "hades-area-resize.jpg",
+      "imageFile": "./images/hades-area-resize.jpg",
       "routes": [
         {
           "globalIndex": 5,

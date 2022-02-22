@@ -64,7 +64,7 @@
     let _selectedTopoId = null;
     let _lastRenderedTopos = null;
     window.onload = function() {
-      LoadCrag("./data/baildon_bank.json", "./images/")
+      LoadCrag("./data/baildon_bank.json")
       .then( crag => {
         _crag = crag;
         _selectedTopoId = _crag.topos[0].id;
