@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import fs from 'fs';
 import path from 'path'
 import * as _crag from './crag.js'
 
@@ -36,6 +35,23 @@ app.get('/get_image', (req, res) => {
   const imageFilename = _crag.GetFullImageFilename(req.query.filename);
   console.log(`returing image file '${imageFilename}'`);
   res.sendFile(imageFilename);
+});
+
+app.get('/get_crag', (req, res) => {
+  console.log('GET /get_crag');
+  _crag.GetCrag()
+  .then( crag => {
+    // console.log(crag);
+    let cragString = JSON.stringify(crag);
+    // console.log(cragString);
+    res.send(cragString);
+  });
+  // .then( crag => {
+  //   res.send(JSON.stringify(crag));
+  // })
+  // .catch( err => {
+  //   res.send(err);
+  // });
 });
 
 app.get('/editor', (req, res) => {

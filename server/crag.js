@@ -47,6 +47,36 @@ export let SaveTopoImage = (topo) => new Promise( (resolve, reject) => {
   });
 });
 
+export let GetCrag = async () => {
+  let fileList = await ReadFolder(dataFolder);
+  let fileReaders = fileList.map( file => ReadFile(path.resolve(dataFolder, file)) );
+  let topos = await Promise.all(fileReaders);
+  let parsedTopos = topos.map( topoString => {
+    let topo = JSON.parse(topoString);
+    topo.imageData = undefined;
+    return topo;
+  });
+  return { topos: parsedTopos };
+}
+
+let ReadFolder = (folder) => new Promise( (resolve, reject) => {
+  fs.readdir(folder, (err, files) => {
+    if (err) {
+      reject(err);
+    }
+    else {
+      resolve(files);
+    }
+  })
+});
+
+let ReadFile = (filename) => new Promise( (resolve, reject) => {
+  fs.readFile(filename, 'utf8' , (err, data) => {
+    if (err) reject(err);
+    else resolve(data);
+  });
+});
+
 let RenameFile = (oldPath, newPath) => new Promise( (resolve, reject) => {
   console.log(`renaming file '${oldPath}' to '${newPath}'`);
   fs.rename(oldPath, newPath, err => {
