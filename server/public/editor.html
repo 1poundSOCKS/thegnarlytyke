@@ -118,8 +118,8 @@
         let row = table.insertRow(index + 1);
         let cell1 = row.insertCell(0);
         cell1.innerHTML = topo.file.name;
-        cell1.onclick = (event) => {
-          let selectedTopos = topos.filter( topo => topo.file.name == event.currentTarget.innerHTML );
+        row.onclick = (event) => {
+          let selectedTopos = topos.filter( topo => topo.file.name == event.currentTarget.cells[0].innerHTML );
           if( selectedTopos.length == 1 ) {
             console.log(selectedTopos[0].file.name);
             UpdateCurrentTopo(selectedTopos[0]);
