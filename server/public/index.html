@@ -81,7 +81,7 @@
       if( _selectedTopoId != null ) {
         const matchedTopos = _lastRenderedTopos.filter( topo => topo.id == _selectedTopoId );
         const selectedTopo = ( matchedTopos.length > 0 ) ? matchedTopos[0] : null;
-        DrawTopoBox(canvas, selectedTopo, 8, '#000000');
+        DrawTopoBox(canvas, selectedTopo, 2, '#000000');
         let mainTopoCanvas = document.getElementById("main-topo-canvas");
         const topo = {};
         Object.assign(topo, selectedTopo);

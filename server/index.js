@@ -41,22 +41,19 @@ app.get('/get_crag', (req, res) => {
   console.log('GET /get_crag');
   _crag.GetCrag()
   .then( crag => {
-    // console.log(crag);
     let cragString = JSON.stringify(crag);
-    // console.log(cragString);
     res.send(cragString);
   });
-  // .then( crag => {
-  //   res.send(JSON.stringify(crag));
-  // })
-  // .catch( err => {
-  //   res.send(err);
-  // });
 });
 
-app.get('/editor', (req, res) => {
+app.get('/add_topos', (req, res) => {
   console.log('GET /editor');
-  res.sendFile(path.resolve('public', 'editor.html'));
+  res.sendFile(path.resolve('public', 'add_topos.html'));
+});
+
+app.get('/edit_crag', (req, res) => {
+  console.log('GET /edit_crag');
+  res.sendFile(path.resolve('public', 'edit_crag.html'));
 });
 
 app.listen(80);

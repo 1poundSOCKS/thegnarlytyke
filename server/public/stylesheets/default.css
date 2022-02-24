@@ -5,7 +5,7 @@
 }
 h1 {
   text-align: center;
-  background: #662608;
+  background: #175707;
   color: white;
   letter-spacing: .2em;
   font-size: 4rem;
@@ -50,4 +50,13 @@ input {
 }
 label {
   font-size: x-large;
+}
+.topo-images {
+  display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 2%;
+}
+.topo-image:hover {
+  cursor: grab;
+  transition: transform .2s;
+  transform: scale(1.1);
+  border: 2px solid black;
 }
