@@ -54,9 +54,11 @@ label {
 .topo-images {
   display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 2%;
 }
+.topo-image {
+  margin: 4px;
+}
 .topo-image:hover {
   cursor: grab;
-  transition: transform .2s;
-  transform: scale(1.1);
+  margin: 2px;
   border: 2px solid black;
 }
