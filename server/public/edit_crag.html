@@ -1,22 +1,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
+    <meta name="viewport" content="width=device-width; initial-scale=1">
     <title>the gnarly tyke</title>
-    <link rel="stylesheet" href="stylesheets/default.css">
+    <link rel="stylesheet" href="stylesheets/edit_crag.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
   <script src="./common.js"></script>
   <h1>the gnarly tyke</h1>
-  <div>
-    <h2>edit crag</h2>
+  <h2>edit crag</h2>
+  <div id="icon-bar" class="icon-bar">
+    <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
+    <a href="#"><i class="fa fa-trash"></i></a>
+    <a href="#"><i class="fa fa-save"></i></a>
+    <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
   </div>
-  <div id="topo-images" class="topo-images"></div>
-  <div id="selected-topo-container" class="topo-images">
-    <canvas id="selected-topo-image" class="topo-image"></canvas>
+  <div id="topo-images-container" class="topo-images-container"></div>
+  <div id="main-topo-container" class="main-topo-container">
+    <canvas id="main-topo-image" class="main-topo-image"></canvas>
+    <table id="route-table" class="route-table">
+      <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Grade</th>
+          </tr>
+      </thead>
+      <tbody id="route-table-body">
+      </tbody>
+    </table>
   </div>
-  <script>
+  <script type="module">
     let _crag = null;
+    let _transactions = [];
+    let _routeTableTransactionsApplied = 0;
     window.onload = () => {
-      document.getElementById('selected-topo-container').style.display = 'none';
+      EnableAllCragToposView();
       fetch('./get_crag')
       .then(response => response.json())
       .then(crag => {
@@ -29,7 +48,7 @@
           LoadImage(`./get_image?filename=${topoImageFile}`)
           .then( topoImage => {
             console.log(`image loaded: width=${topoImage.width}, height=${topoImage.height}`);
-            let topoImagesContainer = document.getElementById('topo-images');
+            let topoImagesContainer = document.getElementById('topo-images-container');
             let canvas = CreateTopoCanvas(topoID, topoImageFile, topoImage);
             let topoCanvas = topoImagesContainer.appendChild(canvas);
             let ctx = topoCanvas.getContext('2d');
@@ -37,8 +56,28 @@
           });
         });
       });
+      document.getElementById("ib-add-route").onclick = event => {
+        AddRoute();
+        UpdateRouteTable();
+      }
+      document.getElementById("ib-close").onclick = event => {
+        EnableAllCragToposView();
+      }
     }
     window.onresize = () => {
+    }
+    let UpdateRouteTable = () => {
+      let routeTransactions = GetTransactionsByType("route");
+      let routeTransactionsToApply = GetTransactionsToApply(routeTransactions, _routeTableTransactionsApplied);
+      console.log(`route transactions count: ${routeTransactions.length}`);
+      let routeTable = document.getElementById("route-table");
+      routeTransactionsToApply.forEach( (routeTransaction, index) => {
+        let newRouteRow = routeTable.insertRow(routeTable.rows.length);
+        _routeTableTransactionsApplied++;
+        newRouteRow.insertCell(0).innerHTML = 'New route';
+        newRouteRow.insertCell(1).innerHTML = '';
+        newRouteRow.insertCell(2).innerHTML = '';
+      });
     }
     let CreateTopoCanvas = (topoID, topoImageFile, topoImage) => {
       let canvas = document.createElement('CANVAS');
@@ -48,28 +87,41 @@
       canvas.setAttribute('height', 200);
       canvas.setAttribute('width', topoImage.width * 200 / topoImage.height);
       canvas.onclick = event => {
-        console.log(`mouse clicked on image`);
-        console.log(`${event.currentTarget}`);
-        console.log(`${event.currentTarget.dataset.id}`);
-        console.log(`${event.currentTarget.dataset.filename}`);
-        let destCanvas = document.getElementById('selected-topo-image');
-        destCanvas.height = 600;
-        destCanvas.width = topoImage.width * 600 / topoImage.height;
-        destCanvas.onclick = event => {
-          document.getElementById('topo-images').style.display = "flex";
-          document.getElementById('selected-topo-container').style.display = 'none';
-        }
-        let destCanvasCtx = destCanvas.getContext('2d');
-        LoadImage(`./get_image?filename=${topoImageFile}`)
-        .then( topoImage => {
-          console.log(`image loaded: width=${topoImage.width}, height=${topoImage.height}`);
-          destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
-        });
-        document.getElementById('topo-images').style.display = "none";
-        document.getElementById('selected-topo-container').style.display = 'flex';
+        DrawMainTopoImage(topoImage);
+        EnableMainTopoView();
       }
       return canvas;
     }
+    let DrawMainTopoImage = topoImage => {
+      console.log(`mouse clicked on image`);
+      console.log(`${event.currentTarget}`);
+      console.log(`${event.currentTarget.dataset.id}`);
+      console.log(`${event.currentTarget.dataset.filename}`);
+      let destCanvas = document.getElementById('main-topo-image');
+      destCanvas.height = topoImage.height;
+      console.log(`dest canvas height: ${destCanvas.height}`);
+      destCanvas.width = topoImage.width * destCanvas.height / topoImage.height;
+      destCanvas.onclick = event => {
+      }
+      let destCanvasCtx = destCanvas.getContext('2d');
+      destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
+    }
+    let EnableAllCragToposView = () => {
+      document.getElementById('icon-bar').classList.add('do-not-display');
+      document.getElementById('topo-images-container').classList.remove('do-not-display');
+      document.getElementById('main-topo-container').classList.add('do-not-display');
+    }
+    let EnableMainTopoView = () => {
+      document.getElementById('icon-bar').classList.remove('do-not-display');
+      document.getElementById('topo-images-container').classList.add('do-not-display');
+      document.getElementById('main-topo-container').classList.remove('do-not-display');
+    }
+    let AddRoute = () => {
+      _transactions.push({type: "route", action: "append"});
+      console.log(`transaction count: ${_transactions.length}`);
+    }
+    let GetTransactionsByType = type => _transactions.filter( transaction => transaction.type == "route" );
+    let GetTransactionsToApply = (transactions, transactionsApplied) => transactions.slice(transactionsApplied);
     </script>
 </body>
 </html>

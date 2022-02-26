@@ -7,17 +7,16 @@ h1 {
   text-align: center;
   background: #175707;
   color: white;
-  letter-spacing: .2em;
-  font-size: 4rem;
+  letter-spacing: .1em;
+  font-size: 3rem;
 }
 h2 {
   text-align: center;
   background: #662608;
   background-size: 100%;
   color: white;
-  letter-spacing: .2em;
+  letter-spacing: .1em;
   font-size: 2rem;
-  border-top: 5px solid black;
 }
 table, th, td {
   border-top: 2px solid black;
@@ -27,7 +26,7 @@ table {
   margin-left: 10%;
   width: 80%;
   border-collapse: collapse;
-  font-size: x-large;
+  font-size: large;
 }
 th {
   text-align: left;
@@ -50,15 +49,4 @@ input {
 }
 label {
   font-size: x-large;
-}
-.topo-images {
-  display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 2%;
-}
-.topo-image {
-  margin: 4px;
-}
-.topo-image:hover {
-  cursor: grab;
-  margin: 2px;
-  border: 2px solid black;
 }
