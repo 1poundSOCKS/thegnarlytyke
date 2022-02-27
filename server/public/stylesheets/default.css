@@ -1,9 +1,9 @@
 * {
-  margin: 0;
-  padding: 0;
   font-family: six caps;
+  font-size: 1rem;
 }
 h1 {
+  margin: auto;
   text-align: center;
   background: #175707;
   color: white;
@@ -11,6 +11,7 @@ h1 {
   font-size: 3rem;
 }
 h2 {
+  margin: auto;
   text-align: center;
   background: #662608;
   background-size: 100%;
@@ -18,20 +19,25 @@ h2 {
   letter-spacing: .1em;
   font-size: 2rem;
 }
-table, th, td {
-  border-top: 2px solid black;
-}
 table {
-  margin-top: 20px;
-  margin-left: 10%;
-  width: 80%;
+  margin: auto;
+  width: 40rem;
+  margin-top: 1rem;
   border-collapse: collapse;
-  font-size: large;
+  border: 0.1rem solid white;
+  border-top: 0.2rem solid white;
+  font-size: 2rem;
 }
 th {
   text-align: left;
   background-color: #662608;
   color: white;
+  border: 0.1rem solid white;
+  border-top: 0.2rem solid white;
+}
+td {
+  border: 0.1rem solid white;
+  border-top: 0.2rem solid white;
 }
 tr:hover { 
   color: white;
@@ -41,12 +47,9 @@ tr:active {
   color: white;
   background: #662608; 
 }
-button {
-  font-size: x-large;
+td {
+  height: 2rem;
 }
-input {
-  font-size: x-large;
-}
-label {
-  font-size: x-large;
+canvas {
+  margin: auto;
 }

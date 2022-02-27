@@ -1,0 +1,109 @@
+* {
+  font-family: six caps;
+}
+
+h1 {
+  margin: auto;
+  text-align: center;
+  background: #175707;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 3rem;
+}
+
+h2 {
+  margin: auto;
+  text-align: center;
+  background: #662608;
+  background-size: 100%;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 2rem;
+}
+
+.topo-images-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  background-color: lightgrey;
+}
+
+.main-topo-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  background-color: lightgrey;
+}
+
+.main-topo-image:hover {
+  cursor: crosshair;
+}
+
+.topo-image:hover {
+  cursor: grab;
+}
+
+.icon-bar {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2rem;
+}
+
+.icon-bar a {
+  float: center;
+  text-align: center;
+  width: 2rem;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+  color: black;
+  font-size: 3rem;
+}
+
+.icon-bar input {
+  font-size: 1rem;
+}
+
+.icon-bar label {
+  font-size: 1rem;
+}
+
+.icon-bar a:hover {
+  background-color: grey;
+}
+
+.route-table {
+  width: 40rem;
+  border-collapse: collapse;
+  font-size: 1rem;
+  white-space: nowrap;
+  table-layout: fixed;
+  border: 0.1rem solid black;
+  border-top: 0.1rem solid black;
+  border-right: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+  background-color: white;
+}
+
+.route-table-header > tr {
+  border: 0.1rem solid black;
+}
+
+.route-table-header > th {
+  border: 0.1rem solid black;
+}
+
+.route-table-row > td {
+  border: 0.1rem solid black;
+}
+
+.do-not-display {
+  display: none;
+}

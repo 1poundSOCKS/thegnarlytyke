@@ -1,34 +1,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
-    <meta name="viewport" content="width=device-width; initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width; initial-scale=1"> -->
     <title>the gnarly tyke</title>
-    <link rel="stylesheet" href="stylesheets/edit_crag.css">
+    <link rel="stylesheet" href="stylesheets/new.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
   <script src="./common.js"></script>
-  <h1>the gnarly tyke</h1>
-  <h2>edit crag</h2>
-  <div id="icon-bar" class="icon-bar">
-    <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
-    <a href="#"><i class="fa fa-trash"></i></a>
-    <a href="#"><i class="fa fa-save"></i></a>
-    <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
-  </div>
+  <div><h1>the gnarly tyke</h1></div>
+  <div><h2>edit crag</h2><div>
   <div id="topo-images-container" class="topo-images-container"></div>
   <div id="main-topo-container" class="main-topo-container">
     <canvas id="main-topo-image" class="main-topo-image"></canvas>
     <table id="route-table" class="route-table">
-      <thead>
+      <thead class="route-table-header">
           <tr>
             <th>Name</th>
-            <th>Type</th>
             <th>Grade</th>
           </tr>
       </thead>
-      <tbody id="route-table-body">
-      </tbody>
+      <tbody id="route-table-body" class="route-table-body"></tbody>
     </table>
+  </div>
+  <div id="icon-bar" class="icon-bar">
+    <label for="new-route-name">Name:</label>
+    <input id="new-route-name">
+    <label for="new-route-grade">Grade:</label>
+    <input id="new-route-grade">
+    <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
+    <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
   </div>
   <script type="module">
     let _crag = null;
@@ -57,8 +57,13 @@
         });
       });
       document.getElementById("ib-add-route").onclick = event => {
-        AddRoute();
-        UpdateRouteTable();
+        let newRouteName = document.getElementById('new-route-name').value;
+        let newRouteGrade = document.getElementById('new-route-grade').value;
+        console.log(`new route name: ${newRouteName}`);
+        if( newRouteName.length > 0 ) {
+          AddRoute(newRouteName, newRouteGrade);
+          UpdateRouteTable();
+        }
       }
       document.getElementById("ib-close").onclick = event => {
         EnableAllCragToposView();
@@ -67,25 +72,37 @@
     window.onresize = () => {
     }
     let UpdateRouteTable = () => {
+      let focusCell = null;
       let routeTransactions = GetTransactionsByType("route");
       let routeTransactionsToApply = GetTransactionsToApply(routeTransactions, _routeTableTransactionsApplied);
       console.log(`route transactions count: ${routeTransactions.length}`);
       let routeTable = document.getElementById("route-table");
       routeTransactionsToApply.forEach( (routeTransaction, index) => {
-        let newRouteRow = routeTable.insertRow(routeTable.rows.length);
+        console.log(`transaction: ${JSON.stringify(routeTransaction)}`);
+        if( routeTransaction.action == 'append' ) {
+          let newRouteRow = routeTable.insertRow(routeTable.rows.length);
+          newRouteRow.insertCell(0).innerText = '<new route>';
+          newRouteRow.insertCell(1).innerText = '';
+        }
+        else if( routeTransaction.action == 'update') {
+          let lastRowIndex = routeTable.rows.length - 1;
+          routeTable.rows[lastRowIndex].cells[0].innerText = routeTransaction.data.name;
+          routeTable.rows[lastRowIndex].cells[1].innerText = routeTransaction.data.grade;
+        }
         _routeTableTransactionsApplied++;
-        newRouteRow.insertCell(0).innerHTML = 'New route';
-        newRouteRow.insertCell(1).innerHTML = '';
-        newRouteRow.insertCell(2).innerHTML = '';
       });
+      return focusCell;
     }
     let CreateTopoCanvas = (topoID, topoImageFile, topoImage) => {
       let canvas = document.createElement('CANVAS');
       canvas.setAttribute('data-id', topoID);
       canvas.setAttribute('data-filename', topoImageFile);
+      let height = 15;
+      let width = topoImage.width * height / topoImage.height;
       canvas.setAttribute('class', 'topo-image');
-      canvas.setAttribute('height', 200);
-      canvas.setAttribute('width', topoImage.width * 200 / topoImage.height);
+      canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+      canvas.setAttribute('width', topoImage.width);
+      canvas.setAttribute('height', topoImage.height);
       canvas.onclick = event => {
         DrawMainTopoImage(topoImage);
         EnableMainTopoView();
@@ -98,8 +115,12 @@
       console.log(`${event.currentTarget.dataset.id}`);
       console.log(`${event.currentTarget.dataset.filename}`);
       let destCanvas = document.getElementById('main-topo-image');
+      let width = 40;
+      let height = topoImage.height * width / topoImage.width;
+      destCanvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+      destCanvas.setAttribute('width', topoImage.width);
+      destCanvas.setAttribute('height', topoImage.height);
       destCanvas.height = topoImage.height;
-      console.log(`dest canvas height: ${destCanvas.height}`);
       destCanvas.width = topoImage.width * destCanvas.height / topoImage.height;
       destCanvas.onclick = event => {
       }
@@ -116,9 +137,16 @@
       document.getElementById('topo-images-container').classList.add('do-not-display');
       document.getElementById('main-topo-container').classList.remove('do-not-display');
     }
-    let AddRoute = () => {
+    let AddRoute = (routeName, routeGrade) => {
       _transactions.push({type: "route", action: "append"});
+      _transactions.push({type: "route", action: "update", 
+        data: {
+          name: routeName,
+          grade: routeGrade
+        }
+      });
       console.log(`transaction count: ${_transactions.length}`);
+      return _transactions.length - 1;
     }
     let GetTransactionsByType = type => _transactions.filter( transaction => transaction.type == "route" );
     let GetTransactionsToApply = (transactions, transactionsApplied) => transactions.slice(transactionsApplied);
