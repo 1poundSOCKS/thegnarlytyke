@@ -43,6 +43,17 @@ h2 {
   background-color: lightgrey;
 }
 
+.edit-topo-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  background-color: lightgrey;
+}
+
 .main-topo-image:hover {
   cursor: crosshair;
 }
@@ -82,26 +93,14 @@ h2 {
 .route-table {
   width: 40rem;
   border-collapse: collapse;
-  font-size: 1rem;
+  font-size: 2rem;
   white-space: nowrap;
   table-layout: fixed;
-  border: 0.1rem solid black;
-  border-top: 0.1rem solid black;
-  border-right: 0.1rem solid black;
-  border-bottom: 0.1rem solid black;
-  background-color: white;
+  text-align: left;
 }
 
 .route-table-header > tr {
-  border: 0.1rem solid black;
-}
-
-.route-table-header > th {
-  border: 0.1rem solid black;
-}
-
-.route-table-row > td {
-  border: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
 }
 
 .do-not-display {

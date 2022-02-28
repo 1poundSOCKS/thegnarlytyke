@@ -1,6 +1,5 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
-    <!-- <meta name="viewport" content="width=device-width; initial-scale=1"> -->
     <title>the gnarly tyke</title>
     <link rel="stylesheet" href="stylesheets/new.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -12,23 +11,36 @@
   <div id="topo-images-container" class="topo-images-container"></div>
   <div id="main-topo-container" class="main-topo-container">
     <canvas id="main-topo-image" class="main-topo-image"></canvas>
-    <table id="route-table" class="route-table">
+    <table id="topo-route-table" class="route-table">
       <thead class="route-table-header">
           <tr>
             <th>Name</th>
             <th>Grade</th>
           </tr>
       </thead>
-      <tbody id="route-table-body" class="route-table-body"></tbody>
     </table>
   </div>
-  <div id="icon-bar" class="icon-bar">
-    <label for="new-route-name">Name:</label>
-    <input id="new-route-name">
-    <label for="new-route-grade">Grade:</label>
-    <input id="new-route-grade">
-    <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
-    <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
+  <div id="edit-topo-container" class="edit-topo-container">
+    <div id="icon-bar" class="icon-bar">
+      <label for="new-route-name">Name:</label>
+      <input id="new-route-name">
+      <label for="new-route-grade">Grade:</label>
+      <input id="new-route-grade">
+      <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
+      <a href="#"><i class="fa fa-save" id="ib-save"></i></a>
+      <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
+    </div>
+    <div>
+      <table id="crag-route-table" class="route-table">
+        <thead class="route-table-header">
+            <tr>
+              <th>Index</th>
+              <th>Name</th>
+              <th>Grade</th>
+            </tr>
+        </thead>
+      </table>
+      </div>
   </div>
   <script type="module">
     let _crag = null;
@@ -41,6 +53,7 @@
       .then(crag => {
         console.log(JSON.stringify(crag));
         _crag = crag;
+        UpdateCragRouteTable(_crag.routes);
         _crag.topos.forEach( topo => {
           let topoID = topo.id;
           let topoImageFile = topo.imageFile;
@@ -62,8 +75,29 @@
         console.log(`new route name: ${newRouteName}`);
         if( newRouteName.length > 0 ) {
           AddRoute(newRouteName, newRouteGrade);
-          UpdateRouteTable();
         }
+      }
+      document.getElementById("ib-save").onclick = event => {
+        let req = { routes: GetCragRoutes() };
+        fetch('./save_crag', {
+          method: 'POST',
+          mode: 'same-origin',
+          cache: 'no-cache',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          redirect: 'follow',
+          referrerPolicy: 'same-origin',
+          body: JSON.stringify(req)
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log(`${JSON.stringify(response)}`);
+        })
+        .catch(err => {
+          console.log(`$err.toString()}`);
+        });
       }
       document.getElementById("ib-close").onclick = event => {
         EnableAllCragToposView();
@@ -71,27 +105,12 @@
     }
     window.onresize = () => {
     }
-    let UpdateRouteTable = () => {
-      let focusCell = null;
-      let routeTransactions = GetTransactionsByType("route");
-      let routeTransactionsToApply = GetTransactionsToApply(routeTransactions, _routeTableTransactionsApplied);
-      console.log(`route transactions count: ${routeTransactions.length}`);
-      let routeTable = document.getElementById("route-table");
-      routeTransactionsToApply.forEach( (routeTransaction, index) => {
-        console.log(`transaction: ${JSON.stringify(routeTransaction)}`);
-        if( routeTransaction.action == 'append' ) {
-          let newRouteRow = routeTable.insertRow(routeTable.rows.length);
-          newRouteRow.insertCell(0).innerText = '<new route>';
-          newRouteRow.insertCell(1).innerText = '';
-        }
-        else if( routeTransaction.action == 'update') {
-          let lastRowIndex = routeTable.rows.length - 1;
-          routeTable.rows[lastRowIndex].cells[0].innerText = routeTransaction.data.name;
-          routeTable.rows[lastRowIndex].cells[1].innerText = routeTransaction.data.grade;
-        }
-        _routeTableTransactionsApplied++;
+    let UpdateCragRouteTable = (routes) => {
+      let routeTable = document.getElementById("crag-route-table");
+      while( routeTable.rows.length > 1 ) routeTable.deleteRow(1);
+      routes.forEach( route => {
+        AddRoute(route.name, route.grade);
       });
-      return focusCell;
     }
     let CreateTopoCanvas = (topoID, topoImageFile, topoImage) => {
       let canvas = document.createElement('CANVAS');
@@ -128,25 +147,35 @@
       destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
     }
     let EnableAllCragToposView = () => {
+      document.getElementById('edit-topo-container').classList.add('do-not-display');
       document.getElementById('icon-bar').classList.add('do-not-display');
       document.getElementById('topo-images-container').classList.remove('do-not-display');
       document.getElementById('main-topo-container').classList.add('do-not-display');
     }
     let EnableMainTopoView = () => {
+      document.getElementById('edit-topo-container').classList.remove('do-not-display');
       document.getElementById('icon-bar').classList.remove('do-not-display');
       document.getElementById('topo-images-container').classList.add('do-not-display');
       document.getElementById('main-topo-container').classList.remove('do-not-display');
     }
     let AddRoute = (routeName, routeGrade) => {
-      _transactions.push({type: "route", action: "append"});
-      _transactions.push({type: "route", action: "update", 
-        data: {
-          name: routeName,
-          grade: routeGrade
-        }
+      let routeTable = document.getElementById("crag-route-table");
+      let newRouteIndex = routeTable.rows.length;
+      let newRouteRow = routeTable.insertRow(newRouteIndex);
+      newRouteRow.insertCell(0).innerText = newRouteIndex;
+      newRouteRow.insertCell(1).innerText = routeName;
+      newRouteRow.insertCell(2).innerText = routeGrade;
+    }
+    let GetCragRoutes = () => {
+      let routes = [];
+      let routeTable = document.getElementById("crag-route-table");
+      let rows = Array.from(routeTable.rows).filter( (row, index) => index > 0 );
+      rows.forEach(row => {
+        let routeName = row.cells[1].innerText;
+        let routeGrade = row.cells[2].innerText;
+        routes.push({name: routeName, grade: routeGrade});
       });
-      console.log(`transaction count: ${_transactions.length}`);
-      return _transactions.length - 1;
+      return routes;
     }
     let GetTransactionsByType = type => _transactions.filter( transaction => transaction.type == "route" );
     let GetTransactionsToApply = (transactions, transactionsApplied) => transactions.slice(transactionsApplied);

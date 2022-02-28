@@ -23,11 +23,11 @@ app.post('/add_topo', (req, res) => {
   .catch( err => {
     console.error(err.toString());
     res.send(JSON.stringify(
-      {
-        result: "error",
-        details: err.toString()
-      }));
-    })
+    {
+      result: "error",
+      details: err.toString()
+    }));  
+  })
 });
 
 app.get('/get_image', (req, res) => {
@@ -43,6 +43,27 @@ app.get('/get_crag', (req, res) => {
   .then( crag => {
     let cragString = JSON.stringify(crag);
     res.send(cragString);
+  });
+});
+
+app.post('/save_crag', (req, res) => {
+  console.log('GET /save_crag');
+  console.log(JSON.stringify(req.body));
+  _crag.SaveRoutes(req.body)
+  .then( () => {
+    res.send(JSON.stringify(
+      {
+        result: "success"
+      })
+    );
+  })
+  .catch( err => {
+    console.error(err.toString());
+    res.send(JSON.stringify(
+    {
+      result: "error",
+      details: err.toString()
+    }));  
   });
 });
 
