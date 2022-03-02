@@ -1,3 +1,6 @@
+/*
+server load functions
+*/
 let LoadImage = (url) => new Promise( (resolve, reject) => {
   const img = new Image();
   img.onload = () => resolve(img);
@@ -27,3 +30,14 @@ let LoadCrag = (url) => new Promise( (resolve, reject) => {
   })
   .catch(err => reject(err));
 });
+
+/*
+table functions
+*/
+let GetTableRowsWithoutHeader = (tableElement) => Array.from(tableElement.rows).filter( (row, index) => index > 0 );
+
+let DeleteAllTableRowsExceptHeader = (tableElement) => { while( tableElement.rows.length > 1 ) tableElement.deleteRow(1); }
+
+let IsTableCellChecked = (row, cellIndex) => {
+  return row.cells[cellIndex].firstChild.checked;
+}

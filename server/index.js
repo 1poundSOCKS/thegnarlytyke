@@ -49,7 +49,7 @@ app.get('/get_crag', (req, res) => {
 app.post('/save_crag', (req, res) => {
   console.log('GET /save_crag');
   console.log(JSON.stringify(req.body));
-  _crag.SaveRoutes(req.body)
+  _crag.SaveCrag(req.body)
   .then( () => {
     res.send(JSON.stringify(
       {

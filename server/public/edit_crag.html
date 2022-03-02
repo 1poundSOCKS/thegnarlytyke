@@ -16,6 +16,7 @@
           <tr>
             <th>Name</th>
             <th>Grade</th>
+            <th>ID</th>
           </tr>
       </thead>
     </table>
@@ -31,12 +32,14 @@
       <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
     </div>
     <div>
-      <table id="crag-route-table" class="route-table">
+      <table id="crag-route-table" class="crag-route-table">
         <thead class="route-table-header">
             <tr>
               <th>Index</th>
               <th>Name</th>
               <th>Grade</th>
+              <th>On topo</th>
+              <th>ID</th>
             </tr>
         </thead>
       </table>
@@ -44,10 +47,18 @@
   </div>
   <script type="module">
     let _crag = null;
-    let _transactions = [];
-    let _routeTableTransactionsApplied = 0;
+    let _currentTopoID = null;
+    let _topoDataMap = new Map();
+    let _nextID = 0;
+    let GetNextID = () => `#${_nextID++}`;
     window.onload = () => {
       EnableAllCragToposView();
+      LoadCrag();
+      SetupIconBarHandlers();
+    }
+    window.onresize = () => {
+    }
+    let LoadCrag = () => {
       fetch('./get_crag')
       .then(response => response.json())
       .then(crag => {
@@ -63,53 +74,85 @@
             console.log(`image loaded: width=${topoImage.width}, height=${topoImage.height}`);
             let topoImagesContainer = document.getElementById('topo-images-container');
             let canvas = CreateTopoCanvas(topoID, topoImageFile, topoImage);
+            canvas.onclick = event => {
+              _currentTopoID = topoID;
+              DrawMainTopoImage(topoImage);
+              EnableMainTopoView();
+            }
             let topoCanvas = topoImagesContainer.appendChild(canvas);
             let ctx = topoCanvas.getContext('2d');
             ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
           });
         });
       });
+    }
+    let SetupIconBarHandlers = () => {
       document.getElementById("ib-add-route").onclick = event => {
         let newRouteName = document.getElementById('new-route-name').value;
         let newRouteGrade = document.getElementById('new-route-grade').value;
         console.log(`new route name: ${newRouteName}`);
         if( newRouteName.length > 0 ) {
-          AddRoute(newRouteName, newRouteGrade);
+          AddRouteToCragRouteTable(newRouteName, newRouteGrade);
         }
       }
       document.getElementById("ib-save").onclick = event => {
-        let req = { routes: GetCragRoutes() };
-        fetch('./save_crag', {
-          method: 'POST',
-          mode: 'same-origin',
-          cache: 'no-cache',
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          redirect: 'follow',
-          referrerPolicy: 'same-origin',
-          body: JSON.stringify(req)
-        })
-        .then(response => response.json())
-        .then(response => {
-          console.log(`${JSON.stringify(response)}`);
-        })
-        .catch(err => {
-          console.log(`$err.toString()}`);
-        });
+        SaveCrag();
       }
       document.getElementById("ib-close").onclick = event => {
         EnableAllCragToposView();
       }
     }
-    window.onresize = () => {
+    let SaveCrag = () => {
+      _crag.routes = GetCragRoutes();
+      let currentTopoRoutes = GetRoutesForCurrentTopo();
+      _topoDataMap.set(_currentTopoID, currentTopoRoutes);
+      _crag.topos.forEach( topo => {
+        let updatedTopoRoutes = _topoDataMap.get(topo.id);
+        if( updatedTopoRoutes ) topo.routes = updatedTopoRoutes;
+      });
+      let req = _crag;
+      fetch('./save_crag', {
+        method: 'POST',
+        mode: 'same-origin',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'same-origin',
+        body: JSON.stringify(req)
+      })
+      .then(response => response.json())
+      .then(response => {
+        console.log(`${JSON.stringify(response)}`);
+      })
+      .catch(err => {
+        console.log(`$err.toString()}`);
+      });
     }
     let UpdateCragRouteTable = (routes) => {
       let routeTable = document.getElementById("crag-route-table");
-      while( routeTable.rows.length > 1 ) routeTable.deleteRow(1);
+      DeleteAllTableRowsExceptHeader(routeTable);
       routes.forEach( route => {
-        AddRoute(route.name, route.grade);
+        AddRouteToCragRouteTable(route.name, route.grade, route.id);
+      });
+    }
+    let UpdateTopoRouteTableFromCragRouteTable = () => {
+      let cragRouteTable = document.getElementById("crag-route-table");
+      let topoRouteTable = document.getElementById("topo-route-table");
+      DeleteAllTableRowsExceptHeader(topoRouteTable);
+      GetTableRowsWithoutHeader(cragRouteTable).forEach( row => {
+        let routeName = row.cells[1].innerText;
+        let routeGrade = row.cells[2].innerText;
+        let routeID = row.cells[4].innerText;
+        if( IsTableCellChecked(row, 3) ) {
+          let newRouteIndex = topoRouteTable.rows.length;
+          let newRouteRow = topoRouteTable.insertRow(newRouteIndex);
+          newRouteRow.insertCell(0).innerText = routeName;
+          newRouteRow.insertCell(1).innerText = routeGrade;
+          newRouteRow.insertCell(2).innerText = routeID;
+        }
       });
     }
     let CreateTopoCanvas = (topoID, topoImageFile, topoImage) => {
@@ -122,10 +165,6 @@
       canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
       canvas.setAttribute('width', topoImage.width);
       canvas.setAttribute('height', topoImage.height);
-      canvas.onclick = event => {
-        DrawMainTopoImage(topoImage);
-        EnableMainTopoView();
-      }
       return canvas;
     }
     let DrawMainTopoImage = topoImage => {
@@ -134,7 +173,7 @@
       console.log(`${event.currentTarget.dataset.id}`);
       console.log(`${event.currentTarget.dataset.filename}`);
       let destCanvas = document.getElementById('main-topo-image');
-      let width = 40;
+      let width = 60;
       let height = topoImage.height * width / topoImage.width;
       destCanvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
       destCanvas.setAttribute('width', topoImage.width);
@@ -153,32 +192,84 @@
       document.getElementById('main-topo-container').classList.add('do-not-display');
     }
     let EnableMainTopoView = () => {
+      let topo = GetTopoFromCragData(_crag, _currentTopoID);
+      console.log(`topo: ${JSON.stringify(topo)}`);
+      if( topo && topo.routes ) SetCragTableRoutesAsTopoRoutes(topo.routes);
+      UpdateTopoRouteTableFromCragRouteTable();
       document.getElementById('edit-topo-container').classList.remove('do-not-display');
       document.getElementById('icon-bar').classList.remove('do-not-display');
       document.getElementById('topo-images-container').classList.add('do-not-display');
       document.getElementById('main-topo-container').classList.remove('do-not-display');
     }
-    let AddRoute = (routeName, routeGrade) => {
+    let AddRouteToCragRouteTable = (routeName, routeGrade, routeID) => {
       let routeTable = document.getElementById("crag-route-table");
       let newRouteIndex = routeTable.rows.length;
       let newRouteRow = routeTable.insertRow(newRouteIndex);
       newRouteRow.insertCell(0).innerText = newRouteIndex;
       newRouteRow.insertCell(1).innerText = routeName;
       newRouteRow.insertCell(2).innerText = routeGrade;
+      newRouteRow.insertCell(3).innerText = routeID ? routeID : GetNextID();
+      let checkBox = document.createElement('input');
+      checkBox.setAttribute('type', 'checkbox');
+      checkBox.onchange = event => {
+        console.log(`check box changed`);
+        UpdateTopoRouteTableFromCragRouteTable();
+      };
+      newRouteRow.insertCell(3).appendChild(checkBox);
     }
     let GetCragRoutes = () => {
       let routes = [];
       let routeTable = document.getElementById("crag-route-table");
-      let rows = Array.from(routeTable.rows).filter( (row, index) => index > 0 );
+      let rows = GetTableRowsWithoutHeader(routeTable);
       rows.forEach(row => {
         let routeName = row.cells[1].innerText;
         let routeGrade = row.cells[2].innerText;
-        routes.push({name: routeName, grade: routeGrade});
+        let routeID = row.cells[4].innerText;
+        routes.push({id: routeID, name: routeName, grade: routeGrade});
       });
       return routes;
     }
-    let GetTransactionsByType = type => _transactions.filter( transaction => transaction.type == "route" );
-    let GetTransactionsToApply = (transactions, transactionsApplied) => transactions.slice(transactionsApplied);
+    let GetCragRouteIndicesForCurrentTopo = () => {
+      let routeTable = document.getElementById("crag-route-table");
+      let rows = GetTableRowsWithoutHeader(routeTable);
+      let routeIndices = [];
+      rows.forEach((row, index) => {
+        if( IsTableCellSelected(row, 3) ) routeIndices.push(index);
+      });
+      return routeIndices;
+    }
+    let GetRoutesForCurrentTopo = () => {
+      let routeTable = document.getElementById("crag-route-table");
+      let rows = GetTableRowsWithoutHeader(routeTable);
+      let currentTopoRoutes = [];
+      rows.forEach( row => {
+        if( IsTableCellChecked(row, 3) ) currentTopoRoutes.push({ id: row.cells[4].innerText });
+      });
+      return currentTopoRoutes;
+    }
+    let FormatTopoDataToSave = () => {
+      let topoDataToSave = [];
+      _topoDataMap.forEach( (value, key) => {
+        topoDataToSave.push({ id: key, routes: value });
+      });
+      return topoDataToSave;
+    }
+    let GetTopoFromCragData = (cragData, topoID) => {
+      let topoRoutes = null;
+      console.log(`crag data: ${JSON.stringify(cragData)}`);
+      let matchingTopos = cragData.topos.filter( topo => topo.id == topoID );
+      return matchingTopos.length == 0 ? null : matchingTopos[0];
+    }
+    let SetCragTableRoutesAsTopoRoutes = (routes) => {
+      console.log(`UpdateSelectedCragRoutes`);
+      let setOfRouteIDs = new Set(routes.map(route => route.id));
+      let cragRouteTableElement = document.getElementById('crag-route-table');
+      let cragRouteTableRows = GetTableRowsWithoutHeader(cragRouteTableElement);
+      cragRouteTableRows.forEach( row => {
+        let rowID = row.cells[4].innerText;
+        row.cells[3].firstChild.checked = setOfRouteIDs.has(rowID);
+      });
+    }
     </script>
 </body>
 </html>

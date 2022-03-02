@@ -1,45 +1,101 @@
 import path from 'path'
-import fs from 'fs';
+import fs, { writeFile } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
 const dataFolder = '../work/data';
 const imagesFolder = '../work/images';
 
-let CreateTopo = (imageData) => {
-  return {id: uuidv4(), imageData: imageData};
-}
-
-let GetTopoFilename = (topo) => path.resolve(dataFolder, `${topo.id}.topo.json`);
-let GetRoutesFilename = () => path.resolve(dataFolder, 'routes.json');
+let GetCragFilename = () => path.resolve(dataFolder, 'crag.json');
 
 export let GetFullImageFilename = (filename) => path.resolve(imagesFolder, filename);
 
 export let AddTopo = async (imageData) => {
-  const topo = CreateTopo(imageData);
-  await SaveTopoImage(topo);
-  await SaveTopo(topo);
+  const topo = CreateTopo();
+  let imageFilename = await SaveTopoURIImageDataToJEPGFile(topo.id, imageData);
+  topo.imageFile = imageFilename;
+  await AppendTopoToCrag(topo);
   return topo;
 }
 
-export let SaveTopo = (topo) => new Promise( (resolve, reject) => {
-  const filename = GetTopoFilename(topo);
-  console.log(`writing topo data to '${filename}'`);
-  fs.writeFile(filename, JSON.stringify(topo, null, 2), (err) => {
-    if (err) reject(err);
-    else resolve(filename);
-  });
-});
+let CreateTopo = () => {
+  return {id: uuidv4()};
+}
 
-export let SaveRoutes = async (routes) => {
-  await DeleteFile(GetRoutesFilename());
-  return WriteDataToFile(JSON.stringify(routes, null, 2), GetRoutesFilename());
+export let AppendTopoToCrag = async (topo) => {
+  let cragObject = await ReadCragObjectFromFile();
+  cragObject.topos.push(topo);
+  return WriteDataToFile(JSON.stringify(cragObject, null, 2), GetCragFilename());
+}
+
+let ReadCragObjectFromFile = async () => {
+  let cragObject = null;
+  try {
+    let cragData = await ReadFile(GetCragFilename());
+    cragObject = JSON.parse(cragData);
+  }
+  catch( e ) {
+    if( e.Error != fs.NOENT ) throw e;
+    cragObject = { routes: [], topos: [] };
+    await WriteDataToFile(JSON.stringify(cragObject), GetCragFilename());
+  }
+  return cragObject;
+}
+
+export let SaveCrag = async (crag) => {
+  ReplaceRouteTempIDsWithUUIDs(crag);
+  await DeleteFile(GetCragFilename());
+  return WriteDataToFile(JSON.stringify(crag, null, 2), GetCragFilename());
 };
 
-export let SaveTopoImage = (topo) => new Promise( (resolve, reject) => {
-  const filename = `${topo.id}.jpg`;
+let ReplaceRouteTempIDsWithUUIDs = crag => {
+  let mapOfIDReplacements = GetTempIDReplacementMapForCrag(crag);
+  ReplaceRouteTempIDs(crag, mapOfIDReplacements);
+  console.log(`crag with new IDs: ${JSON.stringify(crag)}`);
+}
+
+let GetTempIDReplacementMapForCrag = crag => {
+  let tempIDsMap = new Map();
+  crag.routes.forEach(route => {
+    let routeID = route.id;
+    if( routeID.startsWith('#') && !tempIDsMap.get(routeID) ) {
+      console.log(`map set for crag route: id=${routeID}`);
+      tempIDsMap.set(routeID, uuidv4());
+    }
+  });
+  crag.topos.forEach(topo => {
+    if( !topo.routes ) topo.routes = [];
+    topo.routes.forEach(route => {
+      let routeID = route.id;
+      console.log(`${routeID}`);
+      if( routeID.startsWith('#') && !tempIDsMap.get(routeID) ) {
+        console.log(`map set for topo route: id=${routeID}`);
+        tempIDsMap.set(routeID, uuidv4());
+      }
+    });
+  });
+  return tempIDsMap;
+}
+
+let ReplaceRouteTempIDs = (crag, mapOfIDReplacements) => {
+  crag.routes.forEach(route => {
+    if( route.id.startsWith('#') ) {
+      route.id = mapOfIDReplacements.get(route.id);
+    }
+  });
+  crag.topos.forEach(topo => {
+    topo.routes.forEach(route => {
+      if( route.id.startsWith('#') ) {
+        route.id = mapOfIDReplacements.get(route.id);
+      }
+    });
+  });
+};
+
+let SaveTopoURIImageDataToJEPGFile = (topoID, topoURIData) => new Promise( (resolve, reject) => {
+  const filename = `${topoID}.jpg`;
   const fullFilename = path.resolve(imagesFolder, filename);
   console.log(`saving image data to '${fullFilename}'`);
-  const imageDataChunks = topo.imageData.split(",");
+  const imageDataChunks = topoURIData.split(",");
   console.log(`image header='${imageDataChunks[0]}'`);
   const base64ImageData = imageDataChunks[1];
   const buf = Buffer.from(base64ImageData, 'base64');
@@ -47,26 +103,14 @@ export let SaveTopoImage = (topo) => new Promise( (resolve, reject) => {
   fs.writeFile(fullFilename, buf,  "binary", err => {
     if( err ) reject(err);
     else {
-      topo.imageFile = filename;
-      resolve(topo);
+      resolve(filename);
     }
   });
 });
 
 export let GetCrag = async () => {
-  let routeData = await ReadFile(GetRoutesFilename());
-  let routeObject = await JSON.parse(routeData);
-  console.log(routeData);
-  let fileList = await ReadFolder(dataFolder);
-  let topoFileList = fileList.filter(filename => filename.endsWith('.topo.json'));
-  let fileReaders = topoFileList.map( file => ReadFile(path.resolve(dataFolder, file)) );
-  let topos = await Promise.all(fileReaders);
-  let parsedTopos = topos.map( topoString => {
-    let topo = JSON.parse(topoString);
-    topo.imageData = undefined;
-    return topo;
-  });
-  return { routes: routeObject.routes, topos: parsedTopos };
+  let cragData = await ReadFile(GetCragFilename());
+  return JSON.parse(cragData);
 }
 
 let ReadFolder = (folder) => new Promise( (resolve, reject) => {
