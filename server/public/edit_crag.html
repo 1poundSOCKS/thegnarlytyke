@@ -65,27 +65,50 @@
         console.log(JSON.stringify(crag));
         _crag = crag;
         UpdateCragRouteTable(_crag.routes);
+        let topoContainers = CreateTopoContainers(document.getElementById('topo-images-container'), _crag.topos);
         LoadTopoImagesFromCrag(_crag, DisplayTopoImageInCragView);
       });
     }
+    let CreateTopoContainers = (parentContainer, topos) => {
+      let topoContainers = [];
+      topos.forEach(topo => {
+        let topoContainer = parentContainer.appendChild(document.createElement('div'));
+        topoContainer.setAttribute('data-id', topo.id);
+        topoContainer.setAttribute('data-filename', topo.imageFile);
+        topoContainers.push(topoContainer);
+      });
+      return topoContainers;
+    }
     let DisplayTopoImageInCragView = (topo, topoImage) => {
-      console.log(`image loaded: width=${topoImage.width}, height=${topoImage.height}`);
-      let topoID = topo.id;
-      let topoImageFile = topo.imageFile;
+      console.log(`loaded image for topo '${topo.id}'`);
       let topoImagesContainer = document.getElementById('topo-images-container');
-      let canvas = CreateTopoCanvas(topoID, topoImageFile, topoImage);
-      canvas.onclick = event => {
-        _currentTopoID = topoID;
-        DrawMainTopoImage(topoImage);
-        EnableMainTopoView();
-      }
-      let parentDiv = document.createElement('div');
-      parentDiv = topoImagesContainer.appendChild(parentDiv);
-      let topoCanvas = parentDiv.appendChild(canvas);
-      let ctx = topoCanvas.getContext('2d');
-      ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
-      let idText = parentDiv.appendChild(document.createElement('p'));
-      idText.innerText = topoID;
+      Array.from(topoImagesContainer.children).forEach( topoContainer => {
+        let containerID = topoContainer.getAttribute('data-id');
+        console.log(`container id: '${containerID}'`);
+        if( topo.id == containerID) {
+          let topoCanvas = CreateTopoCanvas(topoImage, 15);
+          topoContainer.appendChild(topoCanvas);
+          let ctx = topoCanvas.getContext('2d');
+          ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
+          let idText = topoContainer.appendChild(document.createElement('p'));
+          idText.innerText = topo.id;
+          topoCanvas.onclick = event => {
+            _currentTopoID = topo.id;
+            DrawMainTopoImage(topoImage);
+            EnableMainTopoView();
+          }
+        }
+      });
+    }
+    let CreateTopoCanvas = (topoImage, heightInRem) => {
+      let canvas = document.createElement('CANVAS');
+      let height = 15;
+      let width = topoImage.width * height / topoImage.height;
+      canvas.setAttribute('class', 'topo-image');
+      canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+      canvas.setAttribute('width', topoImage.width);
+      canvas.setAttribute('height', topoImage.height);
+      return canvas;
     }
     let SetupIconBarHandlers = () => {
       document.getElementById("ib-add-route").onclick = event => {
@@ -156,18 +179,18 @@
         }
       });
     }
-    let CreateTopoCanvas = (topoID, topoImageFile, topoImage) => {
-      let canvas = document.createElement('CANVAS');
-      canvas.setAttribute('data-id', topoID);
-      canvas.setAttribute('data-filename', topoImageFile);
-      let height = 15;
-      let width = topoImage.width * height / topoImage.height;
-      canvas.setAttribute('class', 'topo-image');
-      canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
-      canvas.setAttribute('width', topoImage.width);
-      canvas.setAttribute('height', topoImage.height);
-      return canvas;
-    }
+    // let CreateTopoCanvas = (topoID, topoImageFile, topoImage) => {
+    //   let canvas = document.createElement('CANVAS');
+    //   canvas.setAttribute('data-id', topoID);
+    //   canvas.setAttribute('data-filename', topoImageFile);
+    //   let height = 15;
+    //   let width = topoImage.width * height / topoImage.height;
+    //   canvas.setAttribute('class', 'topo-image');
+    //   canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+    //   canvas.setAttribute('width', topoImage.width);
+    //   canvas.setAttribute('height', topoImage.height);
+    //   return canvas;
+    // }
     let DrawMainTopoImage = topoImage => {
       console.log(`mouse clicked on image`);
       console.log(`${event.currentTarget}`);

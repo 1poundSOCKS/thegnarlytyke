@@ -34,7 +34,6 @@ let LoadCrag = (url) => new Promise( (resolve, reject) => {
 
 let LoadTopoImagesFromCrag = (cragObject, OnTopoLoadCallback) => {
   cragObject.topos.forEach( topo => {
-    // let topoID = topo.id;
     let topoImageFile = topo.imageFile;
     console.log(`image file: ${topoImageFile}`);
     LoadImage(`./get_image?filename=${topoImageFile}`)
