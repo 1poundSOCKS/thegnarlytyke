@@ -65,26 +65,27 @@
         console.log(JSON.stringify(crag));
         _crag = crag;
         UpdateCragRouteTable(_crag.routes);
-        _crag.topos.forEach( topo => {
-          let topoID = topo.id;
-          let topoImageFile = topo.imageFile;
-          console.log(`image file: ${topoImageFile}`);
-          LoadImage(`./get_image?filename=${topoImageFile}`)
-          .then( topoImage => {
-            console.log(`image loaded: width=${topoImage.width}, height=${topoImage.height}`);
-            let topoImagesContainer = document.getElementById('topo-images-container');
-            let canvas = CreateTopoCanvas(topoID, topoImageFile, topoImage);
-            canvas.onclick = event => {
-              _currentTopoID = topoID;
-              DrawMainTopoImage(topoImage);
-              EnableMainTopoView();
-            }
-            let topoCanvas = topoImagesContainer.appendChild(canvas);
-            let ctx = topoCanvas.getContext('2d');
-            ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
-          });
-        });
+        LoadTopoImagesFromCrag(_crag, DisplayTopoImageInCragView);
       });
+    }
+    let DisplayTopoImageInCragView = (topo, topoImage) => {
+      console.log(`image loaded: width=${topoImage.width}, height=${topoImage.height}`);
+      let topoID = topo.id;
+      let topoImageFile = topo.imageFile;
+      let topoImagesContainer = document.getElementById('topo-images-container');
+      let canvas = CreateTopoCanvas(topoID, topoImageFile, topoImage);
+      canvas.onclick = event => {
+        _currentTopoID = topoID;
+        DrawMainTopoImage(topoImage);
+        EnableMainTopoView();
+      }
+      let parentDiv = document.createElement('div');
+      parentDiv = topoImagesContainer.appendChild(parentDiv);
+      let topoCanvas = parentDiv.appendChild(canvas);
+      let ctx = topoCanvas.getContext('2d');
+      ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
+      let idText = parentDiv.appendChild(document.createElement('p'));
+      idText.innerText = topoID;
     }
     let SetupIconBarHandlers = () => {
       document.getElementById("ib-add-route").onclick = event => {
