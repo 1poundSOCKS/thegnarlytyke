@@ -73,6 +73,7 @@
       let topoContainers = [];
       topos.forEach(topo => {
         let topoContainer = parentContainer.appendChild(document.createElement('div'));
+        topoContainer.classList.add('topo-container');
         topoContainer.setAttribute('data-id', topo.id);
         topoContainer.setAttribute('data-filename', topo.imageFile);
         topoContainers.push(topoContainer);
@@ -92,19 +93,24 @@
           ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
           let idText = topoContainer.appendChild(document.createElement('p'));
           idText.innerText = topo.id;
+          let saveLink = topoContainer.appendChild(document.createElement('a'));
+          topoContainer.setAttribute('href', '#');
+          let saveIcon = saveLink.appendChild(document.createElement('i'));
+          saveIcon.setAttribute('class', 'fa fa-close');
           topoCanvas.onclick = event => {
             _currentTopoID = topo.id;
             DrawMainTopoImage(topoImage);
             EnableMainTopoView();
           }
+
         }
       });
     }
     let CreateTopoCanvas = (topoImage, heightInRem) => {
       let canvas = document.createElement('CANVAS');
+      canvas.classList.add('topo-image');
       let height = 15;
       let width = topoImage.width * height / topoImage.height;
-      canvas.setAttribute('class', 'topo-image');
       canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
       canvas.setAttribute('width', topoImage.width);
       canvas.setAttribute('height', topoImage.height);

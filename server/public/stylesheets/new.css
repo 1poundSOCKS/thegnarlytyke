@@ -32,6 +32,25 @@ h2 {
   background-color: lightgrey;
 }
 
+.topo-container:hover {
+  background-color: darkgray;
+}
+
+.topo-container a:hover {
+  background-color: blue;
+}
+
+/* .topo-container a {
+  display: block;
+  font-size: 2rem;
+} */
+
+.topo-container * {
+  display: block;
+  margin: auto;
+  font-size: 2rem;
+}
+
 .main-topo-container {
   display: flex;
   flex-direction: row;
@@ -51,6 +70,11 @@ h2 {
 
 .main-topo-image:hover {
   cursor: crosshair;
+}
+
+.topo-image {
+  display: block;
+  margin: auto;
 }
 
 .topo-image:hover {
@@ -85,7 +109,6 @@ h2 {
 }
 
 .route-table {
-  /* width: 40rem; */
   border-collapse: separate;
   font-size: 2rem;
   white-space: nowrap;
@@ -93,7 +116,6 @@ h2 {
 }
 
 .crag-route-table {
-  /* width: 60rem; */
   margin: auto;
   border-collapse: separate;
   text-align: left;
