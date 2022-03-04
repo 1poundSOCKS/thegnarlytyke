@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
     <title>the gnarly tyke</title>
-    <link rel="stylesheet" href="stylesheets/new.css">
+    <link rel="stylesheet" href="stylesheets/default.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -17,6 +18,7 @@
             <th>Name</th>
             <th>Grade</th>
             <th>ID</th>
+            <th>Edit</th>
           </tr>
       </thead>
     </table>
@@ -93,12 +95,18 @@
           ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
           topoCanvas.onclick = event => {
             _currentTopoID = topo.id;
-            DrawMainTopoImage(topoImage);
+            let mainTopoCanvas = DrawMainTopoImage(topoImage);
+            AddMouseHandlerToTopoCanvas(topo, mainTopoCanvas);
             EnableMainTopoView();
           }
           AddControlsToTopoContainer(topoContainer, topo);
         }
       });
+    }
+    let AddMouseHandlerToTopoCanvas = (topoObject, topoCanvas) => {
+      topoCanvas.onclick = event => {
+        console.log(`place holder for mouse handler...`);
+      }
     }
     let CreateTopoCanvas = (topoImage, heightInRem) => {
       let canvas = document.createElement('CANVAS');
@@ -111,15 +119,16 @@
       return canvas;
     }
     let AddControlsToTopoContainer = (topoContainer, topo) => {
-      let idText = topoContainer.appendChild(document.createElement('p'));
-      idText.innerText = topo.id;
+      // let idText = topoContainer.appendChild(document.createElement('p'));
+      // idText.innerText = topo.id;
       let saveLink = topoContainer.appendChild(document.createElement('a'));
       topoContainer.setAttribute('href', '#');
       let saveIcon = saveLink.appendChild(document.createElement('i'));
       saveIcon.setAttribute('class', 'fa fa-close');
       saveLink.onclick = event => {
         console.log(`delete topo '${topo.id}'`);
-        fetch(`./delete_topo?topo_id=${topo.id}`);
+        DeleteTopoFromCragObject(_crag, topo.id);
+        topoContainer.remove();
       }
     }
     let SetupIconBarHandlers = () => {
@@ -188,8 +197,14 @@
           newRouteRow.insertCell(0).innerText = routeName;
           newRouteRow.insertCell(1).innerText = routeGrade;
           newRouteRow.insertCell(2).innerText = routeID;
+          newRouteRow.insertCell(3).appendChild(CreateEditSwitchForRoute());
         }
       });
+    }
+    let CreateEditSwitchForRoute = () => {
+      let inputElement = document.createElement('input');
+      inputElement.setAttribute('type','checkbox');
+      return inputElement;
     }
     let DrawMainTopoImage = topoImage => {
       console.log(`mouse clicked on image`);
@@ -204,10 +219,9 @@
       destCanvas.setAttribute('height', topoImage.height);
       destCanvas.height = topoImage.height;
       destCanvas.width = topoImage.width * destCanvas.height / topoImage.height;
-      destCanvas.onclick = event => {
-      }
       let destCanvasCtx = destCanvas.getContext('2d');
       destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
+      return destCanvas;
     }
     let EnableAllCragToposView = () => {
       document.getElementById('edit-topo-container').classList.add('do-not-display');

@@ -1,0 +1,134 @@
+* {
+  font-family: six caps;
+}
+
+h1 {
+  margin: auto;
+  text-align: center;
+  background: #175707;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 3rem;
+}
+
+h2 {
+  margin: auto;
+  text-align: center;
+  background: #662608;
+  background-size: 100%;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 2rem;
+}
+
+.topo-images-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  background-color: lightgrey;
+}
+
+.topo-container:hover {
+  background-color: darkgray;
+}
+
+.topo-container a:hover {
+  background-color: white;
+}
+
+/* .topo-container a {
+  display: block;
+  font-size: 2rem;
+} */
+
+.topo-container * {
+  display: block;
+  margin: auto;
+  font-size: 2rem;
+}
+
+.main-topo-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  background-color: lightgrey;
+}
+
+.edit-topo-container {
+  display: block;
+  margin: auto;
+  background-color: lightgrey;
+}
+
+.main-topo-image:hover {
+  cursor: crosshair;
+}
+
+.topo-image {
+  display: block;
+  margin: auto;
+}
+
+.topo-image:hover {
+  cursor: grab;
+}
+
+.icon-bar {
+  display: inline-block;
+  margin: auto;
+  font-size: 2rem;
+  /* margin: auto; */
+  background-color: white;
+}
+
+.icon-bar a {
+  float: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  color: black;
+  font-size: 3rem;
+}
+
+.icon-bar input {
+  display: block;
+  font-size: 2rem;
+}
+
+.icon-bar label {
+  font-size: 2rem;
+}
+
+.icon-bar a:hover {
+  background-color: grey;
+}
+
+.route-table {
+  border-collapse: separate;
+  font-size: 2rem;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.crag-route-table {
+  margin: auto;
+  border-collapse: separate;
+  text-align: left;
+  font-size: 2rem;
+}
+
+.route-table-header > tr {
+  border-bottom: 0.1rem solid black;
+  background-color: darkgray;
+}
+
+.do-not-display {
+  display: none;
+}

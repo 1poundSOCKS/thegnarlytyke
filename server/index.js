@@ -4,29 +4,18 @@ import path from 'path'
 import * as _crag from './crag.js'
 
 const app = express();
-app.use(express.static('public'));
+app.use(express.static('private'));
 app.use(bodyParser.json());
 
 app.post('/add_topo', (req, res) => {
   console.log('POST /add_topo');
   AddTopo(req.body.imageData)
   .then( topo => {
-    res.send(JSON.stringify(
-    {
-      result: "success",
-      topo: {
-        id: topo.id,
-        imageFile: topo.imageFile
-      }
-    }));
+    res.send({result: "success", topo: {id: topo.id, imageFile: topo.imageFile}});
   })
   .catch( err => {
     console.error(err.toString());
-    res.send(JSON.stringify(
-    {
-      result: "error",
-      details: err.toString()
-    }));  
+    res.send({result: "error", details: err.toString()});
   })
 });
 
@@ -41,8 +30,7 @@ app.get('/get_crag', (req, res) => {
   console.log('GET /get_crag');
   _crag.GetCrag()
   .then( crag => {
-    let cragString = JSON.stringify(crag);
-    res.send(cragString);
+    res.send(crag);
   });
 });
 
@@ -51,30 +39,34 @@ app.post('/save_crag', (req, res) => {
   console.log(JSON.stringify(req.body));
   _crag.SaveCrag(req.body)
   .then( () => {
-    res.send(JSON.stringify(
-      {
-        result: "success"
-      })
-    );
+    res.send({result: 'success'});
   })
   .catch( err => {
     console.error(err.toString());
-    res.send(JSON.stringify(
-    {
-      result: "error",
-      details: err.toString()
-    }));  
+    res.send({result: "error", details: err.toString()});
   });
 });
 
 app.get('/add_topos', (req, res) => {
   console.log('GET /editor');
-  res.sendFile(path.resolve('public', 'add_topos.html'));
+  res.sendFile(path.resolve('./private', 'add_topos.html'));
 });
 
-app.get('/edit_crag', (req, res) => {
-  console.log('GET /edit_crag');
-  res.sendFile(path.resolve('public', 'edit_crag.html'));
+// app.get('/edit_crag', (req, res) => {
+//   console.log('GET /edit_crag');
+//   res.sendFile(path.resolve('public', 'edit_crag.html'));
+// });
+
+app.get('/delete_topo', (req, res) => {
+  console.log('GET /delete_topo');
+  _crag.DeleteTopo(req.query.topo_id)
+  .then( ()=> {
+    res.send({result: 'success'});
+  })
+  .catch( err => {
+    console.error(err.toString());
+    res.send({result: "error", details: err.toString()});
+  })
 });
 
 app.listen(80);

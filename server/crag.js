@@ -113,6 +113,10 @@ export let GetCrag = async () => {
   return JSON.parse(cragData);
 }
 
+export let DeleteTopo = async (topoID) => {
+  console.log(`Deleting topo '${topoID}'`);
+}
+
 let ReadFolder = (folder) => new Promise( (resolve, reject) => {
   fs.readdir(folder, (err, files) => {
     if (err) {
