@@ -54,6 +54,22 @@ let IsTableCellChecked = (row, cellIndex) => {
   return row.cells[cellIndex].firstChild.checked;
 }
 
+let ConvertRowContentToObject = rowElement => {
+  return Array.from(rowElement.cells).map( cell => {
+    if( cell.firstElementChild ) {
+      return cell.firstElementChild.checked;
+    }
+    else {
+      return cell.innerText;
+    }
+  });
+}
+
+let ConvertTableContentToObject = (tableElement) => {
+  let rowElements = GetTableRowsWithoutHeader(tableElement);
+  return rowElements.map( rowElement => ConvertRowContentToObject(rowElement) );
+}
+
 /*
 crag object functions
 */

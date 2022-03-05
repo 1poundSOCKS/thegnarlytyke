@@ -20,7 +20,6 @@
             <th>ID</th>
             <th>Edit</th>
             <th>Index</th>
-            <th>Points</th>
           </tr>
       </thead>
     </table>
@@ -44,6 +43,7 @@
               <th>Grade</th>
               <th>On topo</th>
               <th>ID</th>
+              <th>Points</th>
             </tr>
         </thead>
       </table>
@@ -52,6 +52,7 @@
   <script type="module">
     let _crag = null;
     let _currentTopoID = null;
+    let _currentTopoImage = null;
     let _topoDataMap = new Map();
     let _nextID = 0;
     let GetNextID = () => `#${_nextID++}`;
@@ -97,6 +98,7 @@
           ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
           topoCanvas.onclick = event => {
             _currentTopoID = topo.id;
+            _currentTopoImage = topoImage;
             let mainTopoCanvas = DrawMainTopoImage(topoImage);
             AddMouseHandlerToTopoCanvas(topo, topoImage, mainTopoCanvas);
             EnableMainTopoView();
@@ -111,41 +113,57 @@
         let clientRectWidth = rect.right - rect.left;
         let clientRectHeight = rect.bottom - rect.top;
         console.log(`client size: ${clientRectWidth}, ${clientRectHeight}`);
+        
         let clientMouseX = event.clientX - rect.left;
         let clientMouseY = event.clientY - rect.top;
         console.log(`mouse position: ${clientMouseX}, ${clientMouseY}`);
+        
         let mousePercentX = clientMouseX / clientRectWidth;
         let mousePercentY = clientMouseY / clientRectHeight;
         console.log(`mouse position (fraction): ${mousePercentX}, ${mousePercentY}`);
+        
         let newPoint = { x: mousePercentX, y: mousePercentY };
         let checkedRows = GetCheckedTopoRouteTableRows();
+        
         if( checkedRows.length > 0 ) {
+          // update the crag route table with point data...
+          // get the existing point data from the crag table
           let firstCheckedRow = checkedRows[0];
-          let routeDataText = firstCheckedRow.cells[5].innerText;
+          let matchingCragTableRows = GetTableRowsWithoutHeader(document.getElementById('crag-route-table'))
+          .filter( row => row.cells[4].innerText == firstCheckedRow.cells[2].innerText );
+          console.assert(matchingCragTableRows.length > 0);
+          let routeDataText = matchingCragTableRows[0].cells[5].innerText;
+          
+          // append the new point to the data
           let routeDataObject = ( routeDataText.length == 0 ) ? { points: [] } : JSON.parse(routeDataText);
           routeDataObject.points.push(newPoint);
-          firstCheckedRow.cells[5].innerText = JSON.stringify(routeDataObject);
+          
+          // update the point data on the crag route table
+          matchingCragTableRows[0].cells[5].innerText = JSON.stringify(routeDataObject);
+          
           let ctx = topoCanvas.getContext('2d');
-          DrawMainTopoImage(topoImage);
-          DrawRoutesInTopoTable(ctx);
+          DrawMainTopoImage(_currentTopoImage);
+          DrawTopoRoutes(ctx);
         }
       }
     }
-    let DrawRoutesInTopoTable = (ctx) => {
-      let topoRouteTableRows = GetTableRowsWithoutHeader(document.getElementById('topo-route-table'));
-      topoRouteTableRows.forEach( row => {
+    let DrawTopoRoutes = (ctx) => {
+      GetCheckedCragTableRows().forEach( (row, rowIndex) => {
         let routeDataText = row.cells[5].innerText;
         if( routeDataText.length > 0 ) {
           let routeDataObject = JSON.parse(routeDataText);
-          routeDataObject.points.forEach( point => {
-            DrawRouteStart(ctx, point.x, point.y, row.cells[4].innerText, 1);
+          let pointsOnCanvas = routeDataObject.points.map( point => {
+            return { x: ctx.canvas.width * point.x, y: ctx.canvas.height * point.y };
+          });
+          pointsOnCanvas.forEach( (point, pointIndex, points) => {
+            let nextPoint = points[pointIndex+1];
+            if( nextPoint ) DrawRouteLine(ctx, point.x, point.y, nextPoint.x, nextPoint.y, 1);
+            DrawRouteStart(ctx, point.x, point.y, rowIndex + 1, 1);
           });
         }
       });
     }
-    let DrawRouteStart = (ctx, x, y, routeIndex, fontSize) => {
-      let canvasX = ctx.canvas.width * x;
-      let canvasY = ctx.canvas.height * y;
+    let DrawRouteStart = (ctx, canvasX, canvasY, routeIndex, fontSize) => {
       console.log(`canvas position: ${canvasX}, ${canvasY}`);
       ctx.font = `bold ${fontSize}rem serif`;
       const metrics = ctx.measureText(routeIndex);
@@ -162,6 +180,14 @@
       ctx.stroke();
       ctx.fillStyle = "#000000";
       ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.75));
+    }
+    let DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {
+      ctx.beginPath();
+      ctx.moveTo(canvasStartX, canvasStartY);
+      ctx.lineTo(canvasEndX, canvasEndY);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.stroke();
     }
     let GetCheckedTopoRouteTableRows = () => {
       let topoRouteTable = document.getElementById('topo-route-table');
@@ -248,32 +274,34 @@
       let cragRouteTable = document.getElementById("crag-route-table");
       let topoRouteTable = document.getElementById("topo-route-table");
       DeleteAllTableRowsExceptHeader(topoRouteTable);
-      GetTableRowsWithoutHeader(cragRouteTable).forEach( row => {
+      GetCheckedCragTableRows().forEach( row => {
         let routeName = row.cells[1].innerText;
         let routeGrade = row.cells[2].innerText;
         let routeID = row.cells[4].innerText;
-        if( IsTableCellChecked(row, 3) ) {
-          let newRouteIndex = topoRouteTable.rows.length;
-          let newRouteRow = topoRouteTable.insertRow(newRouteIndex);
-          newRouteRow.insertCell(0).innerText = routeName;
-          newRouteRow.insertCell(1).innerText = routeGrade;
-          newRouteRow.insertCell(2).innerText = routeID;
-          newRouteRow.insertCell(3).appendChild(CreateEditSwitchForRoute());
-          newRouteRow.insertCell(4).innerText = newRouteIndex;
-          newRouteRow.insertCell(5).innerText = '';
-        }
+        let newRouteIndex = topoRouteTable.rows.length;
+        let newRouteRow = topoRouteTable.insertRow(newRouteIndex);
+        newRouteRow.insertCell(0).innerText = routeName;
+        newRouteRow.insertCell(1).innerText = routeGrade;
+        newRouteRow.insertCell(2).innerText = routeID;
+        newRouteRow.insertCell(3).appendChild(CreateCheckboxInputElement());
+        newRouteRow.insertCell(4).innerText = newRouteIndex;
+        newRouteRow.insertCell(5).innerText = '';
       });
+      let topoCanvas = document.getElementById('main-topo-image');
+      let ctx = topoCanvas.getContext('2d');
+      DrawMainTopoImage(_currentTopoImage);
+      DrawTopoRoutes(ctx);
     }
-    let CreateEditSwitchForRoute = () => {
+    let GetCheckedCragTableRows = () => {
+      let cragRouteTable = document.getElementById("crag-route-table");
+      return GetTableRowsWithoutHeader(cragRouteTable).filter( row => IsTableCellChecked(row, 3) );
+    }
+    let CreateCheckboxInputElement = () => {
       let inputElement = document.createElement('input');
       inputElement.setAttribute('type','checkbox');
       return inputElement;
     }
     let DrawMainTopoImage = topoImage => {
-      console.log(`mouse clicked on image`);
-      console.log(`${event.currentTarget}`);
-      console.log(`${event.currentTarget.dataset.id}`);
-      console.log(`${event.currentTarget.dataset.filename}`);
       let destCanvas = document.getElementById('main-topo-image');
       let width = 60;
       let height = topoImage.height * width / topoImage.width;
@@ -309,14 +337,14 @@
       newRouteRow.insertCell(0).innerText = newRouteIndex;
       newRouteRow.insertCell(1).innerText = routeName;
       newRouteRow.insertCell(2).innerText = routeGrade;
-      newRouteRow.insertCell(3).innerText = routeID ? routeID : GetNextID();
-      let checkBox = document.createElement('input');
-      checkBox.setAttribute('type', 'checkbox');
-      checkBox.onchange = event => {
+      let checkbox = CreateCheckboxInputElement();
+      checkbox.onchange = event => {
         console.log(`check box changed`);
         UpdateTopoRouteTableFromCragRouteTable();
       };
-      newRouteRow.insertCell(3).appendChild(checkBox);
+      newRouteRow.insertCell(3).appendChild(checkbox);
+      newRouteRow.insertCell(4).innerText = routeID ? routeID : GetNextID();
+      newRouteRow.insertCell(5).innerText = '';
     }
     let GetCragRoutes = () => {
       let routes = [];

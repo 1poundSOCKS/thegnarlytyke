@@ -115,8 +115,7 @@ h2 {
   background-color: darkgray;
 }
 
-.topo-route-table td:nth-child(3), .topo-route-table th:nth-child(3),
-.topo-route-table td:nth-child(6), .topo-route-table th:nth-child(6) {
+.topo-route-table td:nth-child(3), .topo-route-table th:nth-child(3) {
   display: none;
 }
 

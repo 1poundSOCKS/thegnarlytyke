@@ -52,11 +52,6 @@ app.get('/add_topos', (req, res) => {
   res.sendFile(path.resolve('./private', 'add_topos.html'));
 });
 
-// app.get('/edit_crag', (req, res) => {
-//   console.log('GET /edit_crag');
-//   res.sendFile(path.resolve('public', 'edit_crag.html'));
-// });
-
 app.get('/delete_topo', (req, res) => {
   console.log('GET /delete_topo');
   _crag.DeleteTopo(req.query.topo_id)
