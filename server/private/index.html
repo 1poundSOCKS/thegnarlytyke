@@ -32,7 +32,6 @@
       <input id="new-route-grade">
       <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
       <a href="#"><i class="fa fa-save" id="ib-save"></i></a>
-      <a href="#"><i class="fa fa-close" id="ib-close"></i></a>
     </div>
     <div>
       <table id="crag-route-table" class="crag-route-table">
@@ -57,7 +56,6 @@
     let _nextID = 0;
     let GetNextID = () => `#${_nextID++}`;
     window.onload = () => {
-      EnableAllCragToposView();
       LoadCrag();
       SetupIconBarHandlers();
     }
@@ -101,7 +99,7 @@
             _currentTopoImage = topoImage;
             let mainTopoCanvas = DrawMainTopoImage(topoImage);
             AddMouseHandlerToTopoCanvas(topo, topoImage, mainTopoCanvas);
-            EnableMainTopoView();
+            RefreshMainTopoView(topo, topoImage);
           }
           AddControlsToTopoContainer(topoContainer, topo);
         }
@@ -230,9 +228,6 @@
       document.getElementById("ib-save").onclick = event => {
         SaveCrag();
       }
-      document.getElementById("ib-close").onclick = event => {
-        EnableAllCragToposView();
-      }
     }
     let SaveCrag = () => {
       _crag.routes = GetCragRoutes();
@@ -314,21 +309,9 @@
       destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
       return destCanvas;
     }
-    let EnableAllCragToposView = () => {
-      document.getElementById('edit-topo-container').classList.add('do-not-display');
-      document.getElementById('icon-bar').classList.add('do-not-display');
-      document.getElementById('topo-images-container').classList.remove('do-not-display');
-      document.getElementById('main-topo-container').classList.add('do-not-display');
-    }
-    let EnableMainTopoView = () => {
-      let topo = GetTopoFromCragData(_crag, _currentTopoID);
-      console.log(`topo: ${JSON.stringify(topo)}`);
-      if( topo && topo.routes ) SetCragTableRoutesAsTopoRoutes(topo.routes);
+    let RefreshMainTopoView = (topoObject, topoImage) => {
+      if( topo && topo.routes ) SetCragTableRoutesAsTopoRoutes(topoObject.routes);
       UpdateTopoRouteTableFromCragRouteTable();
-      document.getElementById('edit-topo-container').classList.remove('do-not-display');
-      document.getElementById('icon-bar').classList.remove('do-not-display');
-      document.getElementById('topo-images-container').classList.add('do-not-display');
-      document.getElementById('main-topo-container').classList.remove('do-not-display');
     }
     let AddRouteToCragRouteTable = (routeName, routeGrade, routeID) => {
       let routeTable = document.getElementById("crag-route-table");
