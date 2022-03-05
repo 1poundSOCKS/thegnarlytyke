@@ -40,11 +40,6 @@ h2 {
   background-color: white;
 }
 
-/* .topo-container a {
-  display: block;
-  font-size: 2rem;
-} */
-
 .topo-container * {
   display: block;
   margin: auto;
@@ -82,10 +77,9 @@ h2 {
 }
 
 .icon-bar {
-  display: inline-block;
+  display: block;
   margin: auto;
   font-size: 2rem;
-  /* margin: auto; */
   background-color: white;
 }
 
@@ -110,11 +104,20 @@ h2 {
   background-color: grey;
 }
 
-.route-table {
+.topo-route-table {
   border-collapse: separate;
   font-size: 2rem;
-  white-space: nowrap;
   text-align: left;
+}
+
+.topo-route-table tr {
+  border-bottom: 0.1rem solid black;
+  background-color: darkgray;
+}
+
+.topo-route-table td:nth-child(3), .topo-route-table th:nth-child(3),
+.topo-route-table td:nth-child(6), .topo-route-table th:nth-child(6) {
+  display: none;
 }
 
 .crag-route-table {
@@ -124,7 +127,7 @@ h2 {
   font-size: 2rem;
 }
 
-.route-table-header > tr {
+.crag-route-table tr {
   border-bottom: 0.1rem solid black;
   background-color: darkgray;
 }

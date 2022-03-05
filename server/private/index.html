@@ -12,13 +12,15 @@
   <div id="topo-images-container" class="topo-images-container"></div>
   <div id="main-topo-container" class="main-topo-container">
     <canvas id="main-topo-image" class="main-topo-image"></canvas>
-    <table id="topo-route-table" class="route-table">
-      <thead class="route-table-header">
+    <table id="topo-route-table" class="topo-route-table">
+      <thead class="topo-route-table-header">
           <tr>
             <th>Name</th>
             <th>Grade</th>
             <th>ID</th>
             <th>Edit</th>
+            <th>Index</th>
+            <th>Points</th>
           </tr>
       </thead>
     </table>
@@ -35,7 +37,7 @@
     </div>
     <div>
       <table id="crag-route-table" class="crag-route-table">
-        <thead class="route-table-header">
+        <thead class="crag-route-table-header">
             <tr>
               <th>Index</th>
               <th>Name</th>
@@ -96,17 +98,76 @@
           topoCanvas.onclick = event => {
             _currentTopoID = topo.id;
             let mainTopoCanvas = DrawMainTopoImage(topoImage);
-            AddMouseHandlerToTopoCanvas(topo, mainTopoCanvas);
+            AddMouseHandlerToTopoCanvas(topo, topoImage, mainTopoCanvas);
             EnableMainTopoView();
           }
           AddControlsToTopoContainer(topoContainer, topo);
         }
       });
     }
-    let AddMouseHandlerToTopoCanvas = (topoObject, topoCanvas) => {
+    let AddMouseHandlerToTopoCanvas = (topoObject, topoImage, topoCanvas) => {
       topoCanvas.onclick = event => {
-        console.log(`place holder for mouse handler...`);
+        let rect = topoCanvas.getBoundingClientRect();
+        let clientRectWidth = rect.right - rect.left;
+        let clientRectHeight = rect.bottom - rect.top;
+        console.log(`client size: ${clientRectWidth}, ${clientRectHeight}`);
+        let clientMouseX = event.clientX - rect.left;
+        let clientMouseY = event.clientY - rect.top;
+        console.log(`mouse position: ${clientMouseX}, ${clientMouseY}`);
+        let mousePercentX = clientMouseX / clientRectWidth;
+        let mousePercentY = clientMouseY / clientRectHeight;
+        console.log(`mouse position (fraction): ${mousePercentX}, ${mousePercentY}`);
+        let newPoint = { x: mousePercentX, y: mousePercentY };
+        let checkedRows = GetCheckedTopoRouteTableRows();
+        if( checkedRows.length > 0 ) {
+          let firstCheckedRow = checkedRows[0];
+          let routeDataText = firstCheckedRow.cells[5].innerText;
+          let routeDataObject = ( routeDataText.length == 0 ) ? { points: [] } : JSON.parse(routeDataText);
+          routeDataObject.points.push(newPoint);
+          firstCheckedRow.cells[5].innerText = JSON.stringify(routeDataObject);
+          let ctx = topoCanvas.getContext('2d');
+          DrawMainTopoImage(topoImage);
+          DrawRoutesInTopoTable(ctx);
+        }
       }
+    }
+    let DrawRoutesInTopoTable = (ctx) => {
+      let topoRouteTableRows = GetTableRowsWithoutHeader(document.getElementById('topo-route-table'));
+      topoRouteTableRows.forEach( row => {
+        let routeDataText = row.cells[5].innerText;
+        if( routeDataText.length > 0 ) {
+          let routeDataObject = JSON.parse(routeDataText);
+          routeDataObject.points.forEach( point => {
+            DrawRouteStart(ctx, point.x, point.y, row.cells[4].innerText, 1);
+          });
+        }
+      });
+    }
+    let DrawRouteStart = (ctx, x, y, routeIndex, fontSize) => {
+      let canvasX = ctx.canvas.width * x;
+      let canvasY = ctx.canvas.height * y;
+      console.log(`canvas position: ${canvasX}, ${canvasY}`);
+      ctx.font = `bold ${fontSize}rem serif`;
+      const metrics = ctx.measureText(routeIndex);
+      let widthOfRouteIndex = metrics.width;
+      ctx.beginPath();
+      ctx.setLineDash([]);
+      ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
+      ctx.lineWidth = fontSize;
+      ctx.strokeStyle = "#000000";
+      ctx.stroke();
+      ctx.fillStyle = "#000000";
+      ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.75));
+    }
+    let GetCheckedTopoRouteTableRows = () => {
+      let topoRouteTable = document.getElementById('topo-route-table');
+      let topoRouteTableRows = GetTableRowsWithoutHeader(topoRouteTable);
+      console.log(`checking ${topoRouteTableRows.length} rows`);
+      return topoRouteTableRows.filter( row => IsTableCellChecked(row, 3) );      
     }
     let CreateTopoCanvas = (topoImage, heightInRem) => {
       let canvas = document.createElement('CANVAS');
@@ -119,8 +180,8 @@
       return canvas;
     }
     let AddControlsToTopoContainer = (topoContainer, topo) => {
-      // let idText = topoContainer.appendChild(document.createElement('p'));
-      // idText.innerText = topo.id;
+      let idText = topoContainer.appendChild(document.createElement('p'));
+      idText.innerText = topo.id;
       let saveLink = topoContainer.appendChild(document.createElement('a'));
       topoContainer.setAttribute('href', '#');
       let saveIcon = saveLink.appendChild(document.createElement('i'));
@@ -198,6 +259,8 @@
           newRouteRow.insertCell(1).innerText = routeGrade;
           newRouteRow.insertCell(2).innerText = routeID;
           newRouteRow.insertCell(3).appendChild(CreateEditSwitchForRoute());
+          newRouteRow.insertCell(4).innerText = newRouteIndex;
+          newRouteRow.insertCell(5).innerText = '';
         }
       });
     }
