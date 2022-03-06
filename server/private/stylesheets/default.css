@@ -21,6 +21,10 @@ h2 {
   font-size: 2rem;
 }
 
+p {
+  font-size: 2rem;
+}
+
 .topo-images-container {
   display: flex;
   flex-direction: row;
