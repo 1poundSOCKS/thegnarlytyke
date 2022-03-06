@@ -126,8 +126,8 @@
       
       let topoRouteTableData = tableData.filter( row => row.onTopo );
       let topoRouteDataToSave = topoRouteTableData.map( row => {
-        let points = row.points ? JSON.parse(row.points) : { points: [] };
-        return { id: row.id, points: points?.points };
+        let points = row.points ? JSON.parse(row.points) : [];
+        return { id: row.id, points: points };
       });
       console.table(topoRouteDataToSave);
       let topoToUpdate = cragObject.topos.filter( topoObject => topoObject.id == currentTopoID );
@@ -137,11 +137,11 @@
     }
     let SwitchMainTopoView = (topoObject, topoImage) => {
       _currentTopoID = topoObject.id;
-        document.getElementById('current-topo-id').textContent = _currentTopoID;
-        _currentTopoImage = topoImage;
-        let mainTopoCanvas = DrawMainTopoImage(topoImage);
-        AddMouseHandlerToTopoCanvas(topoObject, topoImage, mainTopoCanvas);
-        RefreshMainTopoView(topoObject, topoImage);
+      document.getElementById('current-topo-id').textContent = _currentTopoID;
+      _currentTopoImage = topoImage;
+      let mainTopoCanvas = DrawMainTopoImage(topoImage);
+      AddMouseHandlerToTopoCanvas(topoObject, topoImage, mainTopoCanvas);
+      RefreshMainTopoView(topoObject, topoImage);
     }
     let AddMouseHandlerToTopoCanvas = (topoObject, topoImage, topoCanvas) => {
       topoCanvas.onclick = event => {
@@ -171,8 +171,8 @@
           let routeDataText = matchingCragTableRows[0].cells[5].innerText;
           
           // append the new point to the data
-          let routeDataObject = ( routeDataText.length == 0 ) ? { points: [] } : JSON.parse(routeDataText);
-          routeDataObject.points.push(newPoint);
+          let routeDataObject = ( routeDataText.length == 0 ) ? [] : JSON.parse(routeDataText);
+          routeDataObject.push(newPoint);
           
           // update the point data on the crag route table
           matchingCragTableRows[0].cells[5].innerText = JSON.stringify(routeDataObject);
@@ -188,7 +188,7 @@
         let routeDataText = row.cells[5].innerText;
         if( routeDataText.length > 0 ) {
           let routeDataObject = JSON.parse(routeDataText);
-          let pointsOnCanvas = routeDataObject.points.map( point => {
+          let pointsOnCanvas = routeDataObject.map( point => {
             return { x: ctx.canvas.width * point.x, y: ctx.canvas.height * point.y };
           });
           pointsOnCanvas.forEach( (point, pointIndex, points) => {
@@ -242,8 +242,6 @@
       return canvas;
     }
     let AddControlsToTopoContainer = (topoContainer, topo) => {
-      // let idText = topoContainer.appendChild(document.createElement('p'));
-      // idText.innerText = topo.id;
       let saveLink = topoContainer.appendChild(document.createElement('a'));
       topoContainer.setAttribute('href', '#');
       let saveIcon = saveLink.appendChild(document.createElement('i'));
@@ -348,7 +346,7 @@
       return destCanvas;
     }
     let RefreshMainTopoView = (topoObject, topoImage) => {
-      if( topoObject && topoObject.routes ) SetCragTableRoutesAsTopoRoutes(topoObject.routes);
+      if( topoObject?.routes ) SetCragTableRoutesAsTopoRoutes(topoObject.routes);
       UpdateTopoRouteTableFromCragRouteTable();
     }
     let AddRouteToCragRouteTable = (routeName, routeGrade, routeID) => {
@@ -412,12 +410,20 @@
     }
     let SetCragTableRoutesAsTopoRoutes = (routes) => {
       console.log(`UpdateSelectedCragRoutes`);
-      let setOfRouteIDs = new Set(routes.map(route => route.id));
+      let setOfRouteIDs = new Map(routes.map(route => [route.id, route]));
       let cragRouteTableElement = document.getElementById('crag-route-table');
       let cragRouteTableRows = GetTableRowsWithoutHeader(cragRouteTableElement);
       cragRouteTableRows.forEach( row => {
         let rowID = row.cells[4].innerText;
-        row.cells[3].firstChild.checked = setOfRouteIDs.has(rowID);
+        let route = setOfRouteIDs.get(rowID);
+        if( route ) {
+          row.cells[3].firstChild.checked = true;
+          row.cells[5].innerText = route.points ? JSON.stringify(route.points) : '';
+        }
+        else {
+          row.cells[3].firstChild.checked = false;
+          row.cells[5].innerText = '';
+        }
       });
     }
     </script>
