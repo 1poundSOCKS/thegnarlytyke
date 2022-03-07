@@ -31,14 +31,13 @@ let LoadCrag = (url) => new Promise( (resolve, reject) => {
   .catch(err => reject(err));
 });
 
-
-let LoadTopoImagesFromCrag = (cragObject, OnTopoLoadCallback) => {
-  cragObject.topos.forEach( topo => {
-    let topoImageFile = topo.imageFile;
-    console.log(`image file: ${topoImageFile}`);
-    LoadImage(`./get_image?filename=${topoImageFile}`)
+let LoadTopoImagesFromCrag = (cragObject, OnTopoLoadCallback, imageLocation) => {
+  imageLocation = imageLocation ? imageLocation : './get_image?filename=';
+  cragObject.topos.forEach( topoObject => {
+    let topoImageFile = topoObject.imageFile;
+    LoadImage(`${imageLocation}${topoImageFile}`)
     .then( topoImage => {
-      OnTopoLoadCallback(topo, topoImage);
+      OnTopoLoadCallback(cragObject, topoObject, topoImage);
     });
   });
 }
@@ -52,4 +51,27 @@ let DeleteAllTableRowsExceptHeader = (tableElement) => { while( tableElement.row
 
 let IsTableCellChecked = (row, cellIndex) => {
   return row.cells[cellIndex].firstChild.checked;
+}
+
+let ConvertRowContentToObject = rowElement => {
+  return Array.from(rowElement.cells).map( cell => {
+    if( cell.firstElementChild ) {
+      return cell.firstElementChild.checked;
+    }
+    else {
+      return cell.innerText;
+    }
+  });
+}
+
+let ConvertTableContentToObject = (tableElement) => {
+  let rowElements = GetTableRowsWithoutHeader(tableElement);
+  return rowElements.map( rowElement => ConvertRowContentToObject(rowElement) );
+}
+
+/*
+crag object functions
+*/
+let DeleteTopoFromCragObject = (cragObject, topoID) => {
+  cragObject.topos = cragObject.topos.filter(topo => topo.id != topoID);
 }

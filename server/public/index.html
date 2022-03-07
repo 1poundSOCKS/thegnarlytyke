@@ -1,240 +1,240 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
     <title>the gnarly tyke</title>
     <link rel="stylesheet" href="stylesheets/default.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
   <script src="./common.js"></script>
   <div><h1>the gnarly tyke</h1></div>
-  <div><h2>Baildon Bank</h2></div>
-  <div>
-    <canvas style="margin: auto; display: block" id="select-topo-canvas"></canvas>
-    <canvas style="margin: auto; display: block" id="main-topo-canvas"></canvas>
-  </div>
-  <div>
-    <table id="route-table">
-      <thead>
+  <div><h2>edit crag</h2><div>
+  <div id="topo-images-container" class="topo-images-container"></div>
+  <div class="do-not-display"><p id="current-topo-id"></p></div>
+  <div id="main-topo-container" class="main-topo-container do-not-display">
+    <canvas id="main-topo-image" class="main-topo-image"></canvas>
+    <table id="topo-route-table" class="topo-route-table">
+      <thead class="topo-route-table-header">
           <tr>
             <th></th>
             <th>Name</th>
-            <th>Type</th>
+            <th></th>
             <th>Grade</th>
           </tr>
       </thead>
-      <tbody id="route-table-body">
-        <script>
-          let UpdateRouteTable = (topo) => {
-            document.getElementById('route-table-body').innerHTML = GetRouteTableHTML(topo);
-          }
-          let GetRouteTableHTML = (topo) => {
-            let rowHTML = '';
-            GetRoutesForTopo(topo).forEach((route, index) => {
-              rowHTML += 
-              `<tr>
-                <td>${index+1}</td>
-                <td>${route.name}</td>
-                <td>${route.type}</td>
-                <td>${route.grade}</td>
-              </tr>
-              `;
-            });
-            return rowHTML;
-          }
-          let GetRoutesForTopo = topo => {
-            if( !topo.routes ) return [];
-            return topo.routes.map(route => {
-              const routeInfo = _crag.routes[route.globalIndex];
-              return {
-                name: routeInfo.name,
-                type: routeInfo.type,
-                grade: routeInfo.grade,
-                label: route.label,
-                points: route.points
-              };
-            });
-          }
-        </script>
-      </tbody>
     </table>
   </div>
-  <script>
+  <div id="edit-topo-container" class="do-not-display">
+    <div id="icon-bar" class="icon-bar">
+      <label for="new-route-name">Name:</label>
+      <input id="new-route-name">
+      <label for="new-route-grade">Grade:</label>
+      <input id="new-route-grade">
+      <a href="#"><i class="fa fa-plus" id="ib-add-route"></i></a>
+      <a href="#"><i class="fa fa-save" id="ib-save"></i></a>
+    </div>
+    <div>
+      <table id="crag-route-table" class="crag-route-table">
+        <thead class="crag-route-table-header">
+            <tr>
+              <th>Index</th>
+              <th data-property-name="name">Name</th>
+              <th data-property-name="grade">Grade</th>
+              <th data-property-name="onTopo">On topo</th>
+              <th data-property-name="id">ID</th>
+              <th data-property-name="points">Points</th>
+            </tr>
+        </thead>
+      </table>
+      </div>
+  </div>
+  <script type="module">
     let _crag = null;
-    let _selectedTopoId = null;
-    let _lastRenderedTopos = null;
-    window.onload = function() {
-      LoadCrag("./data/baildon_bank.json")
-      .then( crag => {
-        _crag = crag;
-        _selectedTopoId = _crag.topos[0].id;
-        DrawPage(_crag);
-        AddMouseSupport(_crag);
-      });
+    let _currentTopoID = null;
+    let _currentTopoImage = null;
+    window.onload = () => {
+      LoadCrag();
     }
     window.onresize = () => {
-      if( _crag ) DrawPage(_crag);
     }
-    let DrawPage = (crag) => {
-      let canvas = document.getElementById("select-topo-canvas");
-      _lastRenderedTopos = DrawTopoSelection(canvas, crag.topos);
-      if( _selectedTopoId != null ) {
-        const matchedTopos = _lastRenderedTopos.filter( topo => topo.id == _selectedTopoId );
-        const selectedTopo = ( matchedTopos.length > 0 ) ? matchedTopos[0] : null;
-        DrawTopoBox(canvas, selectedTopo, 2, '#000000');
-        let mainTopoCanvas = document.getElementById("main-topo-canvas");
-        const topo = {};
-        Object.assign(topo, selectedTopo);
-        DrawMainTopoCanvas(mainTopoCanvas, topo);
-        UpdateRouteTable(topo);
+    let LoadCrag = () => {
+      fetch('./data/crag.json')
+      .then(response => response.json())
+      .then(crag => {
+        _crag = crag;
+        UpdateCragRouteTable(_crag.routes);
+        let topoContainers = CreateTopoContainers(document.getElementById('topo-images-container'), _crag.topos);
+        LoadTopoImagesFromCrag(_crag, DisplayTopoImageInCragView, './images/');
+      });
+    }
+    let CreateTopoContainers = (parentContainer, topos) => {
+      let topoContainers = [];
+      topos.forEach(topo => {
+        let topoContainer = parentContainer.appendChild(document.createElement('div'));
+        topoContainer.classList.add('topo-container');
+        topoContainer.setAttribute('data-id', topo.id);
+        topoContainer.setAttribute('data-filename', topo.imageFile);
+        topoContainers.push(topoContainer);
+      });
+      return topoContainers;
+    }
+    let DisplayTopoImageInCragView = (cragObject, topo, topoImage) => {
+      let topoImagesContainer = document.getElementById('topo-images-container');
+      let matchingTopoContainers = Array.from(topoImagesContainer.children).filter( topoContainer => {
+        return topoContainer.getAttribute('data-id') == topo.id;
+      });
+      let topoContainer = matchingTopoContainers[0];
+      let topoCanvas = CreateTopoCanvas(topoImage, 10);
+      topoContainer.appendChild(topoCanvas);
+      let ctx = topoCanvas.getContext('2d');
+      ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
+      topoCanvas.onclick = event => {
+        document.getElementById('main-topo-container').classList.remove('do-not-display');
+        SwitchMainTopoView(topo, topoImage);
       }
     }
-    let DrawTopoSelection = (canvas, topoData) => {
-      canvas.width = document.documentElement.clientWidth;
-      canvas.height = 100;
-      const topos = GetRenderData(canvas, topoData, 0.8, 20);
-      RenderTopos(canvas, topos);
-      return topos;
+    let SwitchMainTopoView = (topoObject, topoImage) => {
+      _currentTopoID = topoObject.id;
+      document.getElementById('current-topo-id').textContent = _currentTopoID;
+      _currentTopoImage = topoImage;
+      let mainTopoCanvas = DrawMainTopoImage(topoImage);
+      RefreshMainTopoView(topoObject, topoImage);
     }
-    let DrawMainTopoCanvas = (canvas, topo) => {
-      canvas.width = document.documentElement.clientWidth;
-      canvas.height = 400;
-      topo.x = 0;
-      topo.y = 0;
-      let topos = [topo];
-      AddImageSizes(topos, canvas, 1.0);
-      CentreImagesOnCanvas(topos, canvas);
-      RenderTopos(canvas, topos);
-      DrawTopoRoutes(canvas, topos[0]);
-    }
-    let AddMouseSupport = (crag) => {
-      let canvas = document.getElementById("select-topo-canvas");
-      canvas.onmousemove = event => {
-        let currentSelectedTopoId = null;
-        _lastRenderedTopos.forEach( topo => {
-          var rect = canvas.getBoundingClientRect();
-          const mouseX = event.clientX - rect.left;
-          const mouseY = event.clientY - rect.top;
-          if ( mouseX >= topo.x && mouseX < (topo.x + topo.width) && mouseY >= topo.y && mouseY < (topo.y + topo.height) ) {
-            currentSelectedTopoId = topo.id;
-          }
-        });
-        if( currentSelectedTopoId != null && currentSelectedTopoId != _selectedTopoId ) {
-          _selectedTopoId = currentSelectedTopoId;
-          DrawPage(crag);
+    let DrawTopoRoutes = (ctx) => {
+      GetCheckedCragTableRows().forEach( (row, rowIndex) => {
+        let routeDataText = row.cells[5].innerText;
+        if( routeDataText.length > 0 ) {
+          let routeDataObject = JSON.parse(routeDataText);
+          let pointsOnCanvas = routeDataObject.map( point => {
+            return { x: ctx.canvas.width * point.x, y: ctx.canvas.height * point.y };
+          });
+          pointsOnCanvas.forEach( (point, pointIndex, points) => {
+            let nextPoint = points[pointIndex+1];
+            if( nextPoint ) DrawRouteLine(ctx, point.x, point.y, nextPoint.x, nextPoint.y, 1);
+            DrawRouteStart(ctx, point.x, point.y, rowIndex + 1, 1);
+          });
         }
-      }
-    }
-    let RenderTopos = (canvas, topos) => {
-      topos.forEach( topo => DrawTopoImage(canvas, topo) );
-    }
-    let DrawTopoImage = (canvas, topo) => {
-      let ctx = canvas.getContext("2d");
-      ctx.drawImage(topo.image, topo.x, topo.y, topo.width, topo.height);
-    }
-    let DrawTopoRoutes = (canvas, topo) => {
-      const transformedRoutes = TransformRoutes(topo);
-      let ctx = canvas.getContext("2d");
-      transformedRoutes.forEach( route => {
-        if( route.points.start && route.points.end ) DrawLine(ctx, route.points, topo.height * 0.01);
-      });
-      const labels = transformedRoutes.map( route => { return { value: route.label, pos: route.points.start } });
-      labels.forEach( label => DrawLabel(ctx, label, topo.height * 0.02) );
-    }
-    let DrawTopoBox = (canvas, topo, width, color) => {
-      var ctx = canvas.getContext("2d");
-      ctx.beginPath();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      const halfWidth = width / 2;
-      ctx.rect(topo.x - halfWidth, topo.y - halfWidth, topo.width + width, topo.height + width);
-      ctx.stroke();
-    }
-    let GetRenderData = (canvas, topos, scale, space) => {
-      let renderTopos = topos.map( topo => {
-        const topoCopy = {};
-        return Object.assign(topoCopy, topo);
-      });
-      AddImageSizes(renderTopos, canvas, scale);
-      AddImagePositions(renderTopos, canvas);
-      AddSpaceBetweenImages(renderTopos, space);
-      CentreImagesOnCanvas(renderTopos, canvas);
-      return renderTopos;
-    }
-    let AddImageSizes = (topos, canvas, heightScale) => {
-      topos.forEach( topo => {
-        topo.height = canvas.height * heightScale;
-        topo.width = topo.image.width * topo.height / topo.image.height;
       });
     }
-    let AddImagePositions = (topos, canvas) => {
-      let position = 0;
-      topos.forEach( topo => {
-        const thisPosition = position;
-        position += topo.width;
-        topo.x = thisPosition;
-        topo.y = (canvas.height - topo.height) / 2;
-      });
-    }
-    let AddSpaceBetweenImages = (topos, space) => {
-      let shift = 0;
-      topos.forEach( topo => {
-        const thisShift = shift;
-        shift += space;
-        topo.x += thisShift;
-      });
-    }
-    let CentreImagesOnCanvas = (topos, canvas) => {
-      const lastTopo = topos[topos.length - 1];
-      let totalImageBoundX = lastTopo.x + lastTopo.width;
-      let centreShiftX = ( canvas.width - totalImageBoundX ) / 2;
-      topos.forEach( topo => topo.x += centreShiftX );
-    }
-    let TransformRoutes = (topo) => {
-      if( !topo.routes ) return [];
-      const routesToRender = topo.routes.filter(route => route.label && route.points && route.points.start);
-      return routesToRender.map(route => {
-        const tmpRoute = {
-          label: route.label,
-          points: { 
-            start: { x: route.points.start.x * topo.width + topo.x, y: route.points.start.y * topo.height + topo.y}
-          }
-        }
-        tmpRoute.points.end = route.points.end ? { x: route.points.end.x * topo.width + topo.x, y: route.points.end.y * topo.height + topo.y} : null;
-        return tmpRoute;
-      });
-    }
-    let DrawLine = (ctx, line, lineWidth) => {
-      const lineDash = lineWidth;
-      ctx.strokeStyle = 'white';
-      ctx.beginPath();
-      ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.setLineDash([]);
-      ctx.moveTo(line.start.x, line.start.y);
-      ctx.lineTo(line.end.x, line.end.y);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = '#ad1522';
-      ctx.setLineDash([lineDash * 2, lineDash]);
-      ctx.moveTo(line.start.x, line.start.y);
-      ctx.lineTo(line.end.x, line.end.y);
-      ctx.stroke();
-    }
-    let DrawLabel = (ctx, label, size) => {
-      const fontSize = size * 2;
+    let DrawRouteStart = (ctx, canvasX, canvasY, routeIndex, fontSize) => {
+      ctx.font = `bold ${fontSize}rem serif`;
+      const metrics = ctx.measureText(routeIndex);
+      let widthOfRouteIndex = metrics.width;
       ctx.beginPath();
       ctx.setLineDash([]);
-      ctx.arc(label.pos.x, label.pos.y, size, 0, 2 * Math.PI, false);
+      ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
       ctx.fillStyle = "#FFFFFF";
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(label.pos.x, label.pos.y, size, 0, 2 * Math.PI, false);
-      ctx.lineWidth = size * 0.1;
+      ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
+      ctx.lineWidth = fontSize;
       ctx.strokeStyle = "#000000";
       ctx.stroke();
-      ctx.font = `bold ${fontSize}px serif`;
       ctx.fillStyle = "#000000";
-      ctx.fillText(label.value, label.pos.x - (size * 0.5), label.pos.y + (size * 0.75));
+      ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.75));
+    }
+    let DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {
+      ctx.beginPath();
+      ctx.moveTo(canvasStartX, canvasStartY);
+      ctx.lineTo(canvasEndX, canvasEndY);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.stroke();
+    }
+    let CreateTopoCanvas = (topoImage, heightInRem) => {
+      let canvas = document.createElement('CANVAS');
+      canvas.classList.add('topo-image');
+      let height = heightInRem;
+      let width = topoImage.width * height / topoImage.height;
+      canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+      canvas.setAttribute('width', topoImage.width);
+      canvas.setAttribute('height', topoImage.height);
+      return canvas;
+    }
+    let UpdateCragRouteTable = (routes) => {
+      let routeTable = document.getElementById("crag-route-table");
+      DeleteAllTableRowsExceptHeader(routeTable);
+      routes.forEach( route => {
+        AddRouteToCragRouteTable(route.name, route.grade, route.id);
+      });
+    }
+    let UpdateTopoRouteTableFromCragRouteTable = () => {
+      let cragRouteTable = document.getElementById("crag-route-table");
+      let topoRouteTable = document.getElementById("topo-route-table");
+      DeleteAllTableRowsExceptHeader(topoRouteTable);
+      GetCheckedCragTableRows().forEach( row => {
+        let routeName = row.cells[1].innerText;
+        let routeGrade = row.cells[2].innerText;
+        let routeID = row.cells[4].innerText;
+        let newRouteIndex = topoRouteTable.rows.length;
+        let newRouteRow = topoRouteTable.insertRow(newRouteIndex);
+        newRouteRow.insertCell(0).innerText = newRouteIndex;
+        newRouteRow.insertCell(1).innerText = routeName;
+        newRouteRow.insertCell(2).innerText = routeID;
+        newRouteRow.insertCell(3).innerText = routeGrade;
+      });
+      let topoCanvas = document.getElementById('main-topo-image');
+      let ctx = topoCanvas.getContext('2d');
+      DrawMainTopoImage(_currentTopoImage);
+      DrawTopoRoutes(ctx);
+    }
+    let GetCheckedCragTableRows = () => {
+      let cragRouteTable = document.getElementById("crag-route-table");
+      return GetTableRowsWithoutHeader(cragRouteTable).filter( row => IsTableCellChecked(row, 3) );
+    }
+    let CreateCheckboxInputElement = () => {
+      let inputElement = document.createElement('input');
+      inputElement.setAttribute('type','checkbox');
+      return inputElement;
+    }
+    let DrawMainTopoImage = topoImage => {
+      let destCanvas = document.getElementById('main-topo-image');
+      let width = 60;
+      let height = topoImage.height * width / topoImage.width;
+      destCanvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+      destCanvas.setAttribute('width', topoImage.width);
+      destCanvas.setAttribute('height', topoImage.height);
+      destCanvas.height = topoImage.height;
+      destCanvas.width = topoImage.width * destCanvas.height / topoImage.height;
+      let destCanvasCtx = destCanvas.getContext('2d');
+      destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
+      return destCanvas;
+    }
+    let RefreshMainTopoView = (topoObject, topoImage) => {
+      if( topoObject?.routes ) SetCragTableRoutesAsTopoRoutes(topoObject.routes);
+      UpdateTopoRouteTableFromCragRouteTable();
+    }
+    let AddRouteToCragRouteTable = (routeName, routeGrade, routeID) => {
+      let routeTable = document.getElementById("crag-route-table");
+      let newRouteIndex = routeTable.rows.length;
+      let newRouteRow = routeTable.insertRow(newRouteIndex);
+      newRouteRow.insertCell(0).innerText = newRouteIndex;
+      newRouteRow.insertCell(1).innerText = routeName;
+      newRouteRow.insertCell(2).innerText = routeGrade;
+      let checkbox = CreateCheckboxInputElement();
+      checkbox.onchange = event => {
+        UpdateTopoRouteTableFromCragRouteTable();
+      };
+      newRouteRow.insertCell(3).appendChild(checkbox);
+      newRouteRow.insertCell(4).innerText = routeID ? routeID : GetNextID();
+      newRouteRow.insertCell(5).innerText = '';
+    }
+    let SetCragTableRoutesAsTopoRoutes = (routes) => {
+      let setOfRouteIDs = new Map(routes.map(route => [route.id, route]));
+      let cragRouteTableElement = document.getElementById('crag-route-table');
+      let cragRouteTableRows = GetTableRowsWithoutHeader(cragRouteTableElement);
+      cragRouteTableRows.forEach( row => {
+        let rowID = row.cells[4].innerText;
+        let route = setOfRouteIDs.get(rowID);
+        if( route ) {
+          row.cells[3].firstChild.checked = true;
+          row.cells[5].innerText = route.points ? JSON.stringify(route.points) : '';
+        }
+        else {
+          row.cells[3].firstChild.checked = false;
+          row.cells[5].innerText = '';
+        }
+      });
     }
     </script>
 </body>

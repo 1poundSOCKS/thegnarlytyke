@@ -1,7 +1,7 @@
 * {
   font-family: six caps;
-  font-size: 1rem;
 }
+
 h1 {
   margin: auto;
   text-align: center;
@@ -10,6 +10,7 @@ h1 {
   letter-spacing: .1em;
   font-size: 3rem;
 }
+
 h2 {
   margin: auto;
   text-align: center;
@@ -19,37 +20,122 @@ h2 {
   letter-spacing: .1em;
   font-size: 2rem;
 }
-table {
-  margin: auto;
-  width: 40rem;
-  margin-top: 1rem;
-  border-collapse: collapse;
-  border: 0.1rem solid white;
-  border-top: 0.2rem solid white;
+
+p {
   font-size: 2rem;
 }
-th {
-  text-align: left;
-  background-color: #662608;
-  color: white;
-  border: 0.1rem solid white;
-  border-top: 0.2rem solid white;
-}
-td {
-  border: 0.1rem solid white;
-  border-top: 0.2rem solid white;
-}
-tr:hover { 
-  color: white;
-  background: #04410c; 
-}
-tr:active { 
-  color: white;
-  background: #662608; 
-}
-td {
-  height: 2rem;
-}
-canvas {
+
+.topo-images-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
   margin: auto;
+  background-color: lightgrey;
+}
+
+.topo-container:hover {
+  background-color: darkgray;
+}
+
+.topo-container a:hover {
+  background-color: white;
+}
+
+.topo-container * {
+  display: block;
+  margin: auto;
+  font-size: 2rem;
+}
+
+.main-topo-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-top: 2rem;
+  background-color: lightgrey;
+}
+
+.edit-topo-container {
+  display: block;
+  margin: auto;
+  background-color: lightgrey;
+}
+
+.main-topo-image:hover {
+  cursor: crosshair;
+}
+
+.topo-image {
+  display: block;
+  margin: auto;
+}
+
+.topo-image:hover {
+  cursor: grab;
+}
+
+.icon-bar {
+  display: block;
+  margin: auto;
+  font-size: 2rem;
+  background-color: white;
+}
+
+.icon-bar a {
+  float: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  color: black;
+  font-size: 3rem;
+}
+
+.icon-bar input {
+  display: block;
+  font-size: 2rem;
+}
+
+.icon-bar label {
+  font-size: 2rem;
+}
+
+.icon-bar a:hover {
+  background-color: grey;
+}
+
+.topo-route-table {
+  border-collapse: separate;
+  font-size: 2rem;
+  text-align: left;
+}
+
+.topo-route-table tr {
+  border-bottom: 0.1rem solid black;
+  background-color: darkgray;
+}
+
+.topo-route-table td:nth-child(3), .topo-route-table th:nth-child(3) {
+  display: none;
+}
+
+.crag-route-table {
+  margin: auto;
+  border-collapse: separate;
+  text-align: left;
+  font-size: 2rem;
+}
+
+.crag-route-table tr {
+  border-bottom: 0.1rem solid black;
+  background-color: darkgray;
+}
+
+.do-not-display {
+  display: none;
 }
