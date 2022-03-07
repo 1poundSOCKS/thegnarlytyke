@@ -120,12 +120,11 @@
           pointsOnCanvas.forEach( (point, pointIndex, points) => {
             let nextPoint = points[pointIndex+1];
             if( nextPoint ) DrawRouteLine(ctx, point.x, point.y, nextPoint.x, nextPoint.y, 1);
-            // DrawRouteStart(ctx, point.x, point.y, rowIndex + 1, 1);
           });
           let startPoint = pointsOnCanvas[0];
-          if( startPoint ) DrawRouteStart(ctx, startPoint.x, startPoint.y, rowIndex + 1, 1.2, "rgb(40, 150, 40)");
+          if( startPoint ) DrawRouteStart(ctx, startPoint.x, startPoint.y, rowIndex + 1, 1, "rgb(40, 150, 40)");
           let endPoint = pointsOnCanvas[pointsOnCanvas.length-1];
-          if( endPoint ) DrawRouteStart(ctx, endPoint.x, endPoint.y, rowIndex + 1, "1.2", "rgb(150, 20, 20)");
+          if( endPoint ) DrawRouteStart(ctx, endPoint.x, endPoint.y, rowIndex + 1, "1", "rgb(150, 20, 20)");
         }
       });
     }
@@ -135,16 +134,16 @@
       let widthOfRouteIndex = metrics.width;
       ctx.beginPath();
       ctx.setLineDash([]);
-      ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
+      ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
       ctx.fillStyle = colour;
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
+      ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
       ctx.lineWidth = fontSize;
       ctx.strokeStyle = "#000000";
       ctx.stroke();
-      ctx.fillStyle = "#000000";
-      ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.75));
+      ctx.fillStyle = "rgb(230,230,230)";
+      ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.6));
     }
     let DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {
       ctx.beginPath();
