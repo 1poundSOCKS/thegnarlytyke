@@ -31,11 +31,11 @@ let LoadCrag = (url) => new Promise( (resolve, reject) => {
   .catch(err => reject(err));
 });
 
-let LoadTopoImagesFromCrag = (cragObject, OnTopoLoadCallback) => {
+let LoadTopoImagesFromCrag = (cragObject, OnTopoLoadCallback, imageLocation) => {
+  imageLocation = imageLocation ? imageLocation : './get_image?filename=';
   cragObject.topos.forEach( topoObject => {
     let topoImageFile = topoObject.imageFile;
-    console.log(`image file: ${topoImageFile}`);
-    LoadImage(`./get_image?filename=${topoImageFile}`)
+    LoadImage(`${imageLocation}${topoImageFile}`)
     .then( topoImage => {
       OnTopoLoadCallback(cragObject, topoObject, topoImage);
     });
