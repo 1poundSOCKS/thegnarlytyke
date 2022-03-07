@@ -107,4 +107,4 @@ dist
 # /work/upload/*
 # /work/data/*
 # /work/images/*
-/work/data/crag.backup.*
+/server/private/data/crag.backup.*

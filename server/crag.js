@@ -2,8 +2,8 @@ import path from 'path'
 import fs, { writeFile } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
-const dataFolder = '../work/data';
-const imagesFolder = '../work/images';
+const dataFolder = './private/data';
+const imagesFolder = './private/images';
 
 let GetCragFilename = () => path.resolve(dataFolder, 'crag.json');
 let GetBackupCragFilename = () => path.resolve(dataFolder, `crag.backup.${new Date().getTime()}.json`);
