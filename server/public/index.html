@@ -120,19 +120,23 @@
           pointsOnCanvas.forEach( (point, pointIndex, points) => {
             let nextPoint = points[pointIndex+1];
             if( nextPoint ) DrawRouteLine(ctx, point.x, point.y, nextPoint.x, nextPoint.y, 1);
-            DrawRouteStart(ctx, point.x, point.y, rowIndex + 1, 1);
+            // DrawRouteStart(ctx, point.x, point.y, rowIndex + 1, 1);
           });
+          let startPoint = pointsOnCanvas[0];
+          if( startPoint ) DrawRouteStart(ctx, startPoint.x, startPoint.y, rowIndex + 1, 1.2, "rgb(40, 150, 40)");
+          let endPoint = pointsOnCanvas[pointsOnCanvas.length-1];
+          if( endPoint ) DrawRouteStart(ctx, endPoint.x, endPoint.y, rowIndex + 1, "1.2", "rgb(150, 20, 20)");
         }
       });
     }
-    let DrawRouteStart = (ctx, canvasX, canvasY, routeIndex, fontSize) => {
+    let DrawRouteStart = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
       ctx.font = `bold ${fontSize}rem serif`;
       const metrics = ctx.measureText(routeIndex);
       let widthOfRouteIndex = metrics.width;
       ctx.beginPath();
       ctx.setLineDash([]);
       ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
-      ctx.fillStyle = "#FFFFFF";
+      ctx.fillStyle = colour;
       ctx.fill();
       ctx.beginPath();
       ctx.arc(canvasX, canvasY, widthOfRouteIndex, 0, 2 * Math.PI, false);
@@ -144,9 +148,10 @@
     }
     let DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {
       ctx.beginPath();
+      ctx.setLineDash([10, 10]);
       ctx.moveTo(canvasStartX, canvasStartY);
       ctx.lineTo(canvasEndX, canvasEndY);
-      ctx.lineWidth = 2;
+      ctx.lineWidth = "4";
       ctx.strokeStyle = '#FFFFFF';
       ctx.stroke();
     }
