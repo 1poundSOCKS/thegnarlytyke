@@ -29,11 +29,11 @@ p {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.5rem;
   justify-content: center;
   align-items: center;
   margin: auto;
-  margin-top: 2rem;
+  margin-top: 1rem;
   background-color: lightgrey;
 }
 
@@ -51,6 +51,10 @@ p {
   font-size: 2rem;
 }
 
+.topo-container-selected {
+  background-color: darkgray;
+}
+
 .main-topo-container {
   display: flex;
   flex-direction: row;
@@ -59,7 +63,7 @@ p {
   justify-content: center;
   align-items: center;
   margin: auto;
-  margin-top: 2rem;
+  margin-top: 1rem;
   background-color: lightgrey;
 }
 
@@ -75,7 +79,7 @@ p {
 
 .topo-image {
   display: block;
-  margin: auto;
+  margin: 0.5rem;
 }
 
 .topo-image:hover {

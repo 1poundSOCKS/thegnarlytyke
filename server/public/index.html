@@ -52,6 +52,7 @@
     let _crag = null;
     let _currentTopoID = null;
     let _currentTopoImage = null;
+    let _selectedTopoContainerElement = null;
     window.onload = () => {
       LoadCrag();
     }
@@ -95,10 +96,18 @@
     }
     let SwitchMainTopoView = (topoObject, topoImage) => {
       _currentTopoID = topoObject.id;
+      if( _selectedTopoContainerElement ) _selectedTopoContainerElement.classList.remove('topo-container-selected');
+      _selectedTopoContainerElement = GetTopoContainerElement(topoObject.id);
+      _selectedTopoContainerElement.classList.add('topo-container-selected');
       document.getElementById('current-topo-id').textContent = _currentTopoID;
       _currentTopoImage = topoImage;
       let mainTopoCanvas = DrawMainTopoImage(topoImage);
       RefreshMainTopoView(topoObject, topoImage);
+    }
+    let GetTopoContainerElement = id => {
+      let parentContainerElement = document.getElementById('topo-images-container');
+      let matchingTopoContainers = Array.from(parentContainerElement.children).filter( topoContainerElement => topoContainerElement.dataset.id == id );
+      return matchingTopoContainers[0];
     }
     let DrawTopoRoutes = (ctx) => {
       GetCheckedCragTableRows().forEach( (row, rowIndex) => {
