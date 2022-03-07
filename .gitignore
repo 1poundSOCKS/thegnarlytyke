@@ -104,6 +104,7 @@ dist
 .tern-port
 
 # my project
-/work/upload/*
-/work/data/*
-/work/images/*
+# /work/upload/*
+# /work/data/*
+# /work/images/*
+/work/data/crag.backup.*

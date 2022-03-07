@@ -6,6 +6,7 @@ const dataFolder = '../work/data';
 const imagesFolder = '../work/images';
 
 let GetCragFilename = () => path.resolve(dataFolder, 'crag.json');
+let GetBackupCragFilename = () => path.resolve(dataFolder, `crag.backup.${new Date().getTime()}.json`);
 
 export let GetFullImageFilename = (filename) => path.resolve(imagesFolder, filename);
 
@@ -42,18 +43,21 @@ let ReadCragObjectFromFile = async () => {
 }
 
 export let SaveCrag = async (crag) => {
-  ReplaceRouteTempIDsWithUUIDs(crag);
-  await DeleteFile(GetCragFilename());
+  console.log(JSON.stringify(crag, null, 2));
+  ReplaceTempIDsWithUUIDs(crag);
+  let backupFilename = GetBackupCragFilename();
+  // await DeleteFile(GetCragFilename());
+  await RenameFile(GetCragFilename(), backupFilename);
   return WriteDataToFile(JSON.stringify(crag, null, 2), GetCragFilename());
 };
 
-let ReplaceRouteTempIDsWithUUIDs = crag => {
-  let mapOfIDReplacements = GetTempIDReplacementMapForCrag(crag);
-  ReplaceRouteTempIDs(crag, mapOfIDReplacements);
-  console.log(`crag with new IDs: ${JSON.stringify(crag)}`);
+let ReplaceTempIDsWithUUIDs = crag => {
+  let mapOfIDReplacements = GetTempIDReplacementMap(crag);
+  ReplaceTempIDs(crag, mapOfIDReplacements);
+  console.log(`crag with new IDs: ${JSON.stringify(crag, null, 2)}`);
 }
 
-let GetTempIDReplacementMapForCrag = crag => {
+let GetTempIDReplacementMap = crag => {
   let tempIDsMap = new Map();
   crag.routes.forEach(route => {
     let routeID = route.id;
@@ -66,17 +70,25 @@ let GetTempIDReplacementMapForCrag = crag => {
     if( !topo.routes ) topo.routes = [];
     topo.routes.forEach(route => {
       let routeID = route.id;
-      console.log(`${routeID}`);
       if( routeID.startsWith('#') && !tempIDsMap.get(routeID) ) {
         console.log(`map set for topo route: id=${routeID}`);
         tempIDsMap.set(routeID, uuidv4());
       }
+      if( !route.points ) route.points = [];
+      route.points.forEach( point => {
+        let pointID = point.id;
+        console.log(`point id: ${pointID}`);
+        if( pointID.startsWith('#') && !tempIDsMap.get(pointID) ) {
+          console.log(`map set for point: id=${pointID}`);
+          tempIDsMap.set(pointID, uuidv4());
+        }
+      });
     });
   });
   return tempIDsMap;
 }
 
-let ReplaceRouteTempIDs = (crag, mapOfIDReplacements) => {
+let ReplaceTempIDs = (crag, mapOfIDReplacements) => {
   crag.routes.forEach(route => {
     if( route.id.startsWith('#') ) {
       route.id = mapOfIDReplacements.get(route.id);
@@ -87,6 +99,11 @@ let ReplaceRouteTempIDs = (crag, mapOfIDReplacements) => {
       if( route.id.startsWith('#') ) {
         route.id = mapOfIDReplacements.get(route.id);
       }
+      route.points.forEach( point => {
+        if( point.id.startsWith('#') ) {
+          point.id = mapOfIDReplacements.get(point.id);
+        }
+      });
     });
   });
 };
