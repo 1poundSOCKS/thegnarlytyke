@@ -115,13 +115,14 @@ p {
 }
 
 .topo-route-table {
-  border-collapse: separate;
+  border-collapse: collapse;
+  min-width: 40rem;
   font-size: 2rem;
   text-align: left;
 }
 
 .topo-route-table tr {
-  border-bottom: 0.1rem solid black;
+  border-bottom: 0.2rem solid black;
   background-color: darkgray;
 }
 
