@@ -108,3 +108,4 @@ dist
 # /work/data/*
 # /work/images/*
 /server/private/data/crag.backup.*
+/server/public/bundle.js
