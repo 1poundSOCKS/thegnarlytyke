@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "build": "browserify public/crag_object.js -o public/bundle.js",
+    "watch": "watchify public/crag_object.js -o public/bundle.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "jest": "^27.5.1"
+    "browserify": "^17.0.0",
+    "jest": "^27.5.1",
+    "watchify": "^4.0.0"
   }
 }
