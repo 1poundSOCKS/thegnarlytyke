@@ -1,4 +1,4 @@
-require('../public/crag_object.js');
+require('../source/crag_object.js');
 
 test('Create an empty crag object and check it has no routes', () => {
   let cragObject = CreateCragObject();
