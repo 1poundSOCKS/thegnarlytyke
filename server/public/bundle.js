@@ -840,25 +840,63 @@ exports.default = _default;
 },{"./validate.js":14}],16:[function(require,module,exports){
 let uuid = require('uuid');
 
-module.exports = CreateCragObject = () => {
+module.exports = CreateCragObject = loadedObject => {
   let cragID = uuid.v4();
-  return { loadedObject: {}, id: cragID, routes: [] };
-}
+  if( !loadedObject ) {
+    return {
+      loadedObject: {},
+      id: cragID,
+      routes: [],
+      topos: []
+    };
+  }
 
-module.exports = LoadCragObjectFromJSON = (JSONData) => {
-  let newObject = CreateCragObject();
-  if( JSONData.length == 0 ) return newObject;
-  newObject.loadedObject = JSON.parse(JSONData);
-  newObject.routes = newObject.loadedObject.routes.map( route => route );
-  return newObject;
+  let cragRoutes = loadedObject.routes ? loadedObject.routes.map(route => {
+    return {
+      id: route.id
+    };
+  })
+  : [];
+  
+  let cragTopos = loadedObject.topos ? loadedObject.topos.map(topo => {
+    return {
+      id: topo.id,
+      imageFilename: topo.imageFile ? topo.imageFile : null
+    };
+  })
+  : [];
+  
+  return {
+    id: cragID,
+    routes: cragRoutes,
+    topos: cragTopos
+  }
 }
 
 module.exports = SetUUIDGenFunction = (cragObject, UUIDGenFunction) => {
   cragObject.UUIDGenFunction = UUIDGenFunction;
 }
 
-module.exports = GetCragRoutesAsArray = (cragObject) => {
+module.exports = GetCragTopoIDs = cragObject => {
+  return cragObject.topos ? cragObject.topos.map( topo => topo.id ) : [];
+}
+
+module.exports = GetCragRoutes = cragObject => {
   return cragObject.routes;
+}
+
+module.exports = GetTopoImageFilename = (cragObject, id) => {
+  let matchingTopos = cragObject.topos.filter( topo => topo.id == id );
+  if( matchingTopos.length == 0 ) return null;
+  return matchingTopos[0].imageFilename;
+}
+
+module.exports = GetTopoRouteIDs = (cragObject, topoID) => {
+  return [ '111-aaa' ];
+}
+
+module.exports = GetTopoRouteInfo = (cragObject, topoID, routeID) => {
+  return { name: 'Gnarly Route', grade: 'e12 7b' };
 }
 
 module.exports = AppendRouteToCrag = (cragObject, routeName, routeGrade) => {

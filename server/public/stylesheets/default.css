@@ -114,14 +114,14 @@ p {
   background-color: grey;
 }
 
-.topo-route-table {
+.topo-route-table, .new-topo-route-table {
   border-collapse: collapse;
   min-width: 40rem;
   font-size: 2rem;
   text-align: left;
 }
 
-.topo-route-table tr {
+.topo-route-table tr, .new-topo-route-table tr {
   border-bottom: 0.2rem solid black;
   background-color: darkgray;
 }
