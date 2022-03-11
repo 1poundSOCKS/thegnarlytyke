@@ -840,6 +840,9 @@ exports.default = _default;
 },{"./validate.js":14}],16:[function(require,module,exports){
 let uuid = require('uuid');
 
+module.exports = rsRouteStart = Symbol("rsRouteStart");
+module.exports = rsRouteLine = Symbol("rsRouteLine");
+
 module.exports = CreateCragObject = loadedObject => {
   let cragID = uuid.v4();
   if( !loadedObject ) {
@@ -851,22 +854,32 @@ module.exports = CreateCragObject = loadedObject => {
     };
   }
 
-  let cragRoutes = loadedObject.routes ? loadedObject.routes.map(route => {
-    return {
-      id: route.id
-    };
-  })
-  : [];
+  // let cragRoutes = loadedObject.routes ? loadedObject.routes.map(route => {
+  //   return {
+  //     id: route.id,
+  //     name: route.name,
+  //     grade: route.grade
+  //   };
+  // })
+  // : [];
   
-  let cragTopos = loadedObject.topos ? loadedObject.topos.map(topo => {
-    return {
-      id: topo.id,
-      imageFilename: topo.imageFile ? topo.imageFile : null
-    };
-  })
-  : [];
+  // let cragTopos = null;
+  // if( loadedObject.topos ) {
+  //   cragTopos = loadedObject.topos.map(topo => {
+  //     let topoRoutes = topo.routes ? topo.routes.map(route => { return { id: route.id, points: route.points }; }) : [];
+  //     return {
+  //       id: topo.id,
+  //       imageFilename: topo.imageFile ? topo.imageFile : null,
+  //       routes: topoRoutes
+  //     }
+  //   });
+  // }
+
+  let cragRoutes = loadedObject.routes ? loadedObject.routes : [];
+  let cragTopos = loadedObject.topos ? loadedObject.topos : [];
   
   return {
+    loadedObject: loadedObject,
     id: cragID,
     routes: cragRoutes,
     topos: cragTopos
@@ -885,27 +898,61 @@ module.exports = GetCragRoutes = cragObject => {
   return cragObject.routes;
 }
 
-module.exports = GetTopoImageFilename = (cragObject, id) => {
-  let matchingTopos = cragObject.topos.filter( topo => topo.id == id );
-  if( matchingTopos.length == 0 ) return null;
-  return matchingTopos[0].imageFilename;
+module.exports = GetTopoImageFilename = (cragObject, topoID) => {
+  let firstMatchingTopo = GetFirstMatchingTopo(cragObject, topoID);
+  return firstMatchingTopo ? firstMatchingTopo.imageFilename : null;
 }
 
 module.exports = GetTopoRouteIDs = (cragObject, topoID) => {
-  return [ '111-aaa' ];
+  let firstMatchingTopo = GetFirstMatchingTopo(cragObject, topoID);
+  return (firstMatchingTopo && firstMatchingTopo.routes) ? firstMatchingTopo.routes.map(route => route.id) : [];
 }
 
-module.exports = GetTopoRouteInfo = (cragObject, topoID, routeID) => {
-  return { name: 'Gnarly Route', grade: 'e12 7b' };
+module.exports = GetCragRouteInfo = (cragObject, routeID) => {
+  let firstMatchingRoute = GetFirstMatchingRoute(cragObject, routeID);
+  return firstMatchingRoute ? {
+    name: firstMatchingRoute.name,
+    grade: firstMatchingRoute.grade
+  } : null;
 }
 
-module.exports = AppendRouteToCrag = (cragObject, routeName, routeGrade) => {
-  let routeID = uuidv4(cragObject);
-  return cragObject.routes[cragObject.routes.push({id: routeID, name: routeName, grade: routeGrade}) - 1];
+module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
+  let firstMatchingTopo = GetFirstMatchingTopo(cragObject, topoID);
+  console.log(`*** topo: ${JSON.stringify(firstMatchingTopo)}`);
+  if( !firstMatchingTopo ) return [];
+
+  let routeStartMarkers = firstMatchingTopo.routes.map(route => {
+    if( !route.points || route.point.length == 0) return null;
+    else return { type: rsRouteStart, x: route.points[0].x, y: route.points[0].y }
+  });
+
+  return routeStartMarkers.filter( step => step );
+}
+
+module.exports = GetRenderStepType = renderStep => {
+  return renderStep.type;
+}
+
+module.exports = GetRenderStepX = renderStep => {
+  return renderStep.x;
+}
+
+module.exports = GetRenderStepY = renderStep => {
+  return renderStep.y;
 }
 
 let uuidv4 = cragObject => {
   return cragObject.UUIDGenFunction ? cragObject.UUIDGenFunction() : uuid.v4();
+}
+
+let GetFirstMatchingRoute = (cragObject, routeID) => {
+  let matchingRoutes = cragObject.routes.filter(route => route.id == routeID);
+  return matchingRoutes[0];
+}
+
+let GetFirstMatchingTopo = (cragObject, topoID) => {
+  let matchingTopos = cragObject.topos.filter(topo => topo.id == topoID);
+  return matchingTopos[0];
 }
 
 },{"uuid":1}]},{},[16]);
