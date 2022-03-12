@@ -149,8 +149,30 @@ test("Render steps for a route with a single point", () => {
   let cragObject = CreateCragObject(testInput);
   let renderSteps = GetTopoOverlayRenderSteps(cragObject, 'rid-111');
   expect(renderSteps.length).toEqual(1);
-  let renderStep = renderSteps[0];
-  expect(GetRenderStepType(renderStep)).toEqual(rsRouteStart);
-  expect(GetRenderStepX(renderStep)).toEqual(0.1);
-  expect(GetRenderStepY(renderStep)).toEqual(0.2);
+  expect(renderSteps[0]).toEqual( { type: rsRouteStart, index: 1, x: 0.1, y: 0.2 } );
+});
+
+test("Render steps for a route with 3 points", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'rid-111',
+        routes: [
+          {
+            points: [ { x: 0.1, y: 0.2 }, { x: 0.3, y: 0.4 }, { x: 0.5, y: 0.6 }]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let renderSteps = GetTopoOverlayRenderSteps(cragObject, 'rid-111');
+  console.table(renderSteps);
+  
+  expect(renderSteps.length).toEqual(4);
+  expect(renderSteps[0]).toEqual( { type: rsRouteLine, start: {x: 0.1, y: 0.2}, end: {x: 0.3, y: 0.4} } );  
+  expect(renderSteps[1]).toEqual( { type: rsRouteLine, start: {x: 0.3, y: 0.4}, end: {x: 0.5, y: 0.6 }} );  
+  expect(renderSteps[2]).toEqual( { type: rsRouteStart, index: 1, x: 0.1, y: 0.2 } );
+  expect(renderSteps[3]).toEqual( { type: rsRouteEnd, index: 1, x: 0.5, y: 0.6 } );
 });

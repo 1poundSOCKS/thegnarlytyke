@@ -37,9 +37,9 @@
         let topoImageContainers = cragTopoIDs.map( topoID => {
           return document.getElementById('topo-images-container').appendChild(CreateTopoImageContainer(topoID));
         });
-        let topoImageFilenames = cragTopoIDs.map( id => GetTopoImageFilename(_cragObject, id) );
+        let topoImageFilenames = cragTopoIDs.map( id => GetTopoImageFile(_cragObject, id) );
         cragTopoIDs.forEach( (topoID, index) => {
-          let imageFilename = GetTopoImageFilename(_cragObject, topoID);
+          let imageFilename = GetTopoImageFile(_cragObject, topoID);
           if( imageFilename ) {
             LoadImage(`./images/${imageFilename}`)
             .then( topoImage => DisplayTopoImage(topoImage, topoImageContainers[index], topoID) );
@@ -110,40 +110,22 @@
       let topoCanvas = document.getElementById('main-topo-image');
       let ctx = topoCanvas.getContext('2d');
       topoRouteRenderSteps.forEach( renderStep => {
-        switch( GetRenderStepType(renderStep) ) {
-          case renderPoint:
-            let x = GetRenderStepX(renderStep);
-            let y = GetRenderStepY(renderStep);
-            DrawRouteStart(ctx, topoCanvas.width * x, topoCanvas.height * y, 1, 1, "rgb(255, 0, 0)");
-          case renderLine:
-            let startX = GetRenderStepStartX(renderStep);
-            let startY = GetRenderStepStartY(renderStep);
-            let endX = GetRenderStepStartX(renderStep);
-            let endY = GetRenderStepStartY(renderStep);
-            DrawRouteLine(ctx,topoCanvas.width * startX, topoCanvas.height * startY, topoCanvas.width * endX, topoCanvas.height * endY, 1);
+        switch( renderStep.type ) {
+          case rsRouteStart:
+            DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(40, 150, 40)");
+            break;
+          case rsRouteEnd:
+            DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(150, 20, 20)");
+            break;
+          case rsRouteLine:
+            DrawRouteLine(ctx,
+              topoCanvas.width * renderStep.start.x, topoCanvas.height * renderStep.start.y, 
+              topoCanvas.width * renderStep.end.x, topoCanvas.height * renderStep.end.y, 1);
+            break;
         }
       });
-
-      // let pointIDs = GetTopoRoutesPointIDs(_cragObject, )
-      // GetCheckedCragTableRows().forEach( (row, rowIndex) => {
-      //   let routeDataText = row.cells[5].innerText;
-      //   if( routeDataText.length > 0 ) {
-      //     let routeDataObject = JSON.parse(routeDataText);
-      //     let pointsOnCanvas = routeDataObject.map( point => {
-      //       return { x: ctx.canvas.width * point.x, y: ctx.canvas.height * point.y };
-      //     });
-      //     pointsOnCanvas.forEach( (point, pointIndex, points) => {
-      //       let nextPoint = points[pointIndex+1];
-      //       if( nextPoint ) DrawRouteLine(ctx, point.x, point.y, nextPoint.x, nextPoint.y, 1);
-      //     });
-      //     let startPoint = pointsOnCanvas[0];
-      //     if( startPoint ) DrawRouteStart(ctx, startPoint.x, startPoint.y, rowIndex + 1, 1, "rgb(40, 150, 40)");
-      //     let endPoint = pointsOnCanvas[pointsOnCanvas.length-1];
-      //     if( endPoint ) DrawRouteStart(ctx, endPoint.x, endPoint.y, rowIndex + 1, "1", "rgb(150, 20, 20)");
-      //   }
-      // });
     }
-    let DrawRouteStart = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
+    let DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
       ctx.font = `bold ${fontSize}rem serif`;
       const metrics = ctx.measureText(routeIndex);
       let widthOfRouteIndex = metrics.width;

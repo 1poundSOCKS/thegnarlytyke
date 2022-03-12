@@ -1,6 +1,7 @@
 let uuid = require('uuid');
 
 module.exports = rsRouteStart = Symbol("rsRouteStart");
+module.exports = rsRouteEnd = Symbol("rsRouteEnd");
 module.exports = rsRouteLine = Symbol("rsRouteLine");
 
 module.exports = CreateCragObject = loadedObject => {
@@ -54,27 +55,50 @@ module.exports = GetCragRouteInfo = (cragObject, routeID) => {
 
 module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
   let firstMatchingTopo = GetFirstMatchingTopo(cragObject, topoID);
-  console.log(`*** topo: ${JSON.stringify(firstMatchingTopo)}`);
   if( !firstMatchingTopo ) return [];
 
-  let routeStartMarkers = firstMatchingTopo.routes.map(route => {
-    if( !route.points || route.points.length == 0) return null;
-    else return { type: rsRouteStart, x: route.points[0].x, y: route.points[0].y }
+  let routes = firstMatchingTopo.routes;
+
+  let routesWithAnIndex = routes.map( (route, index) => Object.assign({index: index}, route));
+
+  let routesWithStartPoints = routesWithAnIndex.filter( route => route?.points?.length && route.points.length > 0 );
+  let routesWithEndPoints = routesWithAnIndex.filter( route => route?.points?.length && route.points.length > 1 );
+
+  let routeStartPoints = routesWithStartPoints.map(route => {
+    return {
+      type: rsRouteStart,
+      index: route.index+1,
+      x: route.points[0].x,
+      y: route.points[0].y
+    }
   });
 
-  return routeStartMarkers.filter( step => step );
-}
+  let routeEndPoints = routesWithEndPoints.map(route => {
+    return {
+      type: rsRouteEnd,
+      index: route.index+1,
+      x: route.points[route.points.length-1].x,
+      y: route.points[route.points.length-1].y
+    }
+  });
 
-module.exports = GetRenderStepType = renderStep => {
-  return renderStep.type;
-}
+  let routesWithLines = routesWithEndPoints.map(route => {
+    let routeLines = route.points.map( (point, index, points) => {
+      return {
+        type: rsRouteLine,
+        start: point,
+        end: points[index+1]
+      };
+    });
+    return routeLines.filter( line => line.end );
+  });
 
-module.exports = GetRenderStepX = renderStep => {
-  return renderStep.x;
-}
+  let routeLines = [];
+  routesWithLines.forEach( route => {
+    routeLines = routeLines.concat(route);
+  });
 
-module.exports = GetRenderStepY = renderStep => {
-  return renderStep.y;
+  return routeLines.concat(routeStartPoints, routeEndPoints);
 }
 
 let uuidv4 = cragObject => {
