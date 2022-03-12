@@ -73,17 +73,13 @@ p {
   background-color: lightgrey;
 }
 
-.main-topo-image:hover {
-  cursor: crosshair;
-}
-
 .topo-image {
   display: block;
   margin: 0.5rem;
 }
 
 .topo-image:hover {
-  cursor: grab;
+  cursor: pointer;
 }
 
 .icon-bar {
