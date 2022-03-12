@@ -22,6 +22,10 @@ jobs:
     - name: Set up node 
       uses: actions/setup-node@v1
 
+    - name: Clean cache
+      run: npm cache clean --force
+      working-directory: ./server
+
     - name: Install dependencies
       run: npm install
       working-directory: ./server
