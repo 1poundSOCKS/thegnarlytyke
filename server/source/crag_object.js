@@ -61,8 +61,8 @@ module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
 
   let routesWithAnIndex = routes.map( (route, index) => Object.assign({index: index}, route));
 
-  let routesWithStartPoints = routesWithAnIndex.filter( route => route?.points?.length && route.points.length > 0 );
-  let routesWithEndPoints = routesWithAnIndex.filter( route => route?.points?.length && route.points.length > 1 );
+  let routesWithStartPoints = routesWithAnIndex.filter( route => route.points && route.points.length > 0 );
+  let routesWithEndPoints = routesWithAnIndex.filter( route => route.points && route.points.length > 1 );
 
   let routeStartPoints = routesWithStartPoints.map(route => {
     return {
