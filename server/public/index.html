@@ -13,15 +13,7 @@
   <div class="do-not-display"><p id="current-topo-id"></p></div>
   <div id="main-topo-container" class="main-topo-container do-not-display">
     <canvas id="main-topo-image" class="main-topo-image"></canvas>
-    <table id="topo-route-table" class="new-topo-route-table">
-      <thead class="topo-route-table-header">
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Grade</th>
-          </tr>
-      </thead>
-    </table>
+    <table id="topo-route-table" class="new-topo-route-table"></table>
   </div>
   <script src="./bundle.js"></script>
   <script>
@@ -46,9 +38,11 @@
             _selectedTopoImageContainer.classList.add('topo-container-selected');
             let selectedTopoID = _selectedTopoImageContainer.dataset.id;
             let selectedTopoImage = _topoImages.get(selectedTopoID);
-            DrawMainTopoImage(selectedTopoImage);
-            DrawMainTopoOverlay(_cragObject, selectedTopoID);
-            RefreshTopoRouteTable(_cragObject, selectedTopoID);
+            let mainTopoCanvas = document.getElementById('main-topo-image');
+            DrawMainTopoImage(mainTopoCanvas, selectedTopoImage, 60);
+            DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
+            let topoRouteTable = document.getElementById("topo-route-table");
+            RefreshTopoRouteTable(topoRouteTable, _cragObject, selectedTopoID);
             document.getElementById('main-topo-container').classList.remove('do-not-display');
           }
           return topoCanvas;

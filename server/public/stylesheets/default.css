@@ -118,7 +118,8 @@ p {
 }
 
 .topo-route-table tr, .new-topo-route-table tr {
-  border-bottom: 0.2rem solid black;
+  border-top: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
   background-color: darkgray;
 }
 

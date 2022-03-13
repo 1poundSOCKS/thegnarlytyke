@@ -21,23 +21,19 @@ module.exports = ResizeTopoCanvas = (topoCanvas, topoImage, heightInRem) => {
   return topoCanvas;
 }
 
-module.exports =  DrawMainTopoImage = topoImage => {
-  let destCanvas = document.getElementById('main-topo-image');
-  let width = 60;
-  let height = topoImage.height * width / topoImage.width;
-  destCanvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
-  destCanvas.setAttribute('width', topoImage.width);
-  destCanvas.setAttribute('height', topoImage.height);
-  destCanvas.height = topoImage.height;
-  destCanvas.width = topoImage.width * destCanvas.height / topoImage.height;
-  let destCanvasCtx = destCanvas.getContext('2d');
-  destCanvasCtx.drawImage(topoImage, 0, 0, destCanvas.width, destCanvas.height);
-  return destCanvas;
+module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
+  let height = topoImage.height * widthInRem / topoImage.width;
+  topoCanvas.setAttribute('style', `width: ${widthInRem}rem; height: ${height}rem;`);
+  topoCanvas.setAttribute('width', topoImage.width);
+  topoCanvas.setAttribute('height', topoImage.height);
+  topoCanvas.height = topoImage.height;
+  topoCanvas.width = topoImage.width * topoCanvas.height / topoImage.height;
+  let ctx = topoCanvas.getContext('2d');
+  ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
 }
 
-module.exports =  DrawMainTopoOverlay = (cragObject, topoID) => {
+module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
   let topoRouteRenderSteps = GetTopoOverlayRenderSteps(cragObject, topoID);
-  let topoCanvas = document.getElementById('main-topo-image');
   let ctx = topoCanvas.getContext('2d');
   topoRouteRenderSteps.forEach( renderStep => {
     switch( renderStep.type ) {
@@ -56,13 +52,14 @@ module.exports =  DrawMainTopoOverlay = (cragObject, topoID) => {
   });
 }
 
-module.exports =  RefreshTopoRouteTable = (cragObject, topoID) => {
-  let topoRouteTable = document.getElementById("topo-route-table");
-  while( topoRouteTable.rows.length > 1 ) topoRouteTable.deleteRow(1);
-  GetTopoRouteIDs(cragObject, topoID).forEach( routeID => {
+module.exports =  RefreshTopoRouteTable = (topoRouteTable, cragObject, topoID) => {
+  let tableBody = topoRouteTable.getElementsByTagName('tbody')[0];
+  if( !tableBody ) tableBody = topoRouteTable.createTBody();
+  while( topoRouteTable.rows.length > 0 ) topoRouteTable.deleteRow(0);
+  GetTopoRouteIDs(cragObject, topoID).forEach( (routeID, index) => {
     let topoRouteInfo = GetCragRouteInfo(cragObject, routeID);
     let newRow = topoRouteTable.insertRow(topoRouteTable.rows.length);
-    newRow.insertCell(0).innerText = topoRouteTable.rows.length - 1;
+    newRow.insertCell(0).innerText = index + 1;
     newRow.insertCell(1).innerText = topoRouteInfo.name;
     newRow.insertCell(2).innerText = topoRouteInfo.grade;
   });
