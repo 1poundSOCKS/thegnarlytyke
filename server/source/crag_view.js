@@ -1,3 +1,49 @@
+
+let _cragObject = null;
+let _topoImages = new Map();
+let _selectedTopoImageContainer = null;
+
+module.exports = LoadAndDisplayCrag = async cragURL => {
+  let response = await fetch(cragURL);
+  let crag = await response.json();
+  _cragObject = CreateCragObject(crag);
+  let cragTopoIDs = GetCragTopoIDs(_cragObject);
+  let topoImageContainers = cragTopoIDs.map( topoID => {
+    return document.getElementById('topo-images-container').appendChild(CreateTopoImageContainer(topoID));
+  });
+  let topoImageCanvases = topoImageContainers.map( container => {
+    let topoCanvas = container.appendChild(document.createElement('canvas'));
+    topoCanvas.classList.add('topo-image');
+    topoCanvas.onclick = event => TopoSelected(event);
+    return topoCanvas;
+  });
+  topoImageCanvases.forEach( canvas => {
+    let topoID = canvas.parentElement.dataset.id;
+    let imageFilename = GetTopoImageFile(_cragObject, topoID);
+    if( imageFilename ) {
+      LoadImage(`./images/${imageFilename}`)
+      .then( topoImage => {
+        _topoImages.set(topoID, topoImage);
+        DisplayTopoImage(canvas, topoImage, 10);
+      });
+    }
+  });
+}
+
+let TopoSelected = event => {
+  if( _selectedTopoImageContainer ) _selectedTopoImageContainer.classList.remove('topo-container-selected');
+  _selectedTopoImageContainer = event.target.parentElement;
+  _selectedTopoImageContainer.classList.add('topo-container-selected');
+  let selectedTopoID = _selectedTopoImageContainer.dataset.id;
+  let selectedTopoImage = _topoImages.get(selectedTopoID);
+  let mainTopoCanvas = document.getElementById('main-topo-image');
+  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage, 60);
+  DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
+  let topoRouteTable = document.getElementById("topo-route-table");
+  RefreshTopoRouteTable(topoRouteTable, _cragObject, selectedTopoID);
+  document.getElementById('main-topo-container').classList.remove('do-not-display');
+}
+
 module.exports = CreateTopoImageContainer = (topoID) => {
   let container = document.createElement('div');
   container.classList.add('topo-container');
