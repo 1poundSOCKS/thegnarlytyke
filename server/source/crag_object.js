@@ -41,8 +41,10 @@ module.exports = GetTopoImageFile = (cragObject, topoID) => {
 }
 
 module.exports = GetTopoRouteIDs = (cragObject, topoID) => {
-  let firstMatchingTopo = GetFirstMatchingTopo(cragObject, topoID);
-  return (firstMatchingTopo && firstMatchingTopo.routes) ? firstMatchingTopo.routes.map(route => route.id) : [];
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject.routes ) return [];
+  let orderedRoutes = AddRenderIndexToTopoRoutes(topoObject);
+  return orderedRoutes.map(route => route.id);
 }
 
 module.exports = GetCragRouteInfo = (cragObject, routeID) => {
@@ -53,16 +55,16 @@ module.exports = GetCragRouteInfo = (cragObject, routeID) => {
   } : null;
 }
 
-module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
-  let firstMatchingTopo = GetFirstMatchingTopo(cragObject, topoID);
-  if( !firstMatchingTopo ) return [];
+module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {  
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject ) return [];
 
-  let routes = firstMatchingTopo.routes;
+  AddRenderIndexToTopoRoutes(topoObject);
 
-  let routesWithAnIndex = routes.map( (route, index) => Object.assign({index: index}, route));
-
-  let routesWithStartPoints = routesWithAnIndex.filter( route => route.points && route.points.length > 0 );
-  let routesWithEndPoints = routesWithAnIndex.filter( route => route.points && route.points.length > 1 );
+  let routes = topoObject.routes;
+  let routesWithStartPoints = routes.filter( route => route.points && route.points.length > 0 );
+  
+  let routesWithEndPoints = routesWithStartPoints.filter( route => route.points && route.points.length > 1 );
 
   let routeStartPoints = routesWithStartPoints.map(route => {
     return {
@@ -103,6 +105,23 @@ module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
 
 let uuidv4 = cragObject => {
   return cragObject.UUIDGenFunction ? cragObject.UUIDGenFunction() : uuid.v4();
+}
+
+let AddRenderIndexToTopoRoutes = (topoObject) => {
+  let routesInLeftToRightOrder = topoObject.routes.sort( (route1, route2) => {
+    if( !route1.points && !route2.points ) return 0;
+    else if( route1.points && !route2.points ) return -1;
+    else if( !route1.points && route2.points ) return 1;
+    else return route1.points[0].x - route2.points[0].x;
+  });
+
+  let nextRenderIndex = 0;
+  routesInLeftToRightOrder.forEach( route => {
+    if( route.points && route.points.length > 0 ) route.index = nextRenderIndex++;
+    else delete route.index;
+  });
+
+  return routesInLeftToRightOrder;
 }
 
 let GetFirstMatchingRoute = (cragObject, routeID) => {

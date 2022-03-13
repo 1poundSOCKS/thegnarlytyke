@@ -63,7 +63,37 @@ test('Topo route IDs returned for a topo with no routes', () => {
   expect(testOutput).toEqual(expectedTestOutput);
 });
 
-test('Topo routes IDs returned for multiple crags', () => {
+test('Topo route IDs are returned in left to right order', () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-111-aaa',
+        routes: [
+          {
+            id: 'last',
+            points: [{x: 0.9}]
+          },
+          {
+            id: 'first',
+            points: [{x: 0.1}]
+          },
+          {
+            id: 'middle',
+            points: [{x: 0.5}]
+          }
+        ]
+      }
+    ]
+  };
+  let expectedTestOutput = ['first','middle','last'];
+
+  let cragObject = CreateCragObject(testInput);
+  let testOutput = GetTopoRouteIDs(cragObject, 'tid-111-aaa');
+
+  expect(testOutput).toEqual(expectedTestOutput);
+});
+
+test('Topo routes IDs returned when the crag has multiple topos', () => {
   let testInput = { topos: [
     {
       id: 'tid-111-aaa', 
@@ -168,11 +198,38 @@ test("Render steps for a route with 3 points", () => {
 
   let cragObject = CreateCragObject(testInput);
   let renderSteps = GetTopoOverlayRenderSteps(cragObject, 'rid-111');
-  console.table(renderSteps);
   
   expect(renderSteps.length).toEqual(4);
-  expect(renderSteps[0]).toEqual( { type: rsRouteLine, start: {x: 0.1, y: 0.2}, end: {x: 0.3, y: 0.4} } );  
-  expect(renderSteps[1]).toEqual( { type: rsRouteLine, start: {x: 0.3, y: 0.4}, end: {x: 0.5, y: 0.6 }} );  
-  expect(renderSteps[2]).toEqual( { type: rsRouteStart, index: 1, x: 0.1, y: 0.2 } );
-  expect(renderSteps[3]).toEqual( { type: rsRouteEnd, index: 1, x: 0.5, y: 0.6 } );
+  expect(renderSteps).toContainEqual( { type: rsRouteLine, start: {x: 0.1, y: 0.2}, end: {x: 0.3, y: 0.4} } );  
+  expect(renderSteps).toContainEqual( { type: rsRouteLine, start: {x: 0.3, y: 0.4}, end: {x: 0.5, y: 0.6 }} );  
+  expect(renderSteps).toContainEqual( { type: rsRouteStart, index: 1, x: 0.1, y: 0.2 } );
+  expect(renderSteps).toContainEqual( { type: rsRouteEnd, index: 1, x: 0.5, y: 0.6 } );
+});
+
+test("Left to right sorting of route indexes in render", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'rid-111',
+        routes: [
+          {
+            points: [ { x: 0.2, y: 0.2 }, { x: 0.3, y: 0.4 }, { x: 0.5, y: 0.6 }]
+          },
+          {
+            points: [ { x: 0.1, y: 0.2 }, { x: 0.3, y: 0.4 }, { x: 0.7, y: 0.8 }]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let renderSteps = GetTopoOverlayRenderSteps(cragObject, 'rid-111');
+  console.table(renderSteps);
+  
+  expect(renderSteps.length).toEqual(8);
+  expect(renderSteps).toContainEqual({ type: rsRouteStart, index: 1, x: 0.1, y: 0.2 });
+  expect(renderSteps).toContainEqual({ type: rsRouteStart, index: 2, x: 0.2, y: 0.2 });
+  expect(renderSteps).toContainEqual({ type: rsRouteEnd, index: 1, x: 0.7, y: 0.8 });
+  expect(renderSteps).toContainEqual({ type: rsRouteEnd, index: 2, x: 0.5, y: 0.6 });
 });
