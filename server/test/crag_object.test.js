@@ -225,7 +225,6 @@ test("Left to right sorting of route indexes in render", () => {
 
   let cragObject = CreateCragObject(testInput);
   let renderSteps = GetTopoOverlayRenderSteps(cragObject, 'rid-111');
-  console.table(renderSteps);
   
   expect(renderSteps.length).toEqual(8);
   expect(renderSteps).toContainEqual({ type: rsRouteStart, index: 1, x: 0.1, y: 0.2 });

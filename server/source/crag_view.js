@@ -5,23 +5,20 @@ module.exports = CreateTopoImageContainer = (topoID) => {
   return container;
 }
 
-module.exports = CreateCanvasAndDisplayTopoImage = (topoImage, topoImageContainer) => {
-  let topoCanvas = CreateTopoCanvas(topoImage, 10);
-  topoImageContainer.appendChild(topoCanvas);
+module.exports = DisplayTopoImage = (topoCanvas, topoImage, heightInRem) => {
+  ResizeTopoCanvas(topoCanvas, topoImage, heightInRem);
   let ctx = topoCanvas.getContext('2d');
   ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
   return topoCanvas;
 }
 
-module.exports = CreateTopoCanvas = (topoImage, heightInRem) => {
-  let canvas = document.createElement('CANVAS');
-  canvas.classList.add('topo-image');
+module.exports = ResizeTopoCanvas = (topoCanvas, topoImage, heightInRem) => {
   let height = heightInRem;
   let width = topoImage.width * height / topoImage.height;
-  canvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
-  canvas.setAttribute('width', topoImage.width);
-  canvas.setAttribute('height', topoImage.height);
-  return canvas;
+  topoCanvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
+  topoCanvas.setAttribute('width', topoImage.width);
+  topoCanvas.setAttribute('height', topoImage.height);
+  return topoCanvas;
 }
 
 module.exports =  DrawMainTopoImage = topoImage => {
