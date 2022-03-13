@@ -21,7 +21,7 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
     return topoCanvas;
   });
   
-  topoImageCanvases.forEach( canvas => {
+  topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
     let imageFilename = GetTopoImageFile(_cragObject, topoID);
     if( imageFilename ) {
@@ -31,6 +31,13 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
     }
   });
 }
+
+module.exports = LoadImage = (url) => new Promise( (resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = (err) => reject(err);
+  img.src = url;
+});
 
 let TopoSelected = event => {
   if( _selectedTopoImageContainer ) _selectedTopoImageContainer.classList.remove('topo-container-selected');
