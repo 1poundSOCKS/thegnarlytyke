@@ -71,6 +71,7 @@ let OnTopoSelected = event => {
   DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
   
   RefreshTopoRouteTable(_cragObject, selectedTopoID);
+  RefreshCragRouteTable(_cragObject);
   EnableTopoCommandsInCragRouteTable(_cragObject, selectedTopoID);
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
