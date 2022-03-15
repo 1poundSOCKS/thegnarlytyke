@@ -64,6 +64,7 @@ p {
   align-items: center;
   margin: auto;
   margin-top: 1rem;
+  margin-bottom: 1rem;
   background-color: lightgrey;
 }
 
@@ -110,33 +111,44 @@ p {
   background-color: grey;
 }
 
-.topo-route-table, .new-topo-route-table {
+.topo-route-table {
   border-collapse: collapse;
   min-width: 40rem;
   font-size: 2rem;
   text-align: left;
 }
 
-.topo-route-table tr, .new-topo-route-table tr {
+.topo-route-table tr {
   border-top: 0.1rem solid black;
   border-bottom: 0.1rem solid black;
   background-color: darkgray;
 }
 
-.topo-route-table td:nth-child(3), .topo-route-table th:nth-child(3) {
+.topo-route-table td:nth-child(1) {
   display: none;
 }
 
 .crag-route-table {
-  margin: auto;
-  border-collapse: separate;
-  text-align: left;
+  border-collapse: collapse;
+  min-width: 40rem;
   font-size: 2rem;
+  text-align: left;
+  margin: auto;
 }
 
 .crag-route-table tr {
+  border-top: 0.1rem solid black;
   border-bottom: 0.1rem solid black;
   background-color: darkgray;
+}
+
+.crag-route-table td {
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.crag-route-table td:nth-child(1) {
+  display: none;
 }
 
 .do-not-display {

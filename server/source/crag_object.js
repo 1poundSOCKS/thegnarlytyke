@@ -47,12 +47,32 @@ module.exports = GetTopoRouteIDs = (cragObject, topoID) => {
   return orderedRoutes.map(route => route.id);
 }
 
+module.exports = GetCragRouteIDs = (cragObject) => {
+  return cragObject.routes.map(route => route.id);
+}
+
 module.exports = GetCragRouteInfo = (cragObject, routeID) => {
   let firstMatchingRoute = GetFirstMatchingRoute(cragObject, routeID);
   return firstMatchingRoute ? {
     name: firstMatchingRoute.name,
     grade: firstMatchingRoute.grade
   } : null;
+}
+
+module.exports = SetCragRouteName = (cragObject, routeID, routeName) => {
+  let firstMatchingRoute = GetFirstMatchingRoute(cragObject, routeID);
+  firstMatchingRoute.name = routeName;
+}
+
+module.exports = SetCragRouteGrade = (cragObject, routeID, routeGrade) => {
+  let firstMatchingRoute = GetFirstMatchingRoute(cragObject, routeID);
+  firstMatchingRoute.grade = routeGrade;
+}
+
+module.exports = AppendCragRoute = (cragObject) => {
+  let id = uuid.v4();
+  cragObject.routes.push({id: id, name: '', grade: ''});
+  return id;
 }
 
 module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {  
@@ -101,10 +121,6 @@ module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
   });
 
   return routeLines.concat(routeStartPoints, routeEndPoints);
-}
-
-let uuidv4 = cragObject => {
-  return cragObject.UUIDGenFunction ? cragObject.UUIDGenFunction() : uuid.v4();
 }
 
 let AddRenderIndexToTopoRoutes = (topoObject) => {

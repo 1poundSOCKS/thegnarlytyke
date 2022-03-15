@@ -9,15 +9,25 @@
 <body id="crag-view-body">
   <div><h1>the gnarly tyke</h1></div>
   <div><h2>Baildon Bank</h2><div>
+  <div id="crag-command-bar">
+    <button id="save-crag-button" type="button">Save</button>
+  </div>
   <div id="topo-images-container" class="topo-images-container"></div>
   <div id="main-topo-container" class="main-topo-container do-not-display">
     <canvas id="main-topo-image" class="main-topo-image"></canvas>
-    <table id="topo-route-table" class="new-topo-route-table"></table>
+    <table id="topo-route-table" class="topo-route-table"></table>
+  </div>
+  <div><h2>Crag routes</h2><div>
+    <div id="crag-container" class="crag-container">
+    <table id="crag-route-table" class="crag-route-table"></table>
   </div>
   <script src="./bundle.js"></script>
   <script>
     window.onload = () => {
       LoadAndDisplayCrag('./data/crag.json', './images/');
+      document.getElementById('save-crag-button').onclick = () => {
+        SaveCrag();
+      }
     }
     </script>
 </body>

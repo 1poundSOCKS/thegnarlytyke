@@ -4,7 +4,7 @@ import path from 'path'
 import * as _crag from './crag.js'
 
 const app = express();
-app.use(express.static('private'));
+app.use(express.static('public'));
 app.use(bodyParser.json());
 
 app.post('/add_topo', (req, res) => {

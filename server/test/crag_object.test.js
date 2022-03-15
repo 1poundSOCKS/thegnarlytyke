@@ -232,3 +232,71 @@ test("Left to right sorting of route indexes in render", () => {
   expect(renderSteps).toContainEqual({ type: rsRouteEnd, index: 1, x: 0.7, y: 0.8 });
   expect(renderSteps).toContainEqual({ type: rsRouteEnd, index: 2, x: 0.5, y: 0.6 });
 });
+
+test("Update a crag route name", () => {
+  let testInput = {
+    routes: [
+      {
+        id: 'rid-111',
+        name: 'first route'
+      },
+      {
+        id: 'rid-222',
+        name: 'second route'
+      },
+      {
+        id: 'rid-333',
+        name: 'third route'
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  SetCragRouteName(cragObject, 'rid-222', 'renamed route');
+
+  expect(testInput.routes).toContainEqual({id: 'rid-222', name: 'renamed route'});
+});
+
+test("Update crag route grades", () => {
+  let testInput = {
+    routes: [
+      {
+        id: 'rid-111'
+      },
+      {
+        id: 'rid-222',
+        grade: 'hard'
+      },
+      {
+        id: 'rid-333',
+        grade: 'easy'
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  SetCragRouteGrade(cragObject, 'rid-111', 'okay-ish');
+  SetCragRouteGrade(cragObject, 'rid-222', 'really easy');
+  SetCragRouteGrade(cragObject, 'rid-333', 'very hard');
+
+  expect(testInput.routes).toContainEqual({id: 'rid-111', grade: 'okay-ish'});
+  expect(testInput.routes).toContainEqual({id: 'rid-222', grade: 'really easy'});
+  expect(testInput.routes).toContainEqual({id: 'rid-333', grade: 'very hard'});
+});
+
+test("append new crag routes", () => {
+  let testInput = {
+    routes: [
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let id1 = AppendCragRoute(cragObject);
+  let id2 = AppendCragRoute(cragObject);
+  let id3 = AppendCragRoute(cragObject);
+  let routeIDs = GetCragRouteIDs(cragObject);
+  expect(routeIDs.length).toEqual(3);
+  expect(routeIDs[0]).toEqual(id1);
+  expect(routeIDs[1]).toEqual(id2);
+  expect(routeIDs[2]).toEqual(id3);
+});

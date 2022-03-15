@@ -3,7 +3,7 @@ let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 
-module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
+module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath, inEditMode) => {
   let response = await fetch(cragURL);
   let crag = await response.json();
   
@@ -30,6 +30,25 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
       DisplayTopoImage(canvas, topoImage, 10);
     }
   });
+
+  RefreshCragRouteTable(_cragObject);
+}
+
+module.exports = SaveCrag = async () => {
+  let response = await fetch('./save_crag', {
+    method: 'POST',
+    mode: 'same-origin',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow',
+    referrerPolicy: 'same-origin',
+    body: JSON.stringify(_cragObject)
+  });
+  let parsedResponse = await response.json();
+  console.log(`${JSON.stringify(parsedResponse)}`);
 }
 
 module.exports = LoadImage = (url) => new Promise( (resolve, reject) => {
@@ -111,20 +130,7 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
   });
 }
 
-module.exports =  RefreshTopoRouteTable = (topoRouteTable, cragObject, topoID) => {
-  let tableBody = topoRouteTable.getElementsByTagName('tbody')[0];
-  if( !tableBody ) tableBody = topoRouteTable.createTBody();
-  while( topoRouteTable.rows.length > 0 ) topoRouteTable.deleteRow(0);
-  GetTopoRouteIDs(cragObject, topoID).forEach( (routeID, index) => {
-    let topoRouteInfo = GetCragRouteInfo(cragObject, routeID);
-    let newRow = topoRouteTable.insertRow(topoRouteTable.rows.length);
-    newRow.insertCell(0).innerText = index + 1;
-    newRow.insertCell(1).innerText = topoRouteInfo.name;
-    newRow.insertCell(2).innerText = topoRouteInfo.grade;
-  });
-}
-
-module.exports =  DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
+module.exports = DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
   ctx.font = `bold ${fontSize}rem serif`;
   const metrics = ctx.measureText(routeIndex);
   let widthOfRouteIndex = metrics.width;
