@@ -300,3 +300,27 @@ test("append new crag routes", () => {
   expect(routeIDs[1]).toEqual(id2);
   expect(routeIDs[2]).toEqual(id3);
 });
+
+test("add crag route to topo", () => {
+  let testInput = {
+    routes: [
+      { id: 'rid-111' },
+      { id: 'rid-222' }
+    ],
+    topos: [
+      {
+        id: 'tid-999',
+        routes: [
+          { id: 'rid-111'}
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  AddCragRouteToTopo(cragObject, 'rid-222', 'tid-999');
+  let topoRouteIDs = GetTopoRouteIDs(cragObject, 'tid-999');
+  expect(topoRouteIDs.length).toEqual(2);
+  expect(topoRouteIDs).toContainEqual('rid-111');
+  expect(topoRouteIDs).toContainEqual('rid-222');
+});

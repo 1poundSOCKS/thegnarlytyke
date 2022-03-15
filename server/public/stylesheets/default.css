@@ -25,6 +25,16 @@ p {
   font-size: 2rem;
 }
 
+button {
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  color: black;
+  background-color: lightgray;
+  text-align: center;
+  justify-content: right;
+}
+
 .topo-images-container {
   display: flex;
   flex-direction: row;
@@ -149,6 +159,11 @@ p {
 
 .crag-route-table td:nth-child(1) {
   display: none;
+}
+
+.crag-command-bar {
+  margin: auto;
+  margin-top: 1rem;
 }
 
 .do-not-display {

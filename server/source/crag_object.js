@@ -75,6 +75,11 @@ module.exports = AppendCragRoute = (cragObject) => {
   return id;
 }
 
+module.exports = AddCragRouteToTopo = (cragObject, routeID, topoID) => {
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  topoObject.routes.push({id: routeID});
+}
+
 module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {  
   let topoObject = GetFirstMatchingTopo(cragObject, topoID);
   if( !topoObject ) return [];

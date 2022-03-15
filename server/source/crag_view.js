@@ -17,7 +17,7 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath, inEditMode) =>
   let topoImageCanvases = topoImageContainers.map( container => {
     let topoCanvas = container.appendChild(document.createElement('canvas'));
     topoCanvas.classList.add('topo-image');
-    topoCanvas.onclick = event => TopoSelected(event);
+    topoCanvas.onclick = event => OnTopoSelected(event);
     return topoCanvas;
   });
   
@@ -58,7 +58,7 @@ module.exports = LoadImage = (url) => new Promise( (resolve, reject) => {
   img.src = url;
 });
 
-let TopoSelected = event => {
+let OnTopoSelected = event => {
   if( _selectedTopoImageContainer ) _selectedTopoImageContainer.classList.remove('topo-container-selected');
 
   _selectedTopoImageContainer = event.target.parentElement;
@@ -70,9 +70,9 @@ let TopoSelected = event => {
   DrawMainTopoImage(mainTopoCanvas, selectedTopoImage, 60);
   DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
   
-  let topoRouteTable = document.getElementById("topo-route-table");
-  RefreshTopoRouteTable(topoRouteTable, _cragObject, selectedTopoID);
-  
+  RefreshTopoRouteTable(_cragObject, selectedTopoID);
+  EnableTopoCommandsInCragRouteTable(_cragObject, selectedTopoID);
+
   document.getElementById('main-topo-container').classList.remove('do-not-display');
 }
 
