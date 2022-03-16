@@ -2,8 +2,14 @@
 let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
+let _contentEditable = false;
 
-module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath, inEditMode) => {
+module.exports = SetViewContentEditable = editable => {
+  _contentEditable = editable;
+  SetTableContentEditable(_contentEditable);
+}
+
+module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
   let response = await fetch(cragURL);
   let crag = await response.json();
   
@@ -64,17 +70,20 @@ let OnTopoSelected = event => {
   _selectedTopoImageContainer = event.target.parentElement;
   _selectedTopoImageContainer.classList.add('topo-container-selected');
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;
-  let selectedTopoImage = _topoImages.get(selectedTopoID);
-  let mainTopoCanvas = document.getElementById('main-topo-image');
-  
-  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage, 60);
-  DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
-  
+
+  RefreshMainTopoView();
   RefreshTopoRouteTable(_cragObject, selectedTopoID);
-  RefreshCragRouteTable(_cragObject);
-  EnableTopoCommandsInCragRouteTable(_cragObject, selectedTopoID);
+  RefreshCragRouteTable(_cragObject, selectedTopoID);
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
+}
+
+module.exports = RefreshMainTopoView = () => {
+  let selectedTopoID = _selectedTopoImageContainer.dataset.id;
+  let selectedTopoImage = _topoImages.get(selectedTopoID);
+  let mainTopoCanvas = document.getElementById('main-topo-image');
+  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage, 60);
+  DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
 }
 
 module.exports = CreateTopoImageContainer = (topoID) => {
