@@ -2,6 +2,7 @@
 let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
+let _selectedTopoID = null;
 let _contentEditable = false;
 
 module.exports = SetViewContentEditable = editable => {
@@ -54,7 +55,6 @@ module.exports = SaveCrag = async () => {
     body: JSON.stringify(_cragObject)
   });
   let parsedResponse = await response.json();
-  console.log(`${JSON.stringify(parsedResponse)}`);
 }
 
 module.exports = LoadImage = (url) => new Promise( (resolve, reject) => {
@@ -69,7 +69,8 @@ let OnTopoSelected = event => {
 
   _selectedTopoImageContainer = event.target.parentElement;
   _selectedTopoImageContainer.classList.add('topo-container-selected');
-  let selectedTopoID = _selectedTopoImageContainer.dataset.id;
+
+  let selectedTopoID = GetSelectedTopoID();
 
   RefreshMainTopoView();
   RefreshTopoRouteTable(_cragObject, selectedTopoID);
@@ -77,6 +78,8 @@ let OnTopoSelected = event => {
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
 }
+
+module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer.dataset.id;
 
 module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;

@@ -8,7 +8,7 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 
 app.get('/edit', (req, res) => {
-  res.sendFile('./public/edit.html');
+  res.sendFile(path.resolve('./public', 'edit.html'));
 });
 
 app.post('/add_topo', (req, res) => {
