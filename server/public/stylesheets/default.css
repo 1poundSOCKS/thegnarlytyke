@@ -130,12 +130,14 @@ button {
   background-color: grey;
 }
 
-.topo-route-table {
+.topo-route-table-container {
   margin-top: 1rem;
+  width: min(100%, 35rem);
+}
+
+.topo-route-table {
   border-collapse: collapse;
-  width: 80%;
-  min-width: 30rem;
-  max-width: 30rem;
+  width: 100%;
   font-size: 2rem;
   text-align: left;
 }
@@ -163,13 +165,16 @@ button {
   color: white;
 }
 
-.crag-route-table {
+.crag-route-table-container {
   margin-top: 1rem;
+  width: min(100%, 35rem);
+}
+
+.crag-route-table {
   border-collapse: collapse;
-  min-width: 30rem;
+  width: 100%;
   font-size: 2rem;
   text-align: left;
-  width: 100%;
 }
 
 .crag-route-table tr {
