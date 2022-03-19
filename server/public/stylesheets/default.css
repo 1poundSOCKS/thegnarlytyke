@@ -13,6 +13,7 @@ h1 {
 
 h2 {
   margin: auto;
+  margin-bottom: 1rem;
   text-align: center;
   background: #662608;
   background-size: 100%;
@@ -36,14 +37,19 @@ button {
 }
 
 .topo-images-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-  margin-top: 1rem;
+  display: grid;
+  grid-auto-flow: column;
+  overflow-x: auto;
+  gap: 1rem;
+  background-color: lightgrey;
+}
+
+.topo-images-container-edit {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 20%;
+  overflow-x: auto;
+  gap: 1rem;
   background-color: lightgrey;
 }
 
@@ -53,12 +59,6 @@ button {
 
 .topo-container a:hover {
   background-color: white;
-}
-
-.topo-container * {
-  display: block;
-  margin: auto;
-  font-size: 2rem;
 }
 
 .topo-container-selected {
@@ -71,8 +71,18 @@ button {
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  align-items: center;
+  align-items: top;
   margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: lightgrey;
+}
+
+.main-topo-container-edit {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
   background-color: lightgrey;
@@ -85,8 +95,7 @@ button {
 }
 
 .topo-image {
-  display: block;
-  margin: 0.5rem;
+  width: 100%;
 }
 
 .topo-image:hover {
@@ -122,28 +131,45 @@ button {
 }
 
 .topo-route-table {
+  margin-top: 1rem;
   border-collapse: collapse;
-  min-width: 40rem;
+  width: 80%;
+  min-width: 30rem;
+  max-width: 30rem;
   font-size: 2rem;
   text-align: left;
 }
 
-.topo-route-table tr {
+.topo-route-table-edit {
+  margin-top: 1rem;
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 30rem;
+  font-size: 2rem;
+  text-align: left;
+}
+
+.topo-route-table tr,.topo-route-table-edit tr {
   border-top: 0.1rem solid black;
   border-bottom: 0.1rem solid black;
   background-color: darkgray;
 }
 
-.topo-route-table td:nth-child(1) {
+.topo-route-table td:nth-child(1),.topo-route-table-edit td:nth-child(1) {
   display: none;
 }
 
+.topo-route-table-edit td:nth-child(5):hover {
+  color: white;
+}
+
 .crag-route-table {
+  margin-top: 1rem;
   border-collapse: collapse;
-  min-width: 40rem;
+  min-width: 30rem;
   font-size: 2rem;
   text-align: left;
-  margin: auto;
+  width: 100%;
 }
 
 .crag-route-table tr {
@@ -161,6 +187,10 @@ button {
   display: none;
 }
 
+.crag-route-table td:nth-child(5):hover {
+  color: white;
+}
+
 .crag-command-bar {
   margin: auto;
   margin-top: 1rem;
@@ -168,4 +198,12 @@ button {
 
 .do-not-display {
   display: none;
+}
+
+.main-topo-image-container {
+  width: min(100% - 2rem, 60rem);
+}
+
+.main-topo-image {
+  width: 100%;
 }

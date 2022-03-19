@@ -2,7 +2,6 @@
 let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
-let _selectedTopoID = null;
 let _contentEditable = false;
 
 module.exports = SetViewContentEditable = editable => {
@@ -22,8 +21,9 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
   });
 
   let topoImageCanvases = topoImageContainers.map( container => {
-    let topoCanvas = container.appendChild(document.createElement('canvas'));
+    let topoCanvas = document.createElement('canvas')
     topoCanvas.classList.add('topo-image');
+    topoCanvas = container.appendChild(topoCanvas);
     topoCanvas.onclick = event => OnTopoSelected(event);
     return topoCanvas;
   });
@@ -34,7 +34,7 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
     if( imageFilename ) {
       let topoImage = await LoadImage(`${imagesPath}${imageFilename}`);
       _topoImages.set(topoID, topoImage);
-      DisplayTopoImage(canvas, topoImage, 10);
+      DisplayTopoImage(canvas, topoImage);//, 10);
     }
   });
 
@@ -85,7 +85,7 @@ module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;
   let selectedTopoImage = _topoImages.get(selectedTopoID);
   let mainTopoCanvas = document.getElementById('main-topo-image');
-  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage, 60);
+  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage);//, 60);
   DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
 }
 
@@ -106,19 +106,14 @@ module.exports = DisplayTopoImage = (topoCanvas, topoImage, heightInRem) => {
 module.exports = ResizeTopoCanvas = (topoCanvas, topoImage, heightInRem) => {
   let height = heightInRem;
   let width = topoImage.width * height / topoImage.height;
-  topoCanvas.setAttribute('style', `width: ${width}rem; height: ${height}rem;`);
   topoCanvas.setAttribute('width', topoImage.width);
   topoCanvas.setAttribute('height', topoImage.height);
   return topoCanvas;
 }
 
 module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
-  let height = topoImage.height * widthInRem / topoImage.width;
-  topoCanvas.setAttribute('style', `width: ${widthInRem}rem; height: ${height}rem;`);
   topoCanvas.setAttribute('width', topoImage.width);
   topoCanvas.setAttribute('height', topoImage.height);
-  topoCanvas.height = topoImage.height;
-  topoCanvas.width = topoImage.width * topoCanvas.height / topoImage.height;
   let ctx = topoCanvas.getContext('2d');
   ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
 }

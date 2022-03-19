@@ -2,9 +2,9 @@
 <meta charset="UTF-8">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-    <title>the gnarly tyke</title>
-    <link rel="stylesheet" href="stylesheets/default.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>the gnarly tyke</title>
+  <link rel="stylesheet" href="stylesheets/default.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body id="crag-view-body">
   <div><h1>the gnarly tyke</h1></div>
@@ -12,11 +12,11 @@
   <div id="crag-command-bar">
     <button id="save-crag-button" type="button">Save</button>
   </div>
-  <div id="topo-images-container" class="topo-images-container"></div>
-  <div id="main-topo-container" class="main-topo-container">
-    <canvas id="main-topo-image" class="main-topo-image"></canvas>
-    <table id="topo-route-table" class="topo-route-table"></table>
-    <table id="crag-route-table" class="crag-route-table"></table>
+  <div id="topo-images-container" class="topo-images-container-edit"></div>
+  <div id="main-topo-container" class="main-topo-container-edit">
+    <div><h2>Crag routes</h2><table id="crag-route-table" class="crag-route-table"></table></div>
+    <div><h2>Topo routes</h2><table id="topo-route-table" class="topo-route-table-edit"></table></div>
+    <div><canvas id="main-topo-image" class="main-topo-image"></canvas></div>
   </div>
   <script src="./bundle.js"></script>
   <script>

@@ -61,8 +61,10 @@ let AddButtonsToCragTableRow = row => {
   let id = row.cells[columnIndex_ID].innerText;
   let buttonCell = row.insertCell(columnIndex_Button);
   if( id.length > 0 ) {
-    let button = buttonCell.appendChild(document.createElement('button'));
-    button.innerText = '+';
+    buttonCell.classList.add('fa');
+    buttonCell.classList.add('fa-plus');
+    // let button = buttonCell.appendChild(document.createElement('button'));
+    // button.innerText = '+';
   }
 }
 
@@ -74,12 +76,12 @@ let UpdateCragRouteTableCommands = (cragObject, topoID) => {
 }
 
 let UpdateCragRouteCommands = (row, cragObject, topoID) => {
-  // let button = row.cells[columnIndex_Button];
-  let button = row.cells[columnIndex_Button].getElementsByTagName('button')[0];
+  let button = row.cells[columnIndex_Button];
+  // let button = row.cells[columnIndex_Button].getElementsByTagName('button')[0];
   if( !button ) return;
   button.onclick = event => {
-    let cell = event.target.parentElement;
-    let row = cell.parentElement;
+    let row = event.target.parentElement;
+    // let row = cell.parentElement;
     let routeID = row.cells[columnIndex_ID].innerText;
     AddCragRouteToTopo(cragObject, routeID, topoID);
     RefreshTopoRouteTable(cragObject, topoID);
@@ -95,19 +97,21 @@ let AddButtonsToTopoRouteTableRow = row => {
   let id = row.cells[columnIndex_ID].innerText;
   let buttonCell = row.insertCell(columnIndex_Button);
   if( id.length > 0 ) {
-    let button = buttonCell.appendChild(document.createElement('button'));
-    button.innerText = '-';
+    buttonCell.classList.add('fa');
+    buttonCell.classList.add('fa-minus');
+    // let button = buttonCell.appendChild(document.createElement('button'));
+    // button.innerText = '-';
   }
 }
 
 let UpdateTopoRouteTableCommands = (cragObject, topoID) => {
   let topoRouteTable = document.getElementById('topo-route-table');
   Array.from(topoRouteTable.rows).forEach( row => {
-    // let button = row.cells[columnIndex_Button].children[0];
-    let button = row.cells[columnIndex_Button].getElementsByTagName('button')[0];
+    let button = row.cells[columnIndex_Button];
+    // let button = row.cells[columnIndex_Button].getElementsByTagName('button')[0];
     button.onclick = event => {
-      let cell = event.target.parentElement;
-      let row = cell.parentElement;
+      let row = event.target.parentElement;
+      // let row = cell.parentElement;
       let routeID = row.cells[columnIndex_ID].innerText;
       RemoveCragRouteFromTopo(cragObject, routeID, topoID);
       RefreshTopoRouteTable(cragObject, topoID);
@@ -124,6 +128,7 @@ let AppendRouteTableRow = (routeTable, cragObject, routeID) => {
   newRow.insertCell(columnIndex_Index).innerText = routeID ? routeTable.rows.length : '#';
   newRow.insertCell(columnIndex_Name).innerText = routeInfo.name;
   newRow.insertCell(columnIndex_Grade).innerText = routeInfo.grade;
+  // newRow.insertCell(columnIndex_Button).innerText = routeInfo.grade;
   return newRow;
 }
 
