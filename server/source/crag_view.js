@@ -79,7 +79,7 @@ let OnTopoSelected = event => {
   document.getElementById('main-topo-container').classList.remove('do-not-display');
 }
 
-module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer.dataset.id;
+module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.id;
 
 module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;

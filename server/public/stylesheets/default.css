@@ -39,15 +39,7 @@ button {
 .topo-images-container {
   display: grid;
   grid-auto-flow: column;
-  overflow-x: auto;
-  gap: 1rem;
-  background-color: lightgrey;
-}
-
-.topo-images-container-edit {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 20%;
+  grid-auto-columns: 22%;
   overflow-x: auto;
   gap: 1rem;
   background-color: lightgrey;
@@ -81,7 +73,7 @@ button {
 .main-topo-container-edit {
   display: grid;
   width: 100%;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1.5fr;
   gap: 1rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -132,13 +124,14 @@ button {
 
 .topo-route-table-container {
   margin-top: 1rem;
-  width: min(100%, 35rem);
+  width: 100%;
 }
 
 .topo-route-table {
+  margin: auto;
   border-collapse: collapse;
-  width: 100%;
-  font-size: 2rem;
+  font-size: 2.5rem;
+  width: min(40rem, 100%);
   text-align: left;
 }
 
@@ -146,8 +139,7 @@ button {
   margin-top: 1rem;
   border-collapse: collapse;
   width: 100%;
-  min-width: 30rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-align: left;
 }
 
@@ -167,13 +159,13 @@ button {
 
 .crag-route-table-container {
   margin-top: 1rem;
-  width: min(100%, 35rem);
+  width: 100%;
 }
 
 .crag-route-table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-align: left;
 }
 
@@ -207,6 +199,10 @@ button {
 
 .main-topo-image-container {
   width: min(100% - 2rem, 60rem);
+}
+
+.main-topo-image-container-edit {
+  width: 100%;
 }
 
 .main-topo-image {

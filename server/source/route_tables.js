@@ -57,7 +57,8 @@ let AddCragRouteTableButtons = (routeTable, cragObject, topoID) => {
 
 let AddButtonsToCragTableRow = (row, routeOnTopo) => {
   let id = row.cells[columnIndex_ID].innerText;
-  let buttonCell = row.insertCell(columnIndex_Button);
+  let buttonCell = row.cells[columnIndex_Button];
+  if( !buttonCell ) buttonCell = row.insertCell(columnIndex_Button);
   if( id.length > 0 ) {
     buttonCell.classList.add('fa');
     buttonCell.classList.add(routeOnTopo ? 'fa-toggle-on' : 'fa-toggle-off');
@@ -100,6 +101,8 @@ let AppendRouteTableRow = (routeTable, cragObject, routeID) => {
   newRow.insertCell(columnIndex_Index).innerText = routeID ? routeTable.rows.length : '#';
   newRow.insertCell(columnIndex_Name).innerText = routeInfo.name;
   newRow.insertCell(columnIndex_Grade).innerText = routeInfo.grade;
+  let topoID = GetSelectedTopoID();
+  if( topoID ) newRow.insertCell(columnIndex_Button);
   return newRow;
 }
 
@@ -116,10 +119,12 @@ let EnableRouteTableRowEdit = (row, cragObject) => {
       let row = event.target.parentElement;
       id = AppendNewCragRoute(row, cragObject);
       SetCragRouteName(cragObject, id, name);
-      AddButtonsToCragTableRow(row);
-      UpdateCragRouteCommands(row, cragObject, topoID);
+      if( topoID ) {
+        AddButtonsToCragTableRow(row);
+        UpdateCragRouteCommands(row, cragObject, topoID);
+      }
     }
-    RefreshTopoRouteTable(cragObject, topoID);
+    if( topoID ) RefreshTopoRouteTable(cragObject, topoID);
   });
 
   row.cells[columnIndex_Grade].setAttribute('contenteditable', true);
@@ -136,7 +141,7 @@ let EnableRouteTableRowEdit = (row, cragObject) => {
       AddButtonsToCragTableRow(row);
       UpdateCragRouteCommands(row, cragObject, topoID);
     }
-    RefreshTopoRouteTable(cragObject, topoID);
+    if( topoID ) RefreshTopoRouteTable(cragObject, topoID);
   });
 }
 
