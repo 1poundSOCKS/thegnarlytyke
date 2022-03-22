@@ -32,7 +32,7 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
   if( !topoRouteTable ) return;
   let topoRouteIDs = GetTopoRouteIDs(cragObject, topoID);
   RefreshRouteTable(topoRouteTable, cragObject, topoRouteIDs, false);
-  AddTopoRouteTableButtons(topoRouteTable);
+  if( _contentEditable ) AddTopoRouteTableButtons(topoRouteTable);
 }
 
 let RefreshRouteTable = (routeTable, cragObject, routeIDs, contentEditable) => {

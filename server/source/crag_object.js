@@ -155,7 +155,7 @@ let GetRoutesContainingPoint = (topoObject, pointID) => {
 }
 
 let GetNearestPointForTopo = (x, y, topo) => {
-  let nearestPointsForTopo = topo?.routes.map( route => GetNearestPointForRoute(x, y, route) )
+  let nearestPointsForTopo = topo.routes.map( route => GetNearestPointForRoute(x, y, route) )
   .filter( point => point );
   return nearestPointsForTopo ? GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo) : null;
 }

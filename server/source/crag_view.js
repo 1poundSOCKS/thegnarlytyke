@@ -138,7 +138,6 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
   });
   let selectedTopoID = GetSelectedTopoID();
   if( selectedTopoID ) {
-    console.log(`nearest point: ${_nearestPointID}, selected topo: ${selectedTopoID}`);
     let nearestPointInfo = _nearestPointID ? GetPointInfo(_cragObject, selectedTopoID, _nearestPointID) : null;
     if( nearestPointInfo ) {
       DrawRoutePoint(ctx, topoCanvas.width * nearestPointInfo.x, topoCanvas.height * nearestPointInfo.y, 'X', 1, "rgb(40, 40, 150)");
