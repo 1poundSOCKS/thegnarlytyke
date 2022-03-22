@@ -133,6 +133,58 @@ module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {
   return routeLines.concat(routeStartPoints, routeEndPoints);
 }
 
+module.exports = GetNearestTopoPointID = (cragObject, topoID, x, y) => {
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject ) return null;
+  let nearestPoint = GetNearestPointForTopo(x, y, topoObject);
+  return nearestPoint.id;
+}
+
+module.exports = GetPointInfo = (cragObject, pointID) => {
+  let toposContainingPoint = GetToposContainingPoint(cragObject, pointID);
+  return toposContainingPoint.length > 0 ? toposContainingPoint[0][0][0] : null;
+}
+
+let GetToposContainingPoint = (cragObject, pointID) => {
+  return cragObject.topos.map(topo => {
+    return GetRoutesContainingPoint(topo, pointID);
+  })
+  .filter( routes => routes.length > 0 );
+}
+
+let GetRoutesContainingPoint = (topoObject, pointID) => {
+  return topoObject.routes.map(route => {
+    return route.points?.filter(point => point.id === pointID);
+  })
+  .filter( points => points && points.length > 0 );
+}
+
+let GetNearestPointForTopo = (x, y, topo) => {
+  let nearestPointsForTopo = topo.routes.map( route => GetNearestPointForRoute(x, y, route) );
+  return GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
+}
+
+let GetNearestPointForRoute = (x, y, route) => {
+  return GetNearestPointForArrayOfPoints(x, y, route.points);
+}
+
+let GetNearestPointForArrayOfPoints = (x, y, points) => {
+  let nearestPoint = points.reduce( (previousPoint, currentPoint) => {
+    let distanceFromPrevious = GetDistanceBetweenPoints(previousPoint.x, previousPoint.y, x, y);
+    let distanceFromCurrent = GetDistanceBetweenPoints(currentPoint.x, currentPoint.y, x, y);
+    if( distanceFromCurrent < distanceFromPrevious ) return currentPoint;
+    else return previousPoint;
+  });
+
+  return nearestPoint;
+}
+
+let GetDistanceBetweenPoints = (x1, y1, x2, y2) => {
+  let dx = x1 - x2;
+  let dy = y1 - y2;
+  return Math.sqrt( dx*dx + dy*dy );
+}
+
 let AddRenderIndexToTopoRoutes = (topoObject) => {
   let routesInLeftToRightOrder = topoObject.routes.sort( (route1, route2) => {
     if( !route1.points && !route2.points ) return 0;
@@ -151,11 +203,11 @@ let AddRenderIndexToTopoRoutes = (topoObject) => {
 }
 
 let GetFirstMatchingRoute = (cragObject, routeID) => {
-  let matchingRoutes = cragObject.routes.filter(route => route.id == routeID);
+  let matchingRoutes = cragObject.routes.filter(route => route.id === routeID);
   return matchingRoutes[0];
 }
 
 let GetFirstMatchingTopo = (cragObject, topoID) => {
-  let matchingTopos = cragObject.topos.filter(topo => topo.id == topoID);
+  let matchingTopos = cragObject.topos.filter(topo => topo.id === topoID);
   return matchingTopos[0];
 }

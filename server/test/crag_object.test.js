@@ -348,3 +348,310 @@ test("Remove a route from a topo", () => {
   expect(topoRouteIDs.length).toEqual(1);
   expect(topoRouteIDs).toContainEqual('rid-111');
 });
+
+test("when there's only one point", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.3, y: 0.7 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointID = GetNearestTopoPointID(cragObject, 'tid-1111', 0.1, 0.1);
+  expect(nearestPointID).toEqual('pid-321');
+});
+
+test("when there's more than one point on a single topo route", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.3, y: 0.7 },
+              { id: 'pid-654', x: 0.1, y: 0.2 },
+              { id: 'pid-987', x: 0.1, y: 0.3 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointID = GetNearestTopoPointID(cragObject, 'tid-1111', 0.1, 0.1);
+  expect(nearestPointID).toEqual('pid-654');
+});
+
+test("nearest point is first, when there's more than one point on a single topo route", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.3, y: 0.7 },
+              { id: 'pid-654', x: 0.1, y: 0.2 },
+              { id: 'pid-987', x: 0.1, y: 0.3 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointID = GetNearestTopoPointID(cragObject, 'tid-1111', 0.4, 0.8);
+  expect(nearestPointID).toEqual('pid-321');
+});
+
+test("nearest point is last, when there's more than one point on a single topo route", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.3, y: 0.7 },
+              { id: 'pid-654', x: 0.1, y: 0.2 },
+              { id: 'pid-987', x: 0.1, y: 0.3 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointID = GetNearestTopoPointID(cragObject, 'tid-1111', 0.1, 0.4);
+  expect(nearestPointID).toEqual('pid-987');
+});
+
+test("nearest point when there's multiple routes", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.3, y: 0.7 },
+              { id: 'pid-654', x: 0.1, y: 0.2 },
+              { id: 'pid-987', x: 0.1, y: 0.3 }
+            ]
+          },
+          {
+            points: [
+              { id: 'pid-32A', x: 0.2, y: 0.4 },
+              { id: 'pid-65B', x: 0.1, y: 0.4 },
+              { id: 'pid-98C', x: 0.9, y: 0.5 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointID = GetNearestTopoPointID(cragObject, 'tid-1111', 0.1, 0.4);
+  expect(nearestPointID).toEqual('pid-65B');
+});
+
+test("nearest point when there's multiple topos", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.8, y: 0.4 },
+              { id: 'pid-654', x: 0.1, y: 0.2 },
+              { id: 'pid-987', x: 0.1, y: 0.3 }
+            ]
+          },
+          {
+            points: [
+              { id: 'pid-32A', x: 0.2, y: 0.4 },
+              { id: 'pid-65B', x: 0.1, y: 0.4 },
+              { id: 'pid-98C', x: 0.9, y: 0.5 }
+            ]
+          }
+        ]
+      }
+      ,
+      {
+        id: 'tid-2222',
+        routes: [
+          {
+            points: [
+              { id: 'pid-x21', x: 0.9, y: 0.8 },
+            ]
+          },
+          {
+            points: [
+              { id: 'pid-x2A', x: 0.2, y: 0.1 },
+              { id: 'pid-x5B', x: 0.7, y: 0.4 },
+              { id: 'pid-x8C', x: 0.9, y: 1.0 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointID = GetNearestTopoPointID(cragObject, 'tid-2222', 0.8, 0.4);
+  expect(nearestPointID).toEqual('pid-x5B');
+});
+
+test("Get point info when no routes", () => {
+  let testInput = {
+    topos: [
+      {
+        routes: [
+          {
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let pointInfo = GetPointInfo(cragObject, 'pid-a11');
+  expect(pointInfo).toEqual(null);
+});
+
+test("Get point info when there's one point and it doesn't match", () => {
+  let testInput = {
+    topos: [
+      {
+        routes: [
+          {
+            points: [
+              {
+                id: 'pid-b22', x: 0.1, y: 0.2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let pointInfo = GetPointInfo(cragObject, 'pid-a11');
+  expect(pointInfo).toEqual(null);
+});
+
+test("Get point info when there's one point and it does match", () => {
+  let testInput = {
+    topos: [
+      {
+        routes: [
+          {
+            points: [
+              {
+                id: 'pid-b22', x: 0.1, y: 0.2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let pointInfo = GetPointInfo(cragObject, 'pid-b22');
+  expect(pointInfo).toEqual({id: 'pid-b22', x: 0.1, y: 0.2});
+});
+
+test("Get point info when there's more than one route", () => {
+  let testInput = {
+    topos: [
+      {
+        routes: [
+          {
+            points: [
+              {
+                id: 'pid-a11', x: 0.1, y: 0.2
+              }
+            ]
+          },
+          {
+            points: [
+              {
+                id: 'pid-b22', x: 0.2, y: 0.3
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let pointInfo = GetPointInfo(cragObject, 'pid-b22');
+  expect(pointInfo).toEqual({id: 'pid-b22', x: 0.2, y: 0.3});
+});
+
+test("Get point info when there's more than one topo", () => {
+  let testInput = {
+    topos: [
+      {
+        routes: [
+          {
+            points: [
+              {
+                id: 'pid-a11', x: 0.1, y: 0.2
+              }
+            ]
+          },
+          {
+            points: [
+              {
+                id: 'pid-b22', x: 0.2, y: 0.3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        routes: [
+          {
+            points: [
+              {
+              }
+            ]
+          },
+          {
+            points: [
+              {
+                id: 'pid-c11', x: 0.6, y: 0.7
+              },
+              {
+                id: 'pid-d22', x: 0.8, y: 0.9
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let pointInfo = GetPointInfo(cragObject, 'pid-c11');
+  expect(pointInfo).toEqual({id: 'pid-c11', x: 0.6, y: 0.7});
+});

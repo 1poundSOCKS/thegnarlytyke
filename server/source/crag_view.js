@@ -3,6 +3,7 @@ let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
+let _nearestPointID = null;
 
 module.exports = SetViewContentEditable = editable => {
   _contentEditable = editable;
@@ -69,14 +70,13 @@ let OnTopoSelected = event => {
 
   _selectedTopoImageContainer = event.target.parentElement;
   _selectedTopoImageContainer.classList.add('topo-container-selected');
-
   let selectedTopoID = GetSelectedTopoID();
-
   RefreshMainTopoView();
   RefreshTopoRouteTable(_cragObject, selectedTopoID);
   RefreshCragRouteTable(_cragObject, selectedTopoID);
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
+  if( _contentEditable ) AddMouseHandlerToMainTopoCanvas();
 }
 
 module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.id;
@@ -85,7 +85,7 @@ module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;
   let selectedTopoImage = _topoImages.get(selectedTopoID);
   let mainTopoCanvas = document.getElementById('main-topo-image');
-  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage);//, 60);
+  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage);
   DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
 }
 
@@ -136,6 +136,10 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
         break;
     }
   });
+  let nearestPointInfo = _nearestPointID ? GetPointInfo(_cragObject, _nearestPointID) : null;
+  if( nearestPointInfo ) {
+    DrawRoutePoint(ctx, topoCanvas.width * nearestPointInfo.x, topoCanvas.height * nearestPointInfo.y, 'X', 1, "rgb(40, 40, 150)");
+  }
 }
 
 module.exports = DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
@@ -164,4 +168,34 @@ module.exports =  DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, 
   ctx.lineWidth = "4";
   ctx.strokeStyle = '#FFFFFF';
   ctx.stroke();
+}
+
+let AddMouseHandlerToMainTopoCanvas = () => {
+  let topoCanvas = document.getElementById('main-topo-image');
+
+  topoCanvas.onclick = event => {
+    let mousePos = GetMousePositionFromEvent(topoCanvas, event);
+  }
+
+  topoCanvas.onmousemove = event => {
+    let mousePos = GetMousePositionFromEvent(topoCanvas, event);
+    let topoID = GetSelectedTopoID();
+    let nearestPointID = GetNearestTopoPointID(_cragObject, topoID, mousePos.x, mousePos.y);
+    console.log(`nearest point ID: ${nearestPointID}`);
+    if( nearestPointID !== _nearestPointID ) {
+      _nearestPointID = nearestPointID;
+      RefreshMainTopoView();
+    }
+  }
+}
+
+let GetMousePositionFromEvent = (element, event) => {
+  let rect = element.getBoundingClientRect();
+  let clientRectWidth = rect.right - rect.left;
+  let clientRectHeight = rect.bottom - rect.top;
+  let clientMouseX = event.clientX - rect.left;
+  let clientMouseY = event.clientY - rect.top;
+  let mousePercentX = clientMouseX / clientRectWidth;
+  let mousePercentY = clientMouseY / clientRectHeight;
+  return { x: mousePercentX, y: mousePercentY };
 }

@@ -32,6 +32,7 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
   if( !topoRouteTable ) return;
   let topoRouteIDs = GetTopoRouteIDs(cragObject, topoID);
   RefreshRouteTable(topoRouteTable, cragObject, topoRouteIDs, false);
+  AddTopoRouteTableButtons(topoRouteTable);
 }
 
 let RefreshRouteTable = (routeTable, cragObject, routeIDs, contentEditable) => {
@@ -92,6 +93,14 @@ let UpdateCragRouteCommands = (row, cragObject, topoID) => {
     }
     RefreshMainTopoView();
   }
+}
+
+let AddTopoRouteTableButtons = (routeTable) => {
+  Array.from(routeTable.rows).forEach( row => {
+    let buttonCell = row.insertCell(columnIndex_Button);
+    buttonCell.classList.add('fa');
+    buttonCell.classList.add('fa-edit');
+  });
 }
 
 let AppendRouteTableRow = (routeTable, cragObject, routeID) => {
