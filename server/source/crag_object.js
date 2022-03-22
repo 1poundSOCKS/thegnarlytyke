@@ -149,7 +149,7 @@ module.exports = GetPointInfo = (cragObject, topoID, pointID) => {
 
 let GetRoutesContainingPoint = (topoObject, pointID) => {
   return topoObject.routes.map(route => {
-    return route.points?.filter(point => point.id === pointID);
+    return route.points ? route.points.filter(point => point.id === pointID) : [];
   })
   .filter( points => points && points.length > 0 );
 }
