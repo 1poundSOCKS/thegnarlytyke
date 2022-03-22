@@ -521,6 +521,7 @@ test("Get point info when no routes", () => {
   let testInput = {
     topos: [
       {
+        id: 'tid-1',
         routes: [
           {
           }
@@ -530,7 +531,7 @@ test("Get point info when no routes", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let pointInfo = GetPointInfo(cragObject, 'pid-a11');
+  let pointInfo = GetPointInfo(cragObject, 'tid-1', 'pid-a11');
   expect(pointInfo).toEqual(null);
 });
 
@@ -538,6 +539,7 @@ test("Get point info when there's one point and it doesn't match", () => {
   let testInput = {
     topos: [
       {
+        id: 'tid-1',
         routes: [
           {
             points: [
@@ -552,7 +554,7 @@ test("Get point info when there's one point and it doesn't match", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let pointInfo = GetPointInfo(cragObject, 'pid-a11');
+  let pointInfo = GetPointInfo(cragObject, 'tid-1', 'pid-a11');
   expect(pointInfo).toEqual(null);
 });
 
@@ -560,6 +562,7 @@ test("Get point info when there's one point and it does match", () => {
   let testInput = {
     topos: [
       {
+        id: 'tid-1',
         routes: [
           {
             points: [
@@ -574,7 +577,7 @@ test("Get point info when there's one point and it does match", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let pointInfo = GetPointInfo(cragObject, 'pid-b22');
+  let pointInfo = GetPointInfo(cragObject, 'tid-1', 'pid-b22');
   expect(pointInfo).toEqual({id: 'pid-b22', x: 0.1, y: 0.2});
 });
 
@@ -582,6 +585,7 @@ test("Get point info when there's more than one route", () => {
   let testInput = {
     topos: [
       {
+        id: 'tid-1',
         routes: [
           {
             points: [
@@ -603,7 +607,7 @@ test("Get point info when there's more than one route", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let pointInfo = GetPointInfo(cragObject, 'pid-b22');
+  let pointInfo = GetPointInfo(cragObject, 'tid-1', 'pid-b22');
   expect(pointInfo).toEqual({id: 'pid-b22', x: 0.2, y: 0.3});
 });
 
@@ -611,6 +615,7 @@ test("Get point info when there's more than one topo", () => {
   let testInput = {
     topos: [
       {
+        id: 'tid-1',
         routes: [
           {
             points: [
@@ -629,6 +634,7 @@ test("Get point info when there's more than one topo", () => {
         ]
       },
       {
+        id: 'tid-2',
         routes: [
           {
             points: [
@@ -652,6 +658,6 @@ test("Get point info when there's more than one topo", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let pointInfo = GetPointInfo(cragObject, 'pid-c11');
+  let pointInfo = GetPointInfo(cragObject, 'tid-2', 'pid-c11');
   expect(pointInfo).toEqual({id: 'pid-c11', x: 0.6, y: 0.7});
 });

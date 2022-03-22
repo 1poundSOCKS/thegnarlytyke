@@ -136,9 +136,13 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
         break;
     }
   });
-  let nearestPointInfo = _nearestPointID ? GetPointInfo(_cragObject, _nearestPointID) : null;
-  if( nearestPointInfo ) {
-    DrawRoutePoint(ctx, topoCanvas.width * nearestPointInfo.x, topoCanvas.height * nearestPointInfo.y, 'X', 1, "rgb(40, 40, 150)");
+  let selectedTopoID = GetSelectedTopoID();
+  if( selectedTopoID ) {
+    console.log(`nearest point: ${_nearestPointID}, selected topo: ${selectedTopoID}`);
+    let nearestPointInfo = _nearestPointID ? GetPointInfo(_cragObject, selectedTopoID, _nearestPointID) : null;
+    if( nearestPointInfo ) {
+      DrawRoutePoint(ctx, topoCanvas.width * nearestPointInfo.x, topoCanvas.height * nearestPointInfo.y, 'X', 1, "rgb(40, 40, 150)");
+    }
   }
 }
 
@@ -181,7 +185,6 @@ let AddMouseHandlerToMainTopoCanvas = () => {
     let mousePos = GetMousePositionFromEvent(topoCanvas, event);
     let topoID = GetSelectedTopoID();
     let nearestPointID = GetNearestTopoPointID(_cragObject, topoID, mousePos.x, mousePos.y);
-    console.log(`nearest point ID: ${nearestPointID}`);
     if( nearestPointID !== _nearestPointID ) {
       _nearestPointID = nearestPointID;
       RefreshMainTopoView();

@@ -140,16 +140,11 @@ module.exports = GetNearestTopoPointID = (cragObject, topoID, x, y) => {
   return nearestPoint.id;
 }
 
-module.exports = GetPointInfo = (cragObject, pointID) => {
-  let toposContainingPoint = GetToposContainingPoint(cragObject, pointID);
-  return toposContainingPoint.length > 0 ? toposContainingPoint[0][0][0] : null;
-}
-
-let GetToposContainingPoint = (cragObject, pointID) => {
-  return cragObject.topos.map(topo => {
-    return GetRoutesContainingPoint(topo, pointID);
-  })
-  .filter( routes => routes.length > 0 );
+module.exports = GetPointInfo = (cragObject, topoID, pointID) => {
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject ) return null;
+  let routes = GetRoutesContainingPoint(topoObject, pointID);
+  return routes.length > 0 ? routes[0][0] : null;
 }
 
 let GetRoutesContainingPoint = (topoObject, pointID) => {
@@ -160,12 +155,13 @@ let GetRoutesContainingPoint = (topoObject, pointID) => {
 }
 
 let GetNearestPointForTopo = (x, y, topo) => {
-  let nearestPointsForTopo = topo.routes.map( route => GetNearestPointForRoute(x, y, route) );
-  return GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
+  let nearestPointsForTopo = topo?.routes.map( route => GetNearestPointForRoute(x, y, route) )
+  .filter( point => point );
+  return nearestPointsForTopo ? GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo) : null;
 }
 
 let GetNearestPointForRoute = (x, y, route) => {
-  return GetNearestPointForArrayOfPoints(x, y, route.points);
+  return route.points ? GetNearestPointForArrayOfPoints(x, y, route.points) : null;
 }
 
 let GetNearestPointForArrayOfPoints = (x, y, points) => {
