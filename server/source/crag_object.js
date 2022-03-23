@@ -2,6 +2,7 @@ let uuid = require('uuid');
 
 module.exports = rsRouteStart = Symbol("rsRouteStart");
 module.exports = rsRouteEnd = Symbol("rsRouteEnd");
+module.exports = rsRouteJoin = Symbol("rsRouteJoin");
 module.exports = rsRouteLine = Symbol("rsRouteLine");
 
 module.exports = CreateCragObject = loadedObject => {
@@ -83,6 +84,55 @@ module.exports = AddCragRouteToTopo = (cragObject, routeID, topoID) => {
 module.exports = RemoveCragRouteFromTopo = (cragObject, routeID, topoID) => {
   let topoObject = GetFirstMatchingTopo(cragObject, topoID);
   topoObject.routes = topoObject.routes.filter( route => route.id != routeID );
+}
+
+module.exports = GetTopoOverlayRenderPoints = (cragObject, topoID) => {
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject ) return [];
+  let renderPoints = GetTopoRenderPoints(topoObject);
+  return renderPoints;
+}
+
+let GetTopoRenderPoints = (topoObject) => {
+  let topoRoutes = topoObject.routes ? topoObject.routes : [];
+  let topoRoutesWithPoints = topoRoutes.filter( route => route.points && route.points.length > 0 );
+  topoRoutesWithPoints.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
+  let allRoutePoints = topoRoutesWithPoints.map( route => {
+    let lastPointIndex = route.points.length - 1;
+    return route.points.map( (point, index) => {
+      let pointType = rsRouteJoin;
+      if( index == 0 ) pointType = rsRouteStart;
+      else if( index == lastPointIndex ) pointType = rsRouteEnd;
+      return {
+        type: pointType,
+        x: point.x,
+        y: point.y
+      }
+    });
+  });
+
+  return allRoutePoints;
+}
+
+module.exports = GetTopoOverlayRenderLines = (cragObject, topoID) => {
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject ) return [];
+  let renderLines = GetTopoRenderLines(topoObject);
+  return renderLines;
+}
+
+let GetTopoRenderLines = (topoObject) => {
+  let topoLines = topoObject.routes.map( route => {
+    let routeLines = route.points.map( (point, index, points) => {
+      let nextPoint = points[index + 1];
+      return nextPoint ? { startX: point.x, startY: point.y, endX: nextPoint.x, endY: nextPoint.y } : null;
+    })
+    .filter( line => line );
+    return routeLines;
+  })
+  .filter( routeLines => routeLines.length > 0 );
+  
+  return topoLines;
 }
 
 module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {  

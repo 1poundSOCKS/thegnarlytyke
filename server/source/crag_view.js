@@ -119,7 +119,40 @@ module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
 }
 
 module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
-  let topoRouteRenderSteps = GetTopoOverlayRenderSteps(cragObject, topoID);
+  console.log(`New rendering: topoID=${topoID}`);
+  let renderLines = GetTopoOverlayRenderLines(cragObject, topoID);
+  let renderPoints = GetTopoOverlayRenderPoints(cragObject, topoID);
+  let ctx = topoCanvas.getContext('2d');
+
+  renderLines.forEach( routeLines => {
+    routeLines.forEach( line => {
+      DrawRouteLine(ctx,
+        topoCanvas.width * line.startX, topoCanvas.height * line.startY, 
+        topoCanvas.width * line.endX, topoCanvas.height * line.endY, 1);
+    });
+  })
+
+  renderPoints.forEach( (routePoints, routeIndex) => {
+    let routeLabel = routeIndex + 1;
+    routePoints.forEach( point => {
+      switch( point.type ) {
+        case rsRouteJoin:
+          if( _contentEditable )
+            DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 150, 150)");
+          break;
+        case rsRouteStart:
+          DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(40, 150, 40)");
+          break;
+        case rsRouteEnd:
+          DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 20, 20)");
+          break;
+        }
+    });
+  });
+}
+
+module.exports =  DrawMainTopoOverlay_old = (topoCanvas, cragObject, topoID) => {
+  let topoRouteRenderSteps = GetTopoOverlayRenderSteps(cragObject, topoID, _contentEditable);
   let ctx = topoCanvas.getContext('2d');
   topoRouteRenderSteps.forEach( renderStep => {
     switch( renderStep.type ) {
@@ -129,7 +162,10 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
       case rsRouteEnd:
         DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(150, 20, 20)");
         break;
-      case rsRouteLine:
+      case rsRoutePoint:
+        DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(150, 150, 150)");
+        break;
+        case rsRouteLine:
         DrawRouteLine(ctx,
           topoCanvas.width * renderStep.start.x, topoCanvas.height * renderStep.start.y, 
           topoCanvas.width * renderStep.end.x, topoCanvas.height * renderStep.end.y, 1);
