@@ -36,25 +36,42 @@ button {
   justify-content: right;
 }
 
+.topo-images-container-initial {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2%;
+  background-color: lightgrey;
+}
+
 .topo-images-container {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 23%;
   overflow-x: auto;
-  gap: 1rem;
+  gap: 0.5rem;
   background-color: lightgrey;
+}
+
+.topo-container {
+  width: 100%;
+  overflow: hidden;
 }
 
 .topo-container:hover {
   background-color: darkgray;
 }
 
-.topo-container a:hover {
-  background-color: white;
-}
-
 .topo-container-selected {
   background-color: darkgray;
+}
+
+.topo-image {
+  max-width: 100%;
+}
+
+.topo-image:hover {
+  cursor: pointer;
+  filter: grayscale(0%);
 }
 
 .main-topo-container {
@@ -86,12 +103,8 @@ button {
   background-color: lightgrey;
 }
 
-.topo-image {
-  width: 100%;
-}
-
-.topo-image:hover {
-  cursor: pointer;
+.topo-image-container {
+  background-color: lightgray;
 }
 
 .icon-bar {

@@ -71,6 +71,11 @@ let OnTopoSelected = event => {
   _selectedTopoImageContainer = event.target.parentElement;
   _selectedTopoImageContainer.classList.add('topo-container-selected');
   let selectedTopoID = GetSelectedTopoID();
+
+  let topoImagesContainer = document.getElementById('topo-images-container');
+  topoImagesContainer.classList.remove('topo-images-container-initial');
+  topoImagesContainer.classList.add('topo-images-container');
+
   RefreshMainTopoView();
   RefreshTopoRouteTable(_cragObject, selectedTopoID);
   RefreshCragRouteTable(_cragObject, selectedTopoID);
@@ -119,7 +124,6 @@ module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
 }
 
 module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
-  console.log(`New rendering: topoID=${topoID}`);
   let renderLines = GetTopoOverlayRenderLines(cragObject, topoID);
   let renderPoints = GetTopoOverlayRenderPoints(cragObject, topoID);
   let ctx = topoCanvas.getContext('2d');
@@ -149,36 +153,6 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
         }
     });
   });
-}
-
-module.exports =  DrawMainTopoOverlay_old = (topoCanvas, cragObject, topoID) => {
-  let topoRouteRenderSteps = GetTopoOverlayRenderSteps(cragObject, topoID, _contentEditable);
-  let ctx = topoCanvas.getContext('2d');
-  topoRouteRenderSteps.forEach( renderStep => {
-    switch( renderStep.type ) {
-      case rsRouteStart:
-        DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(40, 150, 40)");
-        break;
-      case rsRouteEnd:
-        DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(150, 20, 20)");
-        break;
-      case rsRoutePoint:
-        DrawRoutePoint(ctx, topoCanvas.width * renderStep.x, topoCanvas.height * renderStep.y, renderStep.index, 1, "rgb(150, 150, 150)");
-        break;
-        case rsRouteLine:
-        DrawRouteLine(ctx,
-          topoCanvas.width * renderStep.start.x, topoCanvas.height * renderStep.start.y, 
-          topoCanvas.width * renderStep.end.x, topoCanvas.height * renderStep.end.y, 1);
-        break;
-    }
-  });
-  let selectedTopoID = GetSelectedTopoID();
-  if( selectedTopoID ) {
-    let nearestPointInfo = _nearestPointID ? GetPointInfo(_cragObject, selectedTopoID, _nearestPointID) : null;
-    if( nearestPointInfo ) {
-      DrawRoutePoint(ctx, topoCanvas.width * nearestPointInfo.x, topoCanvas.height * nearestPointInfo.y, 'X', 1, "rgb(40, 40, 150)");
-    }
-  }
 }
 
 module.exports = DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
