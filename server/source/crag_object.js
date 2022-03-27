@@ -152,6 +152,10 @@ module.exports = GetPointInfo = (cragObject, topoID, pointID) => {
   return routes.length > 0 ? routes[0][0] : null;
 }
 
+module.exports = AppendPointToRoute = (cragObject, topoID, routeID, x, y) => {
+  
+}
+
 let GetRoutesContainingPoint = (topoObject, pointID) => {
   return topoObject.routes.map(route => {
     return route.points ? route.points.filter(point => point.id === pointID) : [];

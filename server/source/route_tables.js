@@ -51,6 +51,11 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
   }
 }
 
+module.exports = GetSelectedTopoRouteTableID = () => {
+  if( !_selectedTopoRouteTableRow ) return null;
+  return _selectedTopoRouteTableRow.cells[columnIndex_ID].innerText;
+}
+
 let RefreshRouteTable = (routeTable, cragObject, routeIDs, contentEditable) => {
   let tableBody = routeTable.getElementsByTagName('tbody')[0];
   if( !tableBody ) tableBody = routeTable.createTBody();

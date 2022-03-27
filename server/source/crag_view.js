@@ -2,7 +2,6 @@ let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
-let _nearestPointID = null;
 let _nearestPointInfo = null;
 
 module.exports = SetViewContentEditable = editable => {
@@ -203,6 +202,10 @@ let AddMouseHandlerToMainTopoCanvas = () => {
 
   topoCanvas.onclick = event => {
     let mousePos = GetMousePositionFromEvent(topoCanvas, event);
+    let topoID = GetSelectedTopoID();
+    let routeID  = GetSelectedTopoRouteTableID();
+    console.log(`mouse pos: ${JSON.stringify(mousePos)}, topo ID: ${topoID}, route ID: ${routeID}`);
+    AppendPointToRoute(_cragObject, topoID, routeID, mousePos.x, mousePos.y);
   }
 
   topoCanvas.onmousemove = event => {
