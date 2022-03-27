@@ -155,7 +155,6 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
   });
 
   if( _nearestPointInfo && _nearestPointInfo.distance < 0.03 ) {
-    console.log(_nearestPointInfo);
     HighlightPoint(ctx, topoCanvas.width * _nearestPointInfo.x, topoCanvas.height * _nearestPointInfo.y, 1);
   }
 }
