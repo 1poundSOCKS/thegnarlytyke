@@ -1,4 +1,3 @@
-
 let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;

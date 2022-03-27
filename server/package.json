@@ -8,7 +8,7 @@
     "start": "node index.js",
     "test": "jest --verbose",
     "build": "browserify source/bundle.js -o public/bundle.js",
-    "watch": "watchify source/bundle.js -o public/bundle.js"
+    "watch": "watchify source/bundle.js -o public/bundle.js -v"
   },
   "keywords": [],
   "author": "",

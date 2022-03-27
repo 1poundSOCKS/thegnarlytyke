@@ -156,6 +156,10 @@ button {
   text-align: left;
 }
 
+.topo-route-table-edit:hover {
+  cursor: pointer;
+}
+
 .topo-route-table tr,.topo-route-table-edit tr {
   border-top: 0.1rem solid black;
   border-bottom: 0.1rem solid black;
@@ -167,6 +171,10 @@ button {
 }
 
 .topo-route-table-edit td:nth-child(5):hover {
+  color: white;
+}
+
+.topo-route-table-row-selected {
   color: white;
 }
 
