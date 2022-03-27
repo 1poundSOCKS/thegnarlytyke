@@ -433,6 +433,27 @@ test("nearest point when there's multiple topos", () => {
   expect(nearestPointID).toEqual('pid-x5B');
 });
 
+test("GetNearestTopoPointInfo: when there's only one point", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            points: [
+              { id: 'pid-321', x: 0.1, y: 0.1 }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointInfo = GetNearestTopoPointInfo(cragObject, 'tid-1111', 0.1, 0.2);
+  expect(nearestPointInfo).toEqual({ id: 'pid-321', x: 0.1, y: 0.1, distance: 0.1 });
+});
+
 test("Get point info when no routes", () => {
   let testInput = {
     topos: [

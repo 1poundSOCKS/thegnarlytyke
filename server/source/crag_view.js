@@ -3,6 +3,7 @@ let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
 let _nearestPointID = null;
+let _nearestPointInfo = null;
 
 module.exports = SetViewContentEditable = editable => {
   _contentEditable = editable;
@@ -153,9 +154,9 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
     });
   });
 
-  if( _nearestPointID ) {
-    let pointInfo = GetPointInfo(cragObject, topoID, _nearestPointID);
-    if( pointInfo ) HighlightPoint(ctx, topoCanvas.width * pointInfo.x, topoCanvas.height * pointInfo.y, 1);
+  if( _nearestPointInfo && _nearestPointInfo.distance < 0.03 ) {
+    console.log(_nearestPointInfo);
+    HighlightPoint(ctx, topoCanvas.width * _nearestPointInfo.x, topoCanvas.height * _nearestPointInfo.y, 1);
   }
 }
 
@@ -208,11 +209,9 @@ let AddMouseHandlerToMainTopoCanvas = () => {
   topoCanvas.onmousemove = event => {
     let mousePos = GetMousePositionFromEvent(topoCanvas, event);
     let topoID = GetSelectedTopoID();
-    let nearestPointID = GetNearestTopoPointID(_cragObject, topoID, mousePos.x, mousePos.y);
-    if( nearestPointID !== _nearestPointID ) {
-      _nearestPointID = nearestPointID;
-      RefreshMainTopoView();
-    }
+    let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, mousePos.x, mousePos.y);
+    _nearestPointInfo = nearestPointInfo;
+    RefreshMainTopoView();
   }
 }
 

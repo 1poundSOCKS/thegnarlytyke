@@ -180,6 +180,37 @@ let GetNearestPointForArrayOfPoints = (x, y, points) => {
   return nearestPoint;
 }
 
+module.exports = GetNearestTopoPointInfo = GetNearestTopoPointInfo = (cragObject, topoID, x, y) => {
+  let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject ) return null;
+  return GetNearestPointInfoForTopo(x, y, topoObject);
+}
+
+let GetNearestPointInfoForTopo = (x, y, topo) => {
+  let nearestPointsForTopo = topo.routes.map( route => GetNearestPointInfoForRoute(x, y, route) )
+  .filter( point => point );
+  return nearestPointsForTopo ? GetNearestPointInfoForArrayOfPointInfo(x, y, nearestPointsForTopo) : null;
+}
+
+let GetNearestPointInfoForRoute = (x, y, route) => {
+  if( !route.points ) return null;
+  let pointsInfo = route.points.map( point => {
+    let distance = GetDistanceBetweenPoints(point.x, point.y, x, y)
+    return Object.assign({distance: distance}, point);
+  });
+
+  return GetNearestPointInfoForArrayOfPointInfo(x, y, pointsInfo);
+}
+
+let GetNearestPointInfoForArrayOfPointInfo = (x, y, pointsInfo) => {  
+  let nearestPoint = pointsInfo.reduce( (previousPoint, currentPoint) => {
+    if( currentPoint.distance < previousPoint.distance ) return currentPoint;
+    else return previousPoint;
+  });
+
+  return nearestPoint;
+}
+
 let GetDistanceBetweenPoints = (x1, y1, x2, y2) => {
   let dx = x1 - x2;
   let dy = y1 - y2;
