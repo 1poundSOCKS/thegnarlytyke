@@ -170,8 +170,8 @@ button {
   display: none;
 }
 
-.topo-route-table-edit td:nth-child(5):hover {
-  color: white;
+.topo-route-table-edit tr:hover {
+  color: lightgray;
 }
 
 .topo-route-table-row-selected {

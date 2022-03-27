@@ -138,54 +138,6 @@ let GetRouteRenderLines = (routeObject) => {
   .filter( line => line );
 }
 
-// module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {  
-//   let topoObject = GetFirstMatchingTopo(cragObject, topoID);
-//   if( !topoObject ) return [];
-
-//   AddRenderIndexToTopoRoutes(topoObject);
-
-//   let routes = topoObject.routes;
-//   let routesWithStartPoints = routes.filter( route => route.points && route.points.length > 0 );
-  
-//   let routesWithEndPoints = routesWithStartPoints.filter( route => route.points && route.points.length > 1 );
-
-//   let routeStartPoints = routesWithStartPoints.map(route => {
-//     return {
-//       type: rsRouteStart,
-//       index: route.index+1,
-//       x: route.points[0].x,
-//       y: route.points[0].y
-//     }
-//   });
-
-//   let routeEndPoints = routesWithEndPoints.map(route => {
-//     return {
-//       type: rsRouteEnd,
-//       index: route.index+1,
-//       x: route.points[route.points.length-1].x,
-//       y: route.points[route.points.length-1].y
-//     }
-//   });
-
-//   let routesWithLines = routesWithEndPoints.map(route => {
-//     let routeLines = route.points.map( (point, index, points) => {
-//       return {
-//         type: rsRouteLine,
-//         start: point,
-//         end: points[index+1]
-//       };
-//     });
-//     return routeLines.filter( line => line.end );
-//   });
-
-//   let routeLines = [];
-//   routesWithLines.forEach( route => {
-//     routeLines = routeLines.concat(route);
-//   });
-
-//   return routeLines.concat(routeStartPoints, routeEndPoints);
-// }
-
 module.exports = GetNearestTopoPointID = (cragObject, topoID, x, y) => {
   let topoObject = GetFirstMatchingTopo(cragObject, topoID);
   if( !topoObject ) return null;

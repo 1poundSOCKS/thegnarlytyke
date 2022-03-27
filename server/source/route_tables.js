@@ -37,10 +37,15 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
     AddTopoRouteTableButtons(topoRouteTable);
     Array.from(topoRouteTable.rows).forEach( row => {
       row.onclick = event => {
-        console.log(`row clicked`);
-        if( _selectedTopoRouteTableRow ) _selectedTopoRouteTableRow.cells[columnIndex_Button].classList.remove('topo-route-table-row-selected');
+        let buttonCell = _selectedTopoRouteTableRow ? _selectedTopoRouteTableRow.cells[columnIndex_Button] : null;
+        if( buttonCell ) {
+          buttonCell.classList.remove('topo-route-table-row-selected');
+        }
         _selectedTopoRouteTableRow = event.target.parentElement;
-        _selectedTopoRouteTableRow.cells[columnIndex_Button].classList.add('topo-route-table-row-selected');
+        buttonCell = _selectedTopoRouteTableRow ? _selectedTopoRouteTableRow.cells[columnIndex_Button] : null;
+        if( buttonCell ) {
+          buttonCell.classList.add('topo-route-table-row-selected');
+        }
       }
     });
   }
