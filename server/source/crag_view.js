@@ -153,6 +153,11 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
         }
     });
   });
+
+  if( _nearestPointID ) {
+    let pointInfo = GetPointInfo(cragObject, topoID, _nearestPointID);
+    if( pointInfo ) HighlightPoint(ctx, topoCanvas.width * pointInfo.x, topoCanvas.height * pointInfo.y, 1);
+  }
 }
 
 module.exports = DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
@@ -171,6 +176,17 @@ module.exports = DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, 
   ctx.stroke();
   ctx.fillStyle = "rgb(230,230,230)";
   ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.6));
+}
+
+let HighlightPoint = (ctx, canvasX, canvasY, fontSize) => {
+  ctx.font = `bold ${fontSize}rem serif`;
+  const metrics = ctx.measureText('X');
+  let widthOfRouteIndex = metrics.width;
+  ctx.beginPath();
+  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
+  ctx.lineWidth = fontSize * 3;
+  ctx.strokeStyle = "rgb(250, 250, 250)";
+  ctx.stroke();
 }
 
 module.exports =  DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {

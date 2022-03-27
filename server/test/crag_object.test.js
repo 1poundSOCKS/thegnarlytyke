@@ -883,7 +883,7 @@ test("When there aren't any render lines", () => {
   let testInput2 = {
     topos:[
       {
-        id: 'tid-1',
+        id: 'tid-2',
         routes: [
           {
             points: [
@@ -903,7 +903,7 @@ test("When there aren't any render lines", () => {
   expect(renderLines1).toEqual([]);
 
   let cragObject2 = CreateCragObject(testInput2);
-  let renderLines2 = GetTopoOverlayRenderLines(cragObject2, 'tid-1');
+  let renderLines2 = GetTopoOverlayRenderLines(cragObject2, 'tid-2');
   expect(renderLines2).toEqual([]);
 });
 

@@ -123,16 +123,19 @@ module.exports = GetTopoOverlayRenderLines = (cragObject, topoID) => {
 
 let GetTopoRenderLines = (topoObject) => {
   let topoLines = topoObject.routes.map( route => {
-    let routeLines = route.points.map( (point, index, points) => {
-      let nextPoint = points[index + 1];
-      return nextPoint ? { startX: point.x, startY: point.y, endX: nextPoint.x, endY: nextPoint.y } : null;
-    })
-    .filter( line => line );
-    return routeLines;
+    return GetRouteRenderLines(route);
   })
   .filter( routeLines => routeLines.length > 0 );
-  
   return topoLines;
+}
+
+let GetRouteRenderLines = (routeObject) => {
+  if( !routeObject.points ) return [];
+  else return routeObject.points.map( (point, index, points) => {
+    let nextPoint = points[index + 1];
+    return nextPoint ? { startX: point.x, startY: point.y, endX: nextPoint.x, endY: nextPoint.y } : null;
+  })
+  .filter( line => line );
 }
 
 module.exports = GetTopoOverlayRenderSteps = (cragObject, topoID) => {  
