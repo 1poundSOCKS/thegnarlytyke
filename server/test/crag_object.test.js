@@ -878,3 +878,46 @@ test("when there's a single render line", () => {
     }]
   ]);
 });
+
+test("AppendPointToRoute: add the first point", () => {
+  let testInput = {
+    topos:[
+      {
+        id: 'tid-1',
+        routes: [
+          {
+            id: 'rid-a'
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let id = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.8, 0.4);
+  let points = GetRoutePoints(cragObject, 'tid-1', 'rid-a');
+  expect(points).toEqual([{id: id, x: 0.8, y: 0.4}]);
+});
+
+test("AppendPointToRoute: add two points", () => {
+  let testInput = {
+    topos:[
+      {
+        id: 'tid-1',
+        routes: [
+          {
+            id: 'rid-a',
+            points: [
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let id1 = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.8, 0.4);
+  let id2 = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.2, 0.5);
+  let points = GetRoutePoints(cragObject, 'tid-1', 'rid-a');
+  expect(points).toEqual([{id: id1, x: 0.8, y: 0.4},{id: id2, x: 0.2, y: 0.5}]);
+});

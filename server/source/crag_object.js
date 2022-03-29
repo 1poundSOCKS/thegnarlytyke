@@ -153,7 +153,17 @@ module.exports = GetPointInfo = (cragObject, topoID, pointID) => {
 }
 
 module.exports = AppendPointToRoute = (cragObject, topoID, routeID, x, y) => {
-  
+  let route = GetFirstMatchingTopoRoute(cragObject, topoID, routeID);
+  if( !route ) return null;
+  let id = uuid.v4();
+  if( route.points ) route.points.push({id: id, x: x, y: y});
+  else route.points = [{id: id, x: x, y: y}];
+  return id;
+}
+
+module.exports = GetRoutePoints = (cragObject, topoID, routeID) => {
+  let route = GetFirstMatchingTopoRoute(cragObject, topoID, routeID);
+  return route ? route.points : null;
 }
 
 let GetRoutesContainingPoint = (topoObject, pointID) => {
@@ -246,4 +256,11 @@ let GetFirstMatchingRoute = (cragObject, routeID) => {
 let GetFirstMatchingTopo = (cragObject, topoID) => {
   let matchingTopos = cragObject.topos.filter(topo => topo.id === topoID);
   return matchingTopos[0];
+}
+
+let GetFirstMatchingTopoRoute = (cragObject, topoID, routeID) => {
+  let matchingTopos = cragObject.topos.filter(topo => topo.id === topoID);
+  if( !matchingTopos[0] ) return null;
+  let matchingRoutes = matchingTopos[0].routes.filter( route => route.id === routeID );
+  return matchingRoutes[0];
 }

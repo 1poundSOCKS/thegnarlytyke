@@ -29,6 +29,8 @@ module.exports = EnableCommandsInCragRouteTable = (cragObject, topoID) => {
 }
 
 module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
+  let selectedID = GetSelectedTopoRouteTableID();
+  _selectedTopoRouteTableRow = null;
   let topoRouteTable = document.getElementById("topo-route-table");
   if( !topoRouteTable ) return;
   let topoRouteIDs = GetTopoRouteIDs(cragObject, topoID);
@@ -37,17 +39,28 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
     AddTopoRouteTableButtons(topoRouteTable);
     Array.from(topoRouteTable.rows).forEach( row => {
       row.onclick = event => {
-        let buttonCell = _selectedTopoRouteTableRow ? _selectedTopoRouteTableRow.cells[columnIndex_Button] : null;
-        if( buttonCell ) {
-          buttonCell.classList.remove('topo-route-table-row-selected');
-        }
-        _selectedTopoRouteTableRow = event.target.parentElement;
-        buttonCell = _selectedTopoRouteTableRow ? _selectedTopoRouteTableRow.cells[columnIndex_Button] : null;
-        if( buttonCell ) {
-          buttonCell.classList.add('topo-route-table-row-selected');
-        }
+        SelectTopoRouteTableRow(event.target.parentElement);
       }
     });
+    if( selectedID ) SelectTopoRouteTableRowByID(selectedID);
+  }
+}
+
+let SelectTopoRouteTableRowByID = (routeID) => {
+  let topoRouteTable = document.getElementById("topo-route-table");
+  let firstMatchingRow = Array.from(topoRouteTable.rows).filter( row => row.cells[columnIndex_ID].innerText === routeID )[0];
+  if( firstMatchingRow ) SelectTopoRouteTableRow(firstMatchingRow);
+}
+
+let SelectTopoRouteTableRow = (row) => {
+  let buttonCell = _selectedTopoRouteTableRow ? _selectedTopoRouteTableRow.cells[columnIndex_Button] : null;
+  if( buttonCell ) {
+    buttonCell.classList.remove('topo-route-table-row-selected');
+  }
+  _selectedTopoRouteTableRow = row;
+  buttonCell = _selectedTopoRouteTableRow ? _selectedTopoRouteTableRow.cells[columnIndex_Button] : null;
+  if( buttonCell ) {
+    buttonCell.classList.add('topo-route-table-row-selected');
   }
 }
 

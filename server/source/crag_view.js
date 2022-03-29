@@ -204,8 +204,9 @@ let AddMouseHandlerToMainTopoCanvas = () => {
     let mousePos = GetMousePositionFromEvent(topoCanvas, event);
     let topoID = GetSelectedTopoID();
     let routeID  = GetSelectedTopoRouteTableID();
-    console.log(`mouse pos: ${JSON.stringify(mousePos)}, topo ID: ${topoID}, route ID: ${routeID}`);
     AppendPointToRoute(_cragObject, topoID, routeID, mousePos.x, mousePos.y);
+    RefreshMainTopoView();
+    RefreshTopoRouteTable(_cragObject, topoID);
   }
 
   topoCanvas.onmousemove = event => {
