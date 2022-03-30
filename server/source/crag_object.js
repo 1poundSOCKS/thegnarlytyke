@@ -166,6 +166,12 @@ module.exports = GetRoutePoints = (cragObject, topoID, routeID) => {
   return route ? route.points : null;
 }
 
+module.exports = MovePoint = (cragObject, topoID, pointID, x, y) => {
+  let point = GetPointInfo(cragObject, topoID, pointID);
+  point.x = x;
+  point.y = y;
+}
+
 let GetRoutesContainingPoint = (topoObject, pointID) => {
   return topoObject.routes.map(route => {
     return route.points ? route.points.filter(point => point.id === pointID) : [];

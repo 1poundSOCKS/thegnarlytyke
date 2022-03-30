@@ -3,6 +3,9 @@ let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
 let _nearestPointInfo = null;
+let _dragStartPos = null;
+let _dragPointInfo = null;
+let _mouseDown = false;
 
 module.exports = SetViewContentEditable = editable => {
   _contentEditable = editable;
@@ -153,7 +156,7 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
     });
   });
 
-  if( _nearestPointInfo && _nearestPointInfo.distance < 0.03 ) {
+  if( _nearestPointInfo ) {
     HighlightPoint(ctx, topoCanvas.width * _nearestPointInfo.x, topoCanvas.height * _nearestPointInfo.y, 1);
   }
 }
@@ -200,21 +203,37 @@ module.exports =  DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, 
 let AddMouseHandlerToMainTopoCanvas = () => {
   let topoCanvas = document.getElementById('main-topo-image');
 
-  topoCanvas.onclick = event => {
-    let mousePos = GetMousePositionFromEvent(topoCanvas, event);
-    let topoID = GetSelectedTopoID();
-    let routeID  = GetSelectedTopoRouteTableID();
-    AppendPointToRoute(_cragObject, topoID, routeID, mousePos.x, mousePos.y);
-    RefreshMainTopoView();
-    RefreshTopoRouteTable(_cragObject, topoID);
-  }
-
   topoCanvas.onmousemove = event => {
     let mousePos = GetMousePositionFromEvent(topoCanvas, event);
     let topoID = GetSelectedTopoID();
     let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, mousePos.x, mousePos.y);
-    _nearestPointInfo = nearestPointInfo;
+    _nearestPointInfo = ( nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
     RefreshMainTopoView();
+  }
+
+  topoCanvas.onmousedown = event => {
+    _mouseDown = true;
+    _dragStartPos = GetMousePositionFromEvent(topoCanvas, event);
+    _dragPointInfo = _nearestPointInfo;
+  }
+
+  topoCanvas.onmouseup = event => {
+    _mouseDown = false;
+    let mousePos = GetMousePositionFromEvent(topoCanvas, event);
+    let topoID = GetSelectedTopoID();
+    if( _dragPointInfo ) {
+      MovePoint(_cragObject, topoID, _dragPointInfo.id, mousePos.x, mousePos.y);
+    }
+    else {
+      let routeID  = GetSelectedTopoRouteTableID();
+      AppendPointToRoute(_cragObject, topoID, routeID, mousePos.x, mousePos.y);
+      RefreshMainTopoView();
+      RefreshTopoRouteTable(_cragObject, topoID);
+    }
+  }
+
+  topoCanvas.onmouseleave = event => {
+    _mouseDown = false;
   }
 }
 

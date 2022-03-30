@@ -921,3 +921,24 @@ test("AppendPointToRoute: add two points", () => {
   let points = GetRoutePoints(cragObject, 'tid-1', 'rid-a');
   expect(points).toEqual([{id: id1, x: 0.8, y: 0.4},{id: id2, x: 0.2, y: 0.5}]);
 });
+
+test("MovePoint: move a single point", () => {
+  let testInput = {
+    topos:[
+      {
+        id: 'tid-1',
+        routes: [
+          {
+            id: 'rid-a'
+          }
+        ]
+      }
+    ]
+  }
+  let cragObject = CreateCragObject(testInput);
+  let pointID = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.5, 0.2);
+  MovePoint(cragObject, 'tid-1', pointID, 0.6, 0.1);
+  let pointInfo = GetPointInfo(cragObject, 'tid-1', pointID);
+  expect(pointInfo.x).toEqual(0.6);
+  expect(pointInfo.y).toEqual(0.1);
+});
