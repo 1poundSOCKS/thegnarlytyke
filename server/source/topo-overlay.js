@@ -5,17 +5,7 @@ module.exports = CreateTopoOverlay = (cragObject, topoID) => {
   return topoObject ? { topo: topoObject } : null;
 }
 
-// module.exports = GetTopoOverlayRenderLines = (cragObject, topoID) => {
-//   let topoObject = GetTopo(cragObject, topoID);
-//   if( !topoObject ) return [];
-//   let renderLines = GetTopoRenderLines(topoObject);
-//   return renderLines;
-// }
-
 module.exports = GetTopoOverlayRenderLines = (topoOverlay) => {
-  // let topoObject = GetTopo(cragObject, topoID);
-  // if( !topoObject ) return [];
-  // let renderLines = GetTopoRenderLines(topoObject);
   let renderLines = GetTopoRenderLines(topoOverlay.topo);
   return renderLines;
 }
@@ -38,10 +28,19 @@ let GetRouteRenderLines = (routeObject) => {
 }
 
 module.exports = GetTopoOverlayRenderPoints = (topoOverlay) => {
-  // let topoObject = GetTopo(cragObject, topoID);
-  // if( !topoObject ) return [];
   let renderPoints = GetTopoRenderPoints(topoOverlay.topo);
   return renderPoints;
+}
+
+module.exports = GetTopoOverlayRenderPointsWithDragPoint = (topoOverlay, dragPoint) => {
+  let renderPoints = GetTopoRenderPoints(topoOverlay.topo);
+  return renderPoints.map( routePoints => {
+    return routePoints.map( routePoint => {
+      return routePoint.id == dragPoint.id ? 
+      { type: routePoint.type, id: routePoint.id, x: dragPoint.x, y: dragPoint.y  } :
+      { type: routePoint.type, id: routePoint.id, x: routePoint.x, y: routePoint.y  };
+    });
+  });
 }
 
 let GetTopoRenderPoints = (topoObject) => {
@@ -56,6 +55,7 @@ let GetTopoRenderPoints = (topoObject) => {
       else if( index == lastPointIndex ) pointType = rsRouteEnd;
       return {
         type: pointType,
+        id: point.id,
         x: point.x,
         y: point.y
       }

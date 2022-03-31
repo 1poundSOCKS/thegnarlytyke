@@ -5,6 +5,34 @@ module.exports = rsRouteEnd = Symbol("rsRouteEnd");
 module.exports = rsRouteJoin = Symbol("rsRouteJoin");
 module.exports = rsRouteLine = Symbol("rsRouteLine");
 
+module.exports = CreateCrag = () => {
+  return { id: uuid.v4(), routes: [], topos: [] };
+}
+
+module.exports = AppendRouteToCrag = (crag, routeName, routeGrade) => {
+  let route = { id: uuid.v4(), name: routeName, grade: routeGrade };
+  crag.routes.push(route);
+  return route;
+}
+
+module.exports = CreateCragTopo = (crag) => {
+  let topo = { id: uuid.v4(), routes: [] };
+  crag.topos.push(topo);
+  return topo;
+}
+
+module.exports = AddRouteToTopo = (topo, cragRoute) => {
+  let topoRoute = { id: cragRoute.id, points: [] };
+  topo.routes.push(topoRoute);
+  return topoRoute;
+}
+
+module.exports = AppendPointToRoute = (route, x, y) => {
+  let point = { id: uuid.v4(), x: x, y: y };
+  route.points.push(point);
+  return point;
+}
+
 module.exports = CreateCragObject = loadedObject => {
   let cragID = uuid.v4();
 
@@ -104,13 +132,17 @@ module.exports = GetPointInfo = (cragObject, topoID, pointID) => {
   return routes.length > 0 ? routes[0][0] : null;
 }
 
-module.exports = AppendPointToRoute = (cragObject, topoID, routeID, x, y) => {
-  let route = GetFirstMatchingTopoRoute(cragObject, topoID, routeID);
-  if( !route ) return null;
-  let id = uuid.v4();
-  if( route.points ) route.points.push({id: id, x: x, y: y});
-  else route.points = [{id: id, x: x, y: y}];
-  return id;
+// module.exports = AppendPointToRoute = (cragObject, topoID, routeID, x, y) => {
+//   let route = GetFirstMatchingTopoRoute(cragObject, topoID, routeID);
+//   if( !route ) return null;
+//   let id = uuid.v4();
+//   if( route.points ) route.points.push({id: id, x: x, y: y});
+//   else route.points = [{id: id, x: x, y: y}];
+//   return id;
+// }
+
+module.exports = GetTopoRoute = (cragObject, topoID, routeID) => {
+  return GetFirstMatchingTopoRoute(cragObject, topoID, routeID);
 }
 
 module.exports = GetRoutePoints = (cragObject, topoID, routeID) => {

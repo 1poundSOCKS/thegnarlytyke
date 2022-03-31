@@ -606,7 +606,8 @@ test("AppendPointToRoute: add the first point", () => {
         id: 'tid-1',
         routes: [
           {
-            id: 'rid-a'
+            id: 'rid-a',
+            points: []
           }
         ]
       }
@@ -614,9 +615,10 @@ test("AppendPointToRoute: add the first point", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let id = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.8, 0.4);
+  let route = GetTopoRoute(cragObject, 'tid-1', 'rid-a');
+  let point = AppendPointToRoute(route, 0.8, 0.4);
   let points = GetRoutePoints(cragObject, 'tid-1', 'rid-a');
-  expect(points).toEqual([{id: id, x: 0.8, y: 0.4}]);
+  expect(points).toEqual([{id: point.id, x: 0.8, y: 0.4}]);
 });
 
 test("AppendPointToRoute: add two points", () => {
@@ -627,8 +629,7 @@ test("AppendPointToRoute: add two points", () => {
         routes: [
           {
             id: 'rid-a',
-            points: [
-            ]
+            points: []
           }
         ]
       }
@@ -636,8 +637,9 @@ test("AppendPointToRoute: add two points", () => {
   }
 
   let cragObject = CreateCragObject(testInput);
-  let id1 = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.8, 0.4);
-  let id2 = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.2, 0.5);
+  let route = GetTopoRoute(cragObject, 'tid-1', 'rid-a');
+  let id1 = AppendPointToRoute(route, 0.8, 0.4).id;
+  let id2 = AppendPointToRoute(route, 0.2, 0.5).id;
   let points = GetRoutePoints(cragObject, 'tid-1', 'rid-a');
   expect(points).toEqual([{id: id1, x: 0.8, y: 0.4},{id: id2, x: 0.2, y: 0.5}]);
 });
@@ -649,16 +651,18 @@ test("MovePoint: move a single point", () => {
         id: 'tid-1',
         routes: [
           {
-            id: 'rid-a'
+            id: 'rid-a',
+            points: []
           }
         ]
       }
     ]
   }
   let cragObject = CreateCragObject(testInput);
-  let pointID = AppendPointToRoute(cragObject, 'tid-1', 'rid-a', 0.5, 0.2);
-  MovePoint(cragObject, 'tid-1', pointID, 0.6, 0.1);
-  let pointInfo = GetPointInfo(cragObject, 'tid-1', pointID);
+  let route = GetTopoRoute(cragObject, 'tid-1', 'rid-a');
+  let point = AppendPointToRoute(route, 0.5, 0.2);
+  MovePoint(cragObject, 'tid-1', point.id, 0.6, 0.1);
+  let pointInfo = GetPointInfo(cragObject, 'tid-1', point.id);
   expect(pointInfo.x).toEqual(0.6);
   expect(pointInfo.y).toEqual(0.1);
 });

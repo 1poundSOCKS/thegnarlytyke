@@ -288,3 +288,22 @@ test("when there's a single render line", () => {
     }]
   ]);
 });
+
+test("GetTopoOverlayRenderPointsWithDragPoint: test point is moved in render data", () => {
+  let crag = CreateCrag();
+  let cragRoute = AppendRouteToCrag(crag, 'Gnarly Route', 'E12 7b');
+  let topo = CreateCragTopo(crag);
+  let route = AddRouteToTopo(topo, cragRoute);
+  let point = AppendPointToRoute(route, 0.1, 0.2);
+  console.log(`${JSON.stringify(crag)}`);
+  let dragPoint = { id: point.id, x: 0.8, y: 0.9 };
+  let topoOverlay = CreateTopoOverlay(crag, topo.id);
+  let renderPoints = GetTopoOverlayRenderPoints(topoOverlay);
+  expect(renderPoints).toEqual([
+    [{type: rsRouteStart, id: point.id, x: 0.1, y: 0.2}]
+  ]);
+  let renderPointsAfterDrag = GetTopoOverlayRenderPointsWithDragPoint(topoOverlay, dragPoint);
+  expect(renderPointsAfterDrag).toEqual([
+    [{type: rsRouteStart, id: point.id, x: 0.8, y: 0.9}]
+  ]);
+});

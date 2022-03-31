@@ -129,7 +129,9 @@ module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
 module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
   let topoOverlay = CreateTopoOverlay(cragObject, topoID);
   let renderLines = GetTopoOverlayRenderLines(topoOverlay);
-  let renderPoints = GetTopoOverlayRenderPoints(topoOverlay);
+  let renderPoints = _dragPointInfo ?
+  GetTopoOverlayRenderPointsWithDragPoint(topoOverlay, _dragPointInfo) :
+  GetTopoOverlayRenderPoints(topoOverlay);
   let ctx = topoCanvas.getContext('2d');
 
   renderLines.forEach( routeLines => {
@@ -212,9 +214,17 @@ let AddMouseHandlerToMainTopoCanvas = () => {
 
   topoCanvas.onmousemove = event => {
     _mousePos = GetMousePositionFromEvent(topoCanvas, event);
-    let topoID = GetSelectedTopoID();
-    let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, _mousePos.x, _mousePos.y);
-    _nearestPointInfo = ( nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
+    if( _mouseDown ) {
+      if( _dragPointInfo ) {
+        _dragPointInfo.x = _mousePos.x;
+        _dragPointInfo.y = _mousePos.y;
+      }
+    }
+    else {
+      let topoID = GetSelectedTopoID();
+      let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, _mousePos.x, _mousePos.y);
+      _nearestPointInfo = ( nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
+    }
     RefreshMainTopoView();
   }
 
@@ -230,10 +240,12 @@ let AddMouseHandlerToMainTopoCanvas = () => {
     let topoID = GetSelectedTopoID();
     if( _dragPointInfo ) {
       MovePoint(_cragObject, topoID, _dragPointInfo.id, mousePos.x, mousePos.y);
+      _dragPointInfo = null;
     }
     else {
       let routeID  = GetSelectedTopoRouteTableID();
-      AppendPointToRoute(_cragObject, topoID, routeID, mousePos.x, mousePos.y);
+      let route = GetTopoRoute(_cragObject, topoID, routeID);
+      if( route ) AppendPointToRoute(route, mousePos.x, mousePos.y);
       RefreshMainTopoView();
       RefreshTopoRouteTable(_cragObject, topoID);
     }
