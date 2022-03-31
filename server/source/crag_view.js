@@ -2,6 +2,7 @@ let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
+let _mousePos = null;
 let _nearestPointInfo = null;
 let _dragStartPos = null;
 let _dragPointInfo = null;
@@ -126,8 +127,9 @@ module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
 }
 
 module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
-  let renderLines = GetTopoOverlayRenderLines(cragObject, topoID);
-  let renderPoints = GetTopoOverlayRenderPoints(cragObject, topoID);
+  let topoOverlay = CreateTopoOverlay(cragObject, topoID);
+  let renderLines = GetTopoOverlayRenderLines(topoOverlay);
+  let renderPoints = GetTopoOverlayRenderPoints(topoOverlay);
   let ctx = topoCanvas.getContext('2d');
 
   renderLines.forEach( routeLines => {
@@ -158,6 +160,11 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
 
   if( _nearestPointInfo ) {
     HighlightPoint(ctx, topoCanvas.width * _nearestPointInfo.x, topoCanvas.height * _nearestPointInfo.y, 1);
+  }
+
+  if( _selectedTopoRouteTableRow && _mousePos && _mouseDown && !_dragPointInfo ) {
+    let routeLabel = _selectedTopoRouteTableRow.rowIndex + 1;
+    DrawRoutePoint(ctx, topoCanvas.width * _mousePos.x, topoCanvas.height * _mousePos.y, routeLabel, 1, "rgb(150, 150, 150)");
   }
 }
 
@@ -204,9 +211,9 @@ let AddMouseHandlerToMainTopoCanvas = () => {
   let topoCanvas = document.getElementById('main-topo-image');
 
   topoCanvas.onmousemove = event => {
-    let mousePos = GetMousePositionFromEvent(topoCanvas, event);
+    _mousePos = GetMousePositionFromEvent(topoCanvas, event);
     let topoID = GetSelectedTopoID();
-    let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, mousePos.x, mousePos.y);
+    let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, _mousePos.x, _mousePos.y);
     _nearestPointInfo = ( nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
     RefreshMainTopoView();
   }

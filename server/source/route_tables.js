@@ -5,7 +5,7 @@ const columnIndex_Grade = 3;
 const columnIndex_Button = 4;
 
 let _contentEditable = false;
-let _selectedTopoRouteTableRow = null;
+module.exports = _selectedTopoRouteTableRow = null;
 
 module.exports = SetTableContentEditable = (editable) => _contentEditable = editable;
 
