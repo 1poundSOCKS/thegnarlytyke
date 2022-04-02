@@ -295,7 +295,6 @@ test("GetTopoOverlayRenderPointsWithDragPoint: test point is moved in render dat
   let topo = CreateCragTopo(crag);
   let route = AddRouteToTopo(topo, cragRoute);
   let point = AppendPointToRoute(route, 0.1, 0.2);
-  console.log(`${JSON.stringify(crag)}`);
   let dragPoint = { id: point.id, x: 0.8, y: 0.9 };
   let topoOverlay = CreateTopoOverlay(crag, topo.id);
   let renderPoints = GetTopoOverlayRenderPoints(topoOverlay);

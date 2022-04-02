@@ -36,6 +36,19 @@ button {
   justify-content: right;
 }
 
+.crag-covers-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: top;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: lightgrey;
+}
+
 .topo-images-container-initial {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

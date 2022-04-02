@@ -29,6 +29,7 @@ module.exports = AddRouteToTopo = (topo, cragRoute) => {
 
 module.exports = AppendPointToRoute = (route, x, y) => {
   let point = { id: uuid.v4(), x: x, y: y };
+  if( !route.points ) route.points = [];
   route.points.push(point);
   return point;
 }

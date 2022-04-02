@@ -599,6 +599,27 @@ test("Get point info when there's more than one topo", () => {
   expect(pointInfo).toEqual({id: 'pid-c11', x: 0.6, y: 0.7});
 });
 
+test("AppendPointToRoute: add the first point when there is no points property", () => {
+  let testInput = {
+    topos:[
+      {
+        id: 'tid-1',
+        routes: [
+          {
+            id: 'rid-a'
+          }
+        ]
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let route = GetTopoRoute(cragObject, 'tid-1', 'rid-a');
+  let point = AppendPointToRoute(route, 0.8, 0.4);
+  let points = GetRoutePoints(cragObject, 'tid-1', 'rid-a');
+  expect(points).toEqual([{id: point.id, x: 0.8, y: 0.4}]);
+});
+
 test("AppendPointToRoute: add the first point", () => {
   let testInput = {
     topos:[
