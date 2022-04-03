@@ -36,6 +36,21 @@ button {
   justify-content: right;
 }
 
+.crag-cover-header {
+  margin: auto;
+  margin-top: 1rem;
+  text-align: center;
+  background: #662608;
+  background-size: 100%;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 2rem;
+}
+
+.crag-cover-image {
+  margin-bottom: 1rem;
+}
+
 .crag-covers-container {
   display: flex;
   flex-direction: row;

@@ -1,0 +1,186 @@
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>the gnarly tyke</title>
+    <link rel="stylesheet" href="stylesheets/default.css">
+</head>
+<body>
+  <script src="./common.js"></script>
+  <h1>the gnarly tyke</h1>
+  <div>
+    <h2>add topos</h2>
+  </div>
+  <div style="display: flex; flex-direction: column; margin-top: 2%;">
+    <input type="file" multiple id="topo-image-files" name="filename" onchange="OnSelectImageFiles()">
+    <div style="display: flex;">
+      <table id="topo-table" style="float: left; width: 50%; margin-right: 2%">
+        <thead>
+            <tr>
+              <th>File</th>
+              <th>Topo ID</th>
+            </tr>
+        </thead>
+        <tbody id="topo-table-body">
+        </tbody>
+      </table>
+      <canvas id="topo-canvas" style="border: 1px solid black;"></canvas>
+    </div>
+  </div>
+  <div style="margin-top: 2%;">
+    <button type="button" id="upload" onclick="Upload()">Upload</button>
+    <button type="button" id="download" onclick="Download()">Download</button>
+  </div>
+  <div style="margin-top: 2%;">
+    <label>Topo ID:
+      <input id="topoID" size="50">
+    </label>
+  </div>
+  <div style="margin-top: 2%;">
+    <label>Topo filename:
+      <input id="topoFilename" size="50">
+    </label>
+  </div>
+  <div style="margin-top: 2%;">
+  </div>
+  <div style="margin-top: 2%;">
+    <canvas id="download-topo-canvas" style="border: 1px solid black;"></canvas>
+  </div>
+  <script>
+    let _topoImageFiles = [];
+    let _currentTopo = null;
+    window.onload = function() {
+      let topoCanvas = document.getElementById('topo-canvas');
+      topoCanvas.width = 500;
+      topoCanvas.height = 500;
+      let downloadTopoCanvas = document.getElementById('download-topo-canvas');
+      downloadTopoCanvas.width = 500;
+      downloadTopoCanvas.height = 500;
+      UpdateCurrentTopo(null);
+    }
+    window.onresize = () => {
+    }
+    let OnSelectImageFiles = () => {
+      let topoImageFiles = document.getElementById('topo-image-files');
+      _topoImageFiles = Array.from(topoImageFiles.files).map( file => {
+        return { file: file }
+      });
+      UpdateTopoTable(_topoImageFiles);
+      LoadCurrentTopoImageFile();
+    }
+    let LoadCurrentTopoImageFile = () => {
+      if( _currentTopo && _currentTopo.image ) {
+        DrawTopoImage(_currentTopo.image);
+      }
+      else if( _currentTopo ) {
+        LoadTopoImageFile(_currentTopo.file).then( result => {
+          console.log(`file '${result.file.name} loaded, content length=${result.contents.length}`);
+          _currentTopo.contents = result.contents;
+          LoadImage(result.contents).then( topoImage => {
+            console.log(`image loaded`);
+            _currentTopo.image = topoImage;
+            DrawTopoImage(topoImage);
+          });
+        });
+      }
+    }
+    let DrawTopoImage = (topoImage) => {
+      let topoCanvas = document.getElementById('topo-canvas');
+      topoCanvas.height = 500;
+      topoCanvas.width = topoImage.width * topoCanvas.height / topoImage.height;
+      const ctx = topoCanvas.getContext("2d");
+      ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
+    }
+    let LoadTopoImageFiles = (files) => {
+      files.forEach( file => {
+        LoadTopoImageFile(file).then( result => {
+          console.log(`file '${result.file.name} loaded, content length=${result.contents.length}`);
+          LoadImage(result.contents).then( topoImage => {
+            console.log(`image loaded`);
+            let topoCanvas = document.getElementById('topo-canvas');
+            topoCanvas.height = 500;
+            topoCanvas.width = topoImage.width * topoCanvas.height / topoImage.height;
+            const ctx = topoCanvas.getContext("2d");
+            ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
+          });
+        });
+      });
+    }
+    let LoadTopoImageFile = file => new Promise( resolve => {
+      console.log(file);
+      let fileReader = new FileReader();
+      fileReader.onload = () => resolve({file: file, contents: fileReader.result});
+      fileReader.readAsDataURL(file);
+    });
+    let UpdateTopoTable = (topos) => {
+      console.log(`update topo table with ${topos.length} files`);
+      let table = document.getElementById('topo-table');
+      while( table.rows.length > 1 ) table.deleteRow(1);
+      topos.forEach( (topo, index) => {
+        let row = table.insertRow(index + 1);
+        let cell1 = row.insertCell(0);
+        cell1.innerHTML = topo.file.name;
+        row.onclick = (event) => {
+          let selectedTopos = topos.filter( topo => topo.file.name == event.currentTarget.cells[0].innerHTML );
+          if( selectedTopos.length == 1 ) {
+            console.log(selectedTopos[0].file.name);
+            UpdateCurrentTopo(selectedTopos[0]);
+            LoadCurrentTopoImageFile();
+          }
+        }
+        let cell2 = row.insertCell(1);
+        cell2.innerHTML = topo.id ? topo.id : '';
+      });
+      let topoCanvas = document.getElementById('topo-canvas');
+      topoCanvas.width = 500;
+      topoCanvas.height = 500;
+    }
+    let UpdateTopoRow = (topo) => {
+      let table = document.getElementById('topo-table');
+      Array.from(table.rows).forEach( row => {
+        if( row.cells[0].innerHTML == topo.file.name ) row.cells[1].innerHTML = topo.topo.id;
+      });
+    }
+    let Upload = async () => {
+      const canvas = document.getElementById("topo-canvas");
+      const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
+      const req = { imageData: topoImageURL };
+      const response = await fetch('/add_topo', {
+        method: 'POST',
+        mode: 'same-origin',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'same-origin',
+        body: JSON.stringify(req)
+      });
+      const resData = await response.json();
+      _currentTopo.uploaded = true;
+      _currentTopo.topo = resData.topo;
+      UpdateCurrentTopo(_currentTopo);
+      UpdateTopoRow(_currentTopo);
+      return resData;
+    }
+    let UpdateCurrentTopo = topo => {
+      _currentTopo = topo;
+      let currentTopoUploaded = (_currentTopo && _currentTopo.uploaded);
+      if( currentTopoUploaded )
+        console.log(`current topo UPLOADED`);
+      document.getElementById("upload").disabled = currentTopoUploaded;
+      document.getElementById("download").disabled = !(_currentTopo && _currentTopo.topo && _currentTopo.topo.imageFile);
+      document.getElementById('topoID').value = _currentTopo && _currentTopo.topo ? _currentTopo.topo.id : '';
+      document.getElementById('topoFilename').value = _currentTopo && _currentTopo.topo ? _currentTopo.topo.imageFile : '';
+    }
+    let Download = async () => {
+      const imageFilename = document.getElementById('topoFilename').value;
+      const image = await LoadImage(`/get_image?filename=${imageFilename}`);
+      const canvas = document.getElementById("download-topo-canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(image, 0, 0);
+    }
+    </script>
+</body>
+</html>
