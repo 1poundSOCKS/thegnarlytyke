@@ -5,7 +5,13 @@ import * as _crag from './crag.js'
 
 const app = express();
 app.use(express.static('public'));
+app.use(express.static('node_modules/@fortawesome'));
 app.use(bodyParser.json());
+
+app.get('/ping', (req, res) => {
+  console.log('GET /ping');
+  res.send({});
+});
 
 app.get('/edit', (req, res) => {
   res.sendFile(path.resolve('./public', 'edit.html'));
