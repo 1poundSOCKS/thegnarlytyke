@@ -1,47 +1,50 @@
-* {
-  font-family: six caps;
-}
-
 html {
+  font-family: six caps;
   background-color: lightgray;
 }
 
-h1 {
+.tgt-header {
+  display: block;
   margin: auto;
-  text-align: center;
   background: #175707;
   color: white;
-  letter-spacing: .1em;
   font-size: 3rem;
-}
-
-h2 {
-  margin: auto;
-  margin-bottom: 1rem;
-  text-align: center;
-  background: #662608;
-  background-size: 100%;
-  color: white;
   letter-spacing: .1em;
-  font-size: 2rem;
-}
-
-p {
-  font-size: 2rem;
-}
-
-button {
-  font-size: 2rem;
-  font-weight: bold;
-  border-radius: 8px;
-  color: black;
-  background-color: lightgray;
   text-align: center;
-  justify-content: right;
 }
 
 .tgt-header:hover {
   cursor: pointer;
+}
+
+.index-header, .crag-view-header {
+  display: block;
+  margin: auto;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: #662608;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 2rem;
+}
+
+.crag-view-header {
+  display: block;
+  background: #662608;
+  color: white;
+  letter-spacing: .1em;
+  font-size: 2rem;
+}
+
+.crag-view-icon-bar {
+  font-size: 2rem;
+  text-align: center;
+  margin-right: 0.2rem;
+  color: darkgray;
+}
+
+.crag-view-icon:hover {
+  color: white;
 }
 
 .crag-cover-header {
