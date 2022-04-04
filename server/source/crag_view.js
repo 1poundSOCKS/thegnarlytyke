@@ -13,9 +13,11 @@ module.exports = SetViewContentEditable = editable => {
   SetTableContentEditable(_contentEditable);
 }
 
-module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath) => {
+module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath, headerElement) => {
   let response = await fetch(cragURL);
   let crag = await response.json();
+
+  if( headerElement && crag.name ) headerElement.innerText = crag.name;
   
   _cragObject = CreateCragObject(crag);
   let cragTopoIDs = GetCragTopoIDs(_cragObject);

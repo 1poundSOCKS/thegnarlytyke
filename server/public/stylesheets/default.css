@@ -2,6 +2,10 @@
   font-family: six caps;
 }
 
+html {
+  background-color: lightgray;
+}
+
 h1 {
   margin: auto;
   text-align: center;
@@ -36,6 +40,10 @@ button {
   justify-content: right;
 }
 
+.tgt-header:hover {
+  cursor: pointer;
+}
+
 .crag-cover-header {
   margin: auto;
   margin-top: 1rem;
@@ -62,6 +70,10 @@ button {
   margin-top: 1rem;
   margin-bottom: 1rem;
   background-color: lightgrey;
+}
+
+.crag_cover-container:hover {
+  cursor: pointer;
 }
 
 .topo-images-container-initial {

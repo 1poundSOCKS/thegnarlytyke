@@ -6,14 +6,19 @@
   <link rel="stylesheet" href="stylesheets/default.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body id="crag-view-body">
-  <div><h1>the gnarly tyke</h1></div>
-  <div><h2>Baildon Bank</h2><div>
-  <div id="topo-images-container" class="topo-images-container-initial"></div>
-  <div id="main-topo-container" class="main-topo-container do-not-display">
-    <div class="main-topo-image-container"><canvas id="main-topo-image" class="main-topo-image"></canvas></div>
-    <div class="topo-route-table-container"><table id="topo-route-table" class="topo-route-table"></table></div>
+<body>
+  <div><h1 id="tgt-header" class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1></div>
+  <div><h2>The Crags</h2><div>
+  <div id="crag-covers-container" class="crag-covers-container">
+    <div id="crag-cover-container" onclick="window.location.href='crag-view.html?id=0b950bd3-ea3b-44d1-ac40-28081c1d732a'" class="crag_cover-container" data-id="0b950bd3-ea3b-44d1-ac40-28081c1d732a">
+      <h3 class="crag-cover-header">Baildon Bank</h3>
+      <img class="crag-cover-image" src="images/0b950bd3-ea3b-44d1-ac40-28081c1d732a.crag.jpg">
+    </div>
+    <div id="crag-cover-container" onclick="window.location.href='crag-view.html?id=b0f543eb-3bc3-4bfe-a84f-53ceb8c940fe'" class="crag_cover-container" data-id="b0f543eb-3bc3-4bfe-a84f-53ceb8c940fe">
+      <h3 class="crag-cover-header">Ilkley Cow & Calf</h3>
+      <img class="crag-cover-image" src="images/b0f543eb-3bc3-4bfe-a84f-53ceb8c940fe.crag.jpg">
+    </div>
   </div>
-  <script src="./index.page.js"></script>
+  <script src="./crag-covers.page.js"></script>
 </body>
 </html>
