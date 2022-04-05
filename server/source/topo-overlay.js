@@ -11,6 +11,7 @@ module.exports = GetTopoOverlayRenderLines = (topoOverlay) => {
 }
 
 let GetTopoRenderLines = (topoObject) => {
+  if( !topoObject.routes ) return [];
   let topoLines = topoObject.routes.map( route => {
     return GetRouteRenderLines(route);
   })

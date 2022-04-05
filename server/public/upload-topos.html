@@ -6,7 +6,7 @@
 <body>
   <script src="./common.js"></script>
   <h1 class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1>
-  <h2 id="upload-topos-header" class="upload-topos-header">Upload topos</h2>
+  <h2 id="upload-topos-header" class="tgt-subheader">Upload topos</h2>
   <div style="display: flex; flex-direction: column; margin-top: 2%;">
     <input type="file" multiple id="topo-image-files" name="filename" onchange="OnSelectImageFiles()">
     <div style="display: flex;">
@@ -43,9 +43,13 @@
     <canvas id="download-topo-canvas" style="border: 1px solid black;"></canvas>
   </div>
   <script>
+    let _cragID = null;
     let _topoImageFiles = [];
     let _currentTopo = null;
     window.onload = function() {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      _cragID = urlParams.get('id');
       let topoCanvas = document.getElementById('topo-canvas');
       topoCanvas.width = 500;
       topoCanvas.height = 500;
@@ -140,7 +144,7 @@
     let Upload = async () => {
       const canvas = document.getElementById("topo-canvas");
       const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
-      const req = { imageData: topoImageURL };
+      const req = { cragID: _cragID, imageData: topoImageURL };
       const response = await fetch('/add_topo', {
         method: 'POST',
         mode: 'same-origin',

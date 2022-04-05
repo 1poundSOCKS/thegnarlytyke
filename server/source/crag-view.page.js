@@ -14,4 +14,5 @@ window.onload = () => {
     if( response.status == 200 )
       document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
   });
+  document.getElementById('upload-topos-address').setAttribute('href', `./upload-topos.html?id=${cragID}`);
 }

@@ -2,19 +2,19 @@ import path from 'path'
 import fs, { writeFile } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
-const dataFolder = './private/data';
-const imagesFolder = './private/images';
+const dataFolder = './public.test/data';
+const imagesFolder = './public.test/images';
 
-let GetCragFilename = () => path.resolve(dataFolder, 'crag.json');
-let GetBackupCragFilename = () => path.resolve(dataFolder, `crag.backup.${new Date().getTime()}.json`);
+let GetCragFilename = (cragID) => path.resolve(dataFolder, `${cragID}.crag.json`);
+let GetBackupCragFilename = (cragID) => path.resolve(dataFolder, `${cragID}.crag.backup.${new Date().getTime()}.json`);
 
 export let GetFullImageFilename = (filename) => path.resolve(imagesFolder, filename);
 
-export let AddTopo = async (imageData) => {
+export let AddTopo = async (cragID, imageData) => {
   const topo = CreateTopo();
   let imageFilename = await SaveTopoURIImageDataToJEPGFile(topo.id, imageData);
   topo.imageFile = imageFilename;
-  await AppendTopoToCrag(topo);
+  await AppendTopoToCrag(cragID, topo);
   return topo;
 }
 
@@ -22,22 +22,22 @@ let CreateTopo = () => {
   return {id: uuidv4()};
 }
 
-export let AppendTopoToCrag = async (topo) => {
-  let cragObject = await ReadCragObjectFromFile();
-  cragObject.topos.push(topo);
-  return WriteDataToFile(JSON.stringify(cragObject, null, 2), GetCragFilename());
+export let AppendTopoToCrag = async (cragID, topo) => {
+  let cragObject = await ReadCragObjectFromFile(cragID);
+  cragObject.topos ? cragObject.topos.push(topo) : cragObject.topos = [topo];
+  return WriteDataToFile(JSON.stringify(cragObject, null, 2), GetCragFilename(cragID));
 }
 
-let ReadCragObjectFromFile = async () => {
+let ReadCragObjectFromFile = async (cragID) => {
   let cragObject = null;
   try {
-    let cragData = await ReadFile(GetCragFilename());
+    let cragData = await ReadFile(GetCragFilename(cragID));
     cragObject = JSON.parse(cragData);
   }
   catch( e ) {
     if( e.Error != fs.NOENT ) throw e;
     cragObject = { routes: [], topos: [] };
-    await WriteDataToFile(JSON.stringify(cragObject), GetCragFilename());
+    await WriteDataToFile(JSON.stringify(cragObject), GetCragFilename(cragID));
   }
   return cragObject;
 }
@@ -109,7 +109,7 @@ let ReplaceTempIDs = (crag, mapOfIDReplacements) => {
 };
 
 let SaveTopoURIImageDataToJEPGFile = (topoID, topoURIData) => new Promise( (resolve, reject) => {
-  const filename = `${topoID}.jpg`;
+  const filename = `${topoID}.topo.jpg`;
   const fullFilename = path.resolve(imagesFolder, filename);
   console.log(`saving image data to '${fullFilename}'`);
   const imageDataChunks = topoURIData.split(",");

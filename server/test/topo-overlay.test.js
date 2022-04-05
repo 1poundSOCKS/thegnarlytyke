@@ -1,5 +1,19 @@
 require('../source/topo-overlay.js');
 
+test("GetTopoRenderLines: no routes array in the topo", () => {
+  let testInput = {
+    topos:[
+      {
+        id: 'tid-1',
+      }
+    ]
+  }
+  let cragObject = CreateCragObject(testInput);
+  let topoOverlay = CreateTopoOverlay(cragObject, 'tid-1');
+  let renderLines = GetTopoOverlayRenderLines(topoOverlay);
+  expect(renderLines).toEqual([]);
+});
+
 test("When there aren't any render points", () => {
   let testInput = {
     topos:[

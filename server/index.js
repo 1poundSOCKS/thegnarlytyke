@@ -19,7 +19,7 @@ app.get('/edit', (req, res) => {
 
 app.post('/add_topo', (req, res) => {
   console.log('POST /add_topo');
-  AddTopo(req.body.imageData)
+  AddTopo(req.body.cragID, req.body.imageData)
   .then( topo => {
     res.send({result: "success", topo: {id: topo.id, imageFile: topo.imageFile}});
   })
@@ -75,8 +75,9 @@ app.get('/delete_topo', (req, res) => {
 
 app.listen(80);
 
-let AddTopo = async (imageData) => {
+let AddTopo = async (cragID, imageData) => {
+  if( !imageData ) throw 'crag ID not specified';
   if( !imageData ) throw 'image data not supplied';
-  const topo = _crag.AddTopo(imageData);
+  const topo = _crag.AddTopo(cragID, imageData);
   return topo;
 }

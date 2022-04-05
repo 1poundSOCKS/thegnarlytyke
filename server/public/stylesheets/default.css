@@ -17,7 +17,7 @@ html {
   cursor: pointer;
 }
 
-.index-header, .crag-view-header {
+.tgt-subheader {
   display: block;
   margin: auto;
   margin-bottom: 1rem;
@@ -32,6 +32,11 @@ html {
   font-size: 2rem;
   text-align: center;
   margin-right: 0.2rem;
+  color: darkgray;
+}
+
+.crag-view-icon {
+  cursor: pointer;
   color: darkgray;
 }
 
