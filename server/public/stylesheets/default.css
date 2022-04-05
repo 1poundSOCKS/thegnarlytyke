@@ -73,8 +73,10 @@ html {
 }
 
 .topo-images-container-initial {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2%;
   background-color: lightgrey;
 }
@@ -86,11 +88,6 @@ html {
   overflow-x: auto;
   gap: 0.5rem;
   background-color: lightgrey;
-}
-
-.topo-container {
-  width: 100%;
-  overflow: hidden;
 }
 
 .topo-container:hover {
@@ -180,7 +177,7 @@ html {
   margin: auto;
   border-collapse: collapse;
   font-size: 2.5rem;
-  width: min(40rem, 100%);
+  width: min(100% - 2rem, 60rem);
   text-align: left;
 }
 
