@@ -12,9 +12,9 @@ window.onload = function() {
   downloadTopoCanvas.width = 500;
   downloadTopoCanvas.height = 500;
   UpdateCurrentTopo(null);
-  document.getElementById('topo-image-files').onchange = () => {
-    OnSelectImageFiles();
-  }
+  document.getElementById('topo-image-files').onchange = OnSelectImageFiles;
+  document.getElementById('upload').onclick = Upload;
+  document.getElementById('download').onclick = Download;
 }
 window.onresize = () => {
 }
