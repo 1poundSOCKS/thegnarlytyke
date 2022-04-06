@@ -85,7 +85,7 @@
   "topos": [
     {
       "id": "2a6c208d-4978-4b9b-a62a-50a10b23adf4",
-      "imageFile": "2a6c208d-4978-4b9b-a62a-50a10b23adf4.jpg",
+      "imageFile": "2a6c208d-4978-4b9b-a62a-50a10b23adf4.topo.jpg",
       "routes": [
         {
           "id": "07984564-22a1-4e5e-aa3c-83b308405d2e",
@@ -141,7 +141,7 @@
     },
     {
       "id": "632a7c8f-afbd-4ed5-ad7a-6fd3b8cdb9d2",
-      "imageFile": "632a7c8f-afbd-4ed5-ad7a-6fd3b8cdb9d2.jpg",
+      "imageFile": "632a7c8f-afbd-4ed5-ad7a-6fd3b8cdb9d2.topo.jpg",
       "routes": [
         {
           "id": "195f2792-9f7a-46ea-8502-48ed9230fa12",
@@ -287,7 +287,7 @@
     },
     {
       "id": "4e06d21f-bfea-4d34-b678-e309f9be63e7",
-      "imageFile": "4e06d21f-bfea-4d34-b678-e309f9be63e7.jpg",
+      "imageFile": "4e06d21f-bfea-4d34-b678-e309f9be63e7.topo.jpg",
       "routes": [
         {
           "id": "997634ec-5d88-4f08-ac36-7fca12f39315",
@@ -333,7 +333,7 @@
     },
     {
       "id": "bf27beed-3262-485d-af7c-6832a003df41",
-      "imageFile": "bf27beed-3262-485d-af7c-6832a003df41.jpg",
+      "imageFile": "bf27beed-3262-485d-af7c-6832a003df41.topo.jpg",
       "routes": [
         {
           "id": "7da44dff-a881-433e-b161-c6816f48b4fe",
@@ -414,7 +414,7 @@
     },
     {
       "id": "a9c41aa1-540c-42bf-b05a-379f06c6de68",
-      "imageFile": "a9c41aa1-540c-42bf-b05a-379f06c6de68.jpg",
+      "imageFile": "a9c41aa1-540c-42bf-b05a-379f06c6de68.topo.jpg",
       "routes": [
         {
           "id": "9115ca16-2fcc-403c-ba54-4a2947cf5c92",
@@ -440,7 +440,7 @@
     },
     {
       "id": "570a05f0-b0e2-4009-8e89-71d0afd9465e",
-      "imageFile": "570a05f0-b0e2-4009-8e89-71d0afd9465e.jpg",
+      "imageFile": "570a05f0-b0e2-4009-8e89-71d0afd9465e.topo.jpg",
       "routes": [
         {
           "id": "8afd00ac-bac6-4192-aae3-211187fba78b",
@@ -531,7 +531,7 @@
     },
     {
       "id": "d38a0a34-cf87-415f-8999-05d7f115f061",
-      "imageFile": "d38a0a34-cf87-415f-8999-05d7f115f061.jpg",
+      "imageFile": "d38a0a34-cf87-415f-8999-05d7f115f061.topo.jpg",
       "routes": [
         {
           "id": "2bea977f-0690-4716-8fcc-ba7731e95979",
