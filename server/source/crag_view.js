@@ -225,7 +225,7 @@ let AddMouseHandlerToMainTopoCanvas = () => {
     else {
       let topoID = GetSelectedTopoID();
       let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, _mousePos.x, _mousePos.y);
-      _nearestPointInfo = ( nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
+      _nearestPointInfo = ( nearestPointInfo && nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
     }
     RefreshMainTopoView();
   }

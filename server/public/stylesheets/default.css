@@ -1,13 +1,22 @@
+:root {
+  --tgt-header-background-color: #175707;
+  --tgt-subheader-background-color: #662608;
+  --tgt-std-light-color: white;
+  --tgt-std-dark-color: darkgray;
+  --tgt-std-background-color: lightgray;
+  --tgt-highlight-background-color: darkgray;
+}
+
 html {
   font-family: six caps;
-  background-color: lightgray;
+  background-color: var(--tgt-std-background-color);
 }
 
 .tgt-header {
   display: block;
   margin: auto;
-  background: #175707;
-  color: white;
+  background: var(--tgt-header-background-color);
+  color: var(--tgt-std-light-color);
   font-size: 3rem;
   letter-spacing: .1em;
   text-align: center;
@@ -22,8 +31,8 @@ html {
   margin: auto;
   margin-bottom: 1rem;
   text-align: center;
-  background: #662608;
-  color: white;
+  background: var(--tgt-subheader-background-color);
+  color: var(--tgt-std-light-color);
   letter-spacing: .1em;
   font-size: 2rem;
 }
@@ -32,26 +41,27 @@ html {
   font-size: 2rem;
   text-align: center;
   margin-right: 0.2rem;
-  color: darkgray;
+  margin-bottom: 1rem;
+  color: var(--tgt-std-dark-color);
 }
 
 .crag-view-icon {
   cursor: pointer;
-  color: darkgray;
+  color: var(--tgt-std-dark-color);
 }
 
 .crag-view-icon:hover {
   cursor: pointer;
-  color: white;
+  color: var(--tgt-std-light-color);
 }
 
 .crag-cover-header {
   margin: auto;
   margin-top: 1rem;
   text-align: center;
-  background: #662608;
+  background: var(--tgt-header-background-color);
   background-size: 100%;
-  color: white;
+  color: var(--tgt-std-light-color);
   letter-spacing: .1em;
   font-size: 2rem;
 }
@@ -83,7 +93,7 @@ html {
   flex-wrap: wrap;
   justify-content: center;
   gap: 2%;
-  background-color: lightgrey;
+  background-color: var(--tgt-std-background-color);
 }
 
 .topo-images-container {
@@ -92,15 +102,15 @@ html {
   grid-auto-columns: 23%;
   overflow-x: auto;
   gap: 0.5rem;
-  background-color: lightgrey;
+  background-color: var(--tgt-std-background-color);
 }
 
 .topo-container:hover {
-  background-color: darkgray;
+  background-color: var(--tgt-highlight-background-color);
 }
 
 .topo-container-selected {
-  background-color: darkgray;
+  background-color: var(--tgt-highlight-background-color);
 }
 
 .topo-image {
@@ -109,7 +119,6 @@ html {
 
 .topo-image:hover {
   cursor: pointer;
-  filter: grayscale(0%);
 }
 
 .main-topo-container {
@@ -122,7 +131,7 @@ html {
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  background-color: lightgrey;
+  background-color: var(--tgt-std-background-color);
 }
 
 .main-topo-container-edit {
@@ -132,17 +141,17 @@ html {
   gap: 1rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  background-color: lightgrey;
+  background-color: var(--tgt-std-background-color);
 }
 
 .edit-topo-container {
   display: block;
   margin: auto;
-  background-color: lightgrey;
+  background-color: var(--tgt-std-background-color);
 }
 
 .topo-image-container {
-  background-color: lightgray;
+  background-color: var(--tgt-std-background-color);
 }
 
 .icon-bar {

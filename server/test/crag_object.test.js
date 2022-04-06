@@ -433,6 +433,20 @@ test("nearest point when there's multiple topos", () => {
   expect(nearestPointID).toEqual('pid-x5B');
 });
 
+test("GetNearestTopoPointInfo: routes property missing", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111'
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointInfo = GetNearestTopoPointInfo(cragObject, 'tid-1111', 0.1, 0.2);
+  expect(nearestPointInfo).toBeNull();
+});
+
 test("GetNearestTopoPointInfo: when there's only one point", () => {
   let testInput = {
     topos: [
@@ -597,6 +611,20 @@ test("Get point info when there's more than one topo", () => {
   let cragObject = CreateCragObject(testInput);
   let pointInfo = GetPointInfo(cragObject, 'tid-2', 'pid-c11');
   expect(pointInfo).toEqual({id: 'pid-c11', x: 0.6, y: 0.7});
+});
+
+test("GetTopoRoute: routes property missing", () => {
+  let testInput = {
+    topos:[
+      {
+        id: 'tid-1'
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let route = GetTopoRoute(cragObject, 'tid-1', 'rid-a');
+  expect(route).toBeNull();
 });
 
 test("AppendPointToRoute: add the first point when there is no points property", () => {
