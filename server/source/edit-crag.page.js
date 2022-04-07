@@ -9,7 +9,7 @@ window.onload = () => {
   const cragID = urlParams.get('id');
   const cragNameDisplayElement = document.getElementById('crag-view-header');
   SetViewContentEditable(true);
-  LoadAndDisplayCrag(`./data/${cragID}.crag.json`, './images/', cragNameDisplayElement);
+  LoadAndDisplayCrag(`env/prod/data/${cragID}.crag.json`, 'env/prod/images/', cragNameDisplayElement);
   document.getElementById('save-crag-button').onclick = () => {
     SaveCrag();
   }
