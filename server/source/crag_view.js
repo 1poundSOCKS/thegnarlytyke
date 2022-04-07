@@ -1,3 +1,5 @@
+require('./config.js');
+
 let _cragObject = null;
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
@@ -14,7 +16,8 @@ module.exports = SetViewContentEditable = editable => {
 }
 
 module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
-  const cragURL = `env/prod/data/${cragID}.crag.json`;
+  const env = GetEnvironment();
+  const cragURL = `env/${env}/data/${cragID}.crag.json`;
   const imagesPath = 'env/prod/images/';
   let response = await fetch(cragURL);
   let crag = await response.json();
