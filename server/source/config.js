@@ -1,7 +1,11 @@
-let _environment = "prod";
+let Config = function() {
+  this.environment = "prod";
+  this.mode = "view";
+}
 
-module.exports = SetEnvironment = () => new Promise( resolve => {
-  resolve(_environment);
-});
+Config.prototype.Load = function(config) {
+  Object.assign(this, config);
+  return this;
+}
 
-module.exports = GetEnvironment = () => _environment;
+module.exports = new Config;
