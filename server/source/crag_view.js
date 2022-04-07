@@ -13,7 +13,9 @@ module.exports = SetViewContentEditable = editable => {
   SetTableContentEditable(_contentEditable);
 }
 
-module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath, headerElement) => {
+module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
+  const cragURL = `env/prod/data/${cragID}.crag.json`;
+  const imagesPath = 'env/prod/images/';
   let response = await fetch(cragURL);
   let crag = await response.json();
 
@@ -40,7 +42,7 @@ module.exports = LoadAndDisplayCrag = async (cragURL, imagesPath, headerElement)
     if( imageFilename ) {
       let topoImage = await LoadImage(`${imagesPath}${imageFilename}`);
       _topoImages.set(topoID, topoImage);
-      DisplayTopoImage(canvas, topoImage);//, 10);
+      DisplayTopoImage(canvas, topoImage);
     }
   });
 

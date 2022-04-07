@@ -8,7 +8,6 @@
   <h1 class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1>
   <h2 id="upload-topos-header" class="tgt-subheader">Upload topos</h2>
   <div style="display: flex; flex-direction: column; margin-top: 2%;">
-    <!-- <input id="select-image-files" type="file" multiple id="topo-image-files" name="filename" onchange="OnSelectImageFiles()"> -->
     <input type="file" multiple id="topo-image-files" name="filename">
     <div style="display: flex;">
       <table id="topo-table" style="float: left; width: 50%; margin-right: 2%">
@@ -25,8 +24,6 @@
     </div>
   </div>
   <div style="margin-top: 2%;">
-    <!-- <button type="button" id="upload" onclick="Upload()">Upload</button>
-    <button type="button" id="download" onclick="Download()">Download</button> -->
     <button type="button" id="upload">Upload</button>
     <button type="button" id="download">Download</button>
   </div>
@@ -45,6 +42,6 @@
   <div style="margin-top: 2%;">
     <canvas id="download-topo-canvas" style="border: 1px solid black;"></canvas>
   </div>
-  <script src="./upload-topos.page.js"></script>
+  <script src="./scripts/upload-topos.page.js"></script>
 </body>
 </html>

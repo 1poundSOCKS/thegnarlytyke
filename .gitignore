@@ -105,6 +105,4 @@ dist
 
 # my project
 /server/private/data/crag.backup.*
-/server/public/*.page.js
-/server/public.test/data/*
-/server/public.test/images/*
+/server/public/scripts/*.page.js
