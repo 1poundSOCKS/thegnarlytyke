@@ -182,6 +182,12 @@ html {
   background-color: grey;
 }
 
+.table-header {
+  color: var(--tgt-std-light-color);
+  background-color: var(--tgt-header-background-color);
+  font-size: 2rem;
+}
+
 .topo-route-table-container {
   margin-top: 1rem;
   width: 100%;

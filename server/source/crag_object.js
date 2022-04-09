@@ -35,22 +35,28 @@ module.exports = AppendPointToRoute = (route, x, y) => {
 }
 
 module.exports = CreateCragObject = loadedObject => {
-  let cragID = uuid.v4();
+  // let cragID = uuid.v4();
 
   if( !loadedObject ) {
     return {
-      loadedObject: {},
-      id: cragID,
+      // loadedObject: {},
+      // id: cragID,
+      id: uuid.v4(),
       routes: [],
       topos: []
     };
   }
 
-  let objectCopy = Object.assign( { loadedObject: loadedObject, id: cragID }, loadedObject );
-  if( !objectCopy.routes ) objectCopy.routes = [];
-  if( !objectCopy.topos ) objectCopy.topos = [];
+  // let objectCopy = Object.assign( { loadedObject: loadedObject, id: cragID }, loadedObject );
+  // if( !objectCopy.routes ) objectCopy.routes = [];
+  // if( !objectCopy.topos ) objectCopy.topos = [];
 
-  return objectCopy;
+  // return objectCopy;
+  return {
+    id: loadedObject.id ? loadedObject.id : uuid.v4(),
+    routes: loadedObject.routes ? loadedObject.routes : [],
+    topos: loadedObject.topos ? loadedObject.topos : []
+  };
 }
 
 module.exports = SetUUIDGenFunction = (cragObject, UUIDGenFunction) => {

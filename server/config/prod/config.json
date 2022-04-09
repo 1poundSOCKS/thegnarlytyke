@@ -1,5 +1,4 @@
 {
   "environment": "prod",
-  "mode" : "view",
-  "test-prop": "working"
+  "mode" : "view"
 }

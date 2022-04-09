@@ -1,4 +1,4 @@
-const config = require('../source/config.js');
+const config = require('../source/config.cjs');
 
 test("Config: intial state", () => {
   expect(config.environment).toEqual("prod");

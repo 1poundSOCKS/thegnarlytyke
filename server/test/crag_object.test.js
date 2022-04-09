@@ -10,6 +10,7 @@ test('Create an empty crag object and check it has no routes or topos', () => {
 
 test('Create a crag object from an existing empty parsed object and check it has no routes or topos', () => {
   let cragObject = CreateCragObject(JSON.parse('{}'));
+  console.log(`${JSON.stringify(cragObject)}`);
   let cragRoutes = GetCragRoutes(cragObject);
   expect(cragRoutes.length).toEqual(0);
   let cragTopoIDs = GetCragTopoIDs(cragObject);

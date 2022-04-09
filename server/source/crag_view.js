@@ -1,4 +1,4 @@
-const Config = require('./config.js');
+const Config = require('./config.cjs');
 
 let _cragObject = null;
 let _topoImages = new Map();
@@ -53,6 +53,8 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
 }
 
 module.exports = SaveCrag = async () => {
+  const requestBody = JSON.stringify(_cragObject);
+
   let response = await fetch('./save_crag', {
     method: 'POST',
     mode: 'same-origin',
@@ -63,7 +65,7 @@ module.exports = SaveCrag = async () => {
     },
     redirect: 'follow',
     referrerPolicy: 'same-origin',
-    body: JSON.stringify(_cragObject)
+    body: requestBody
   });
   let parsedResponse = await response.json();
 }

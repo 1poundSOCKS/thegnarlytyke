@@ -145,12 +145,22 @@ let ReadFolder = (folder) => new Promise( (resolve, reject) => {
   })
 });
 
-let ReadFile = (filename) => new Promise( (resolve, reject) => {
+export let ReadJSONFileIntoObject = async (filename) => {
+  let jsonData = await ReadFile(filename);
+  return JSON.parse(jsonData);
+}
+
+export let ReadFile = (filename) => new Promise( (resolve, reject) => {
   fs.readFile(filename, 'utf8' , (err, data) => {
     if (err) reject(err);
     else resolve(data);
   });
 });
+
+export let WriteObjectToFile = async (object, filename) => {
+  const jsonData = JSON.stringify(object);
+  return WriteDataToFile(jsonData, filename);
+}
 
 let WriteDataToFile = (data, filename) => new Promise( (resolve, reject) => {
   fs.writeFile(filename, data , (err, data) => {
