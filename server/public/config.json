@@ -1,4 +1,4 @@
 {
-  "environment": "test",
-  "mode" : "edit"
+  "environment": "prod",
+  "mode" : "view"
 }
