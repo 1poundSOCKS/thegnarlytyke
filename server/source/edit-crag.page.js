@@ -1,16 +1,17 @@
-require('./config.js');
+const Config = require('./config.js');
 require('./crag_object.js');
 require('./crag_view.js');
 require('./route_tables.js');
 require('./topo-overlay.js');
 
-window.onload = () => {
-  SetEnvironment().then( () => {
-    OnEnvironmentSet();
-  });
-}
+fetch('config.json')
+.then( response => response.json() )
+.then( parsedData => {
+  Config.Load(parsedData);
+  OnConfigLoad();
+});
 
-let OnEnvironmentSet = () => {
+let OnConfigLoad = () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
