@@ -1,4 +1,5 @@
 :root {
+  --tgt-font: six caps;
   --tgt-header-background-color: #175707;
   --tgt-subheader-background-color: #662608;
   --tgt-std-light-color: white;
@@ -8,7 +9,7 @@
 }
 
 html {
-  font-family: six caps;
+  font-family: var(--tgt-font);
   background-color: var(--tgt-std-background-color);
 }
 
@@ -45,14 +46,23 @@ html {
   color: var(--tgt-std-dark-color);
 }
 
+.tgt-icon-address {
+  text-decoration: none;
+}
+
 .crag-view-icon {
   cursor: pointer;
   color: var(--tgt-std-dark-color);
+  font-family: var(--tgt-font);
 }
 
 .crag-view-icon:hover {
   cursor: pointer;
   color: var(--tgt-std-light-color);
+}
+
+.crag-view-icon-text {
+  font-family: var(--tgt-font);
 }
 
 .crag-cover-header {
