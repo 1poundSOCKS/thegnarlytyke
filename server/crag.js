@@ -158,7 +158,7 @@ export let ReadFile = (filename) => new Promise( (resolve, reject) => {
 });
 
 export let WriteObjectToFile = async (object, filename) => {
-  const jsonData = JSON.stringify(object);
+  const jsonData = JSON.stringify(object, null, 2);
   return WriteDataToFile(jsonData, filename);
 }
 

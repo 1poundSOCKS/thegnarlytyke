@@ -47,7 +47,6 @@ app.get('/get_crag', (req, res) => {
 
 app.post('/save_crag', (req, res) => {
   console.log('GET /save_crag');
-  // _crag.SaveCrag(req.body)
   SaveCrag(req.body)
   .then( () => {
     res.send({result: 'success'});
@@ -94,15 +93,13 @@ let LoadConfig = async () => {
   console.log(`environment loaded: ${Config.environment}`);
 }
 
-let SaveCrag = async (cragData) => {
-  if( !cragData ) throw 'crag data not supplied';
-  console.log(cragData);
-  let cragObject = JSON.parse(cragData);
+let SaveCrag = async (cragObject) => {
+  if( !cragObject ) throw 'crag data not supplied';
   let cragID = cragObject.id;
-  console.log(`crag ID: ${cragID}`);
+  if( !cragID ) throw 'crag does not have an ID';
   await LoadConfig();
   console.log(`environment: ${Config.environment}`);
   const cragFilename = `public/env/${Config.environment}/data/${cragID}.crag.json`;
   console.log(`crag filename: ${cragFilename}`);
-  return WriteObjectToFile(cragObject, cragFilename);
+  return _crag.WriteObjectToFile(cragObject, cragFilename);
 }

@@ -18,7 +18,7 @@ module.exports = SetViewContentEditable = editable => {
 module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   const env = Config.environment;
   const cragURL = `env/${env}/data/${cragID}.crag.json`;
-  const imagesPath = 'env/prod/images/';
+  const imagesPath = `env/${env}/images/`;
   let response = await fetch(cragURL);
   let crag = await response.json();
 

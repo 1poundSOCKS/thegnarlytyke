@@ -17,10 +17,15 @@ test('Create a crag object from an existing empty parsed object and check it has
   expect(cragTopoIDs.length).toEqual(0);
 });
 
-test('Create a crag object with no topos and get the topos IDs', () => {
+test('CreateCragObject: ensure ID and name are set when loaded', () => {
+  let cragObject = CreateCragObject({id: "topo-id-1234", name: "Best Crag Ever"});
+  expect(cragObject.id).toEqual("topo-id-1234");
+  expect(cragObject.name).toEqual("Best Crag Ever");
+});
+
+test('Create a crag object with no topos', () => {
   let cragObject = CreateCragObject({});
   let cragTopoIDs = GetCragTopoIDs(cragObject);
-
   expect(cragTopoIDs.length).toEqual(0);
 });
 
@@ -57,10 +62,8 @@ test('Create a crag object with three topos and get the image filename of the fi
 test('Topo route IDs returned for a topo with no routes', () => {
   let testInput = { topos: [{ id: 'tid-111-aaa'}]};
   let expectedTestOutput = [];
-
   let cragObject = CreateCragObject(testInput);
   let testOutput = GetTopoRouteIDs(cragObject, 'tid-111-aaa');
-
   expect(testOutput).toEqual(expectedTestOutput);
 });
 
@@ -218,7 +221,28 @@ test("append new crag routes", () => {
   expect(routeIDs[2]).toEqual(id3);
 });
 
-test("add crag route to topo", () => {
+
+test("AddCragRouteToTopo: add the first route", () => {
+  let testInput = {
+    routes: [
+      { id: 'rid-111' },
+      { id: 'rid-222' }
+    ],
+    topos: [
+      {
+        id: 'tid-999'
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  AddCragRouteToTopo(cragObject, 'rid-111', 'tid-999');
+  let topoRouteIDs = GetTopoRouteIDs(cragObject, 'tid-999');
+  expect(topoRouteIDs.length).toEqual(1);
+  expect(topoRouteIDs[0]).toEqual('rid-111');
+});
+
+test("AddCragRouteToTopo: add a second route", () => {
   let testInput = {
     routes: [
       { id: 'rid-111' },
@@ -439,6 +463,25 @@ test("GetNearestTopoPointInfo: routes property missing", () => {
     topos: [
       {
         id: 'tid-1111'
+      }
+    ]
+  }
+
+  let cragObject = CreateCragObject(testInput);
+  let nearestPointInfo = GetNearestTopoPointInfo(cragObject, 'tid-1111', 0.1, 0.2);
+  expect(nearestPointInfo).toBeNull();
+});
+
+test("GetNearestTopoPointInfo: when there aren't any points", () => {
+  let testInput = {
+    topos: [
+      {
+        id: 'tid-1111',
+        routes: [
+          {
+            id: 'rid-999'
+          }
+        ]
       }
     ]
   }

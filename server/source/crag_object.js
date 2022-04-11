@@ -35,25 +35,17 @@ module.exports = AppendPointToRoute = (route, x, y) => {
 }
 
 module.exports = CreateCragObject = loadedObject => {
-  // let cragID = uuid.v4();
-
   if( !loadedObject ) {
     return {
-      // loadedObject: {},
-      // id: cragID,
       id: uuid.v4(),
       routes: [],
       topos: []
     };
   }
 
-  // let objectCopy = Object.assign( { loadedObject: loadedObject, id: cragID }, loadedObject );
-  // if( !objectCopy.routes ) objectCopy.routes = [];
-  // if( !objectCopy.topos ) objectCopy.topos = [];
-
-  // return objectCopy;
   return {
     id: loadedObject.id ? loadedObject.id : uuid.v4(),
+    name: loadedObject.name,
     routes: loadedObject.routes ? loadedObject.routes : [],
     topos: loadedObject.topos ? loadedObject.topos : []
   };
@@ -117,6 +109,7 @@ module.exports = AppendCragRoute = (cragObject) => {
 
 module.exports = AddCragRouteToTopo = (cragObject, routeID, topoID) => {
   let topoObject = GetFirstMatchingTopo(cragObject, topoID);
+  if( !topoObject.routes ) topoObject.routes = [];
   topoObject.routes.push({id: routeID});
 }
 
@@ -205,7 +198,8 @@ let GetNearestPointInfoForRoute = (x, y, route) => {
   return GetNearestPointInfoForArrayOfPointInfo(x, y, pointsInfo);
 }
 
-let GetNearestPointInfoForArrayOfPointInfo = (x, y, pointsInfo) => {  
+let GetNearestPointInfoForArrayOfPointInfo = (x, y, pointsInfo) => {
+  if( pointsInfo.length == 0 ) return null;
   let nearestPoint = pointsInfo.reduce( (previousPoint, currentPoint) => {
     if( currentPoint.distance < previousPoint.distance ) return currentPoint;
     else return previousPoint;
