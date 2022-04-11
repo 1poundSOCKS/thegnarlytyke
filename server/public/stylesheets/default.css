@@ -102,6 +102,7 @@ html {
   grid-auto-columns: 23%;
   overflow-x: auto;
   gap: 0.5rem;
+  justify-content: center;
   background-color: var(--tgt-std-background-color);
 }
 
