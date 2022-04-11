@@ -99,10 +99,10 @@ html {
 .topo-images-container {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 23%;
+  grid-auto-columns: 10rem;
   overflow-x: auto;
   gap: 0.5rem;
-  justify-content: center;
+  justify-content: safe center;
   background-color: var(--tgt-std-background-color);
 }
 
