@@ -21,7 +21,7 @@ let OnConfigLoad = () => {
   LoadAndDisplayCrag(cragID, cragNameDisplayElement);
   if( Config.mode === "edit" ) {
     document.getElementById('upload-topos-address').setAttribute('href', `./upload-topos.html?id=${cragID}`);
-    document.getElementById('edit-topos-address').setAttribute('href', `./edit-crag.html?id=${cragID}`);
+    document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);
     document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
   }
 }
