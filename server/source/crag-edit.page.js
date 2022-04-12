@@ -18,7 +18,7 @@ let OnConfigLoad = () => {
   const cragNameDisplayElement = document.getElementById('crag-view-header');
   SetViewContentEditable(true);
   LoadAndDisplayCrag(cragID, cragNameDisplayElement);
-  document.getElementById('save-crag-button').onclick = () => {
-    SaveCrag();
+  document.getElementById('save-crag').onclick = () => {
+     SaveCrag();
   }
 }
