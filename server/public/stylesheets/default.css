@@ -13,6 +13,10 @@ html {
   background-color: var(--tgt-std-background-color);
 }
 
+.do-not-display {
+  display: none;
+}
+
 .tgt-header {
   display: block;
   margin: auto;
@@ -276,10 +280,6 @@ html {
 .crag-command-bar {
   margin: auto;
   margin-top: 1rem;
-}
-
-.do-not-display {
-  display: none;
 }
 
 .main-topo-image-container {

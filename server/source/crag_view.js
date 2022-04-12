@@ -1,4 +1,5 @@
 const Config = require('./config.cjs');
+const Crag = require('./new/crag.cjs');
 
 let _cragObject = null;
 let _topoImages = new Map();
@@ -88,6 +89,7 @@ let OnTopoSelected = event => {
   topoImagesContainer.classList.remove('topo-images-container-initial');
   topoImagesContainer.classList.add('topo-images-container');
 
+  RefreshIcons();
   RefreshMainTopoView();
   RefreshTopoRouteTable(_cragObject, selectedTopoID);
   RefreshCragRouteTable(_cragObject, selectedTopoID);
@@ -97,6 +99,24 @@ let OnTopoSelected = event => {
 }
 
 module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.id;
+
+let RefreshIcons = () => {
+  const shiftTopoLeftContainer = document.getElementById('shift-topo-left-container');
+  if( shiftTopoLeftContainer ) {
+    if( SelectedTopoCanShiftLeft() ) shiftTopoLeftContainer.classList.remove('do-not-display');
+    else shiftTopoLeftContainer.classList.add('do-not-display');
+  }
+
+  const shiftTopoRightContainer = document.getElementById('shift-topo-right-container');
+  if( shiftTopoRightContainer ) {
+    if( SelectedTopoCanShiftRight() ) shiftTopoRightContainer.classList.remove('do-not-display');
+    else shiftTopoRightContainer.classList.add('do-not-display');
+  }
+}
+
+let SelectedTopoCanShiftLeft = () => false;//!IsTopoTheFirst(_cragObject, GetSelectedTopoID());
+
+let SelectedTopoCanShiftRight = () => false;//!IsTopoTheLast(_cragObject, GetSelectedTopoID());
 
 module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;
