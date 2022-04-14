@@ -13,10 +13,6 @@ html {
   background-color: var(--tgt-std-background-color);
 }
 
-.do-not-display {
-  display: none;
-}
-
 .tgt-header {
   display: block;
   margin: auto;
@@ -292,4 +288,8 @@ html {
 
 .main-topo-image {
   width: 100%;
+}
+
+.do-not-display {
+  display: none;
 }
