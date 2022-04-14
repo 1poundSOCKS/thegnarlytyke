@@ -107,31 +107,33 @@ let RefreshIcons = () => {
   if( shiftTopoLeftContainer ) {
     if( _selectedTopoImageContainer.previousSibling ) shiftTopoLeftContainer.classList.remove('do-not-display');
     else shiftTopoLeftContainer.classList.add('do-not-display');
-    shiftTopoLeftContainer.onclick = () => {
-      const parentNode = _selectedTopoImageContainer.parentNode;
-      const previousContainer = _selectedTopoImageContainer.previousSibling;
-      _selectedTopoImageContainer.remove();
-      parentNode.insertBefore(_selectedTopoImageContainer, previousContainer);
-      RefreshIcons();
-      const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
-      _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex - 1);
-    }
   }
 
   const shiftTopoRightContainer = document.getElementById('shift-topo-right-container');
   if( shiftTopoRightContainer ) {
     if( _selectedTopoImageContainer.nextSibling ) shiftTopoRightContainer.classList.remove('do-not-display');
     else shiftTopoRightContainer.classList.add('do-not-display');
-    shiftTopoRightContainer.onclick = () => {
-      const parentNode = _selectedTopoImageContainer.parentNode;
-      const nextContainer = _selectedTopoImageContainer.nextSibling;
-      nextContainer.remove();
-      parentNode.insertBefore(nextContainer, _selectedTopoImageContainer);
-      RefreshIcons();
-      const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
-      _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
-    }
   }
+}
+
+module.exports = ShiftSelectedTopoLeft = () => {
+  const parentNode = _selectedTopoImageContainer.parentNode;
+  const previousContainer = _selectedTopoImageContainer.previousSibling;
+  _selectedTopoImageContainer.remove();
+  parentNode.insertBefore(_selectedTopoImageContainer, previousContainer);
+  RefreshIcons();
+  const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
+  _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex - 1);
+}
+
+module.exports = ShiftSelectedTopoRight = () => {
+  const parentNode = _selectedTopoImageContainer.parentNode;
+  const nextContainer = _selectedTopoImageContainer.nextSibling;
+  nextContainer.remove();
+  parentNode.insertBefore(nextContainer, _selectedTopoImageContainer);
+  RefreshIcons();
+  const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
+  _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
 }
 
 module.exports = RefreshMainTopoView = () => {

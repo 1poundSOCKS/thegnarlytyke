@@ -4,12 +4,14 @@ require('./crag_view.js');
 require('./route_tables.js');
 require('./topo-overlay.js');
 
-fetch('config.json')
-.then( response => response.json() )
-.then( parsedData => {
-  Config.Load(parsedData);
-  OnConfigLoad();
-});
+window.onload = () => {
+  fetch('config.json')
+  .then( response => response.json() )
+  .then( parsedData => {
+    Config.Load(parsedData);
+    OnConfigLoad();
+  });
+}
 
 let OnConfigLoad = () => {
   const queryString = window.location.search;
@@ -18,7 +20,8 @@ let OnConfigLoad = () => {
   const cragNameDisplayElement = document.getElementById('crag-view-header');
   SetViewContentEditable(true);
   LoadAndDisplayCrag(cragID, cragNameDisplayElement);
-  document.getElementById('save-crag').onclick = () => {
-     SaveCrag();
-  }
 }
+
+module.exports = OnShiftTopoLeft = () => ShiftSelectedTopoLeft();
+module.exports = OnShiftTopoRight = () => ShiftSelectedTopoRight();
+module.exports = OnSave = () => SaveCrag();
