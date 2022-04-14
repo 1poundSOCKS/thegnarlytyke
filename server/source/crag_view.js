@@ -2,6 +2,7 @@ const Config = require('./config.cjs');
 const Crag = require('./new/crag.cjs');
 
 let _cragObject = null;
+let _crag = new Crag();
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
@@ -26,6 +27,7 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   if( headerElement && crag.name ) headerElement.innerText = crag.name;
   
   _cragObject = CreateCragObject(crag);
+  _crag.Attach(crag);
   let cragTopoIDs = GetCragTopoIDs(_cragObject);
   
   let topoImageContainers = cragTopoIDs.map( topoID => {
@@ -114,9 +116,9 @@ let RefreshIcons = () => {
   }
 }
 
-let SelectedTopoCanShiftLeft = () => false;//!IsTopoTheFirst(_cragObject, GetSelectedTopoID());
+let SelectedTopoCanShiftLeft = () => _crag.GetTopoIndex(GetSelectedTopoID()) > 0;
 
-let SelectedTopoCanShiftRight = () => false;//!IsTopoTheLast(_cragObject, GetSelectedTopoID());
+let SelectedTopoCanShiftRight = () => _crag.GetTopoIndex(GetSelectedTopoID()) < _crag.GetLastTopoIndex();
 
 module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;
