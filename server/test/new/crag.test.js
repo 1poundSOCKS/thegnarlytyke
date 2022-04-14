@@ -96,3 +96,27 @@ test("GetLastTopoIndex: return 2 for 3 topos", () => {
   crag.Attach(cragObject);
   expect(crag.GetLastTopoIndex()).toEqual(2);
 });
+
+test("SwapTopos: switch when just 2 topos", () => {
+  let cragObject = {
+    id: '12345',
+    routes: [{}],
+    topos: [{id: 1}, {id: 2}]
+  }
+  let crag = new Crag();
+  crag.Attach(cragObject);
+  crag.SwapTopos(0, 1);
+  expect(crag.topos).toEqual([{id: 2}, {id: 1}])
+});
+
+test("SwapTopos: switch when 3 topos", () => {
+  let cragObject = {
+    id: '12345',
+    routes: [{}],
+    topos: [{id: 1}, {id: 2}, {id: 3}]
+  }
+  let crag = new Crag();
+  crag.Attach(cragObject);
+  crag.SwapTopos(2, 0);
+  expect(crag.topos).toEqual([{id: 3}, {id: 2}, {id: 1}])
+});

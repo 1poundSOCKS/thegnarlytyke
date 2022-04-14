@@ -105,20 +105,34 @@ module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.
 let RefreshIcons = () => {
   const shiftTopoLeftContainer = document.getElementById('shift-topo-left-container');
   if( shiftTopoLeftContainer ) {
-    if( SelectedTopoCanShiftLeft() ) shiftTopoLeftContainer.classList.remove('do-not-display');
+    if( _selectedTopoImageContainer.previousSibling ) shiftTopoLeftContainer.classList.remove('do-not-display');
     else shiftTopoLeftContainer.classList.add('do-not-display');
+    shiftTopoLeftContainer.onclick = () => {
+      const parentNode = _selectedTopoImageContainer.parentNode;
+      const previousContainer = _selectedTopoImageContainer.previousSibling;
+      _selectedTopoImageContainer.remove();
+      parentNode.insertBefore(_selectedTopoImageContainer, previousContainer);
+      RefreshIcons();
+      const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
+      _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex - 1);
+    }
   }
 
   const shiftTopoRightContainer = document.getElementById('shift-topo-right-container');
   if( shiftTopoRightContainer ) {
-    if( SelectedTopoCanShiftRight() ) shiftTopoRightContainer.classList.remove('do-not-display');
+    if( _selectedTopoImageContainer.nextSibling ) shiftTopoRightContainer.classList.remove('do-not-display');
     else shiftTopoRightContainer.classList.add('do-not-display');
+    shiftTopoRightContainer.onclick = () => {
+      const parentNode = _selectedTopoImageContainer.parentNode;
+      const nextContainer = _selectedTopoImageContainer.nextSibling;
+      nextContainer.remove();
+      parentNode.insertBefore(nextContainer, _selectedTopoImageContainer);
+      RefreshIcons();
+      const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
+      _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
+    }
   }
 }
-
-let SelectedTopoCanShiftLeft = () => _crag.GetTopoIndex(GetSelectedTopoID()) > 0;
-
-let SelectedTopoCanShiftRight = () => _crag.GetTopoIndex(GetSelectedTopoID()) < _crag.GetLastTopoIndex();
 
 module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;

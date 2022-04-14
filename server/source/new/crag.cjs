@@ -23,4 +23,10 @@ Crag.prototype.GetLastTopoIndex = function () {
   return this.topos.length - 1;
 }
 
+Crag.prototype.SwapTopos = function(index1, index2) {
+  const firstTopo = this.topos[index1];
+  this.topos[index1] = this.topos[index2];
+  this.topos[index2] = firstTopo;
+}
+
 module.exports = Crag;
