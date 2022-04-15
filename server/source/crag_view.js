@@ -1,7 +1,6 @@
 const Config = require('./config.cjs');
 const Crag = require('./new/crag.cjs');
 
-let _cragObject = null;
 let _crag = new Crag();
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
@@ -26,9 +25,8 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
 
   if( headerElement && crag.name ) headerElement.innerText = crag.name;
   
-  _cragObject = CreateCragObject(crag);
   _crag.Attach(crag);
-  let cragTopoIDs = GetCragTopoIDs(_cragObject);
+  let cragTopoIDs = _crag.topos.map( topo => topo.id );
   
   let topoImageContainers = cragTopoIDs.map( topoID => {
     return document.getElementById('topo-images-container').appendChild(CreateTopoImageContainer(topoID));
@@ -44,7 +42,7 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   
   topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
-    let imageFilename = GetTopoImageFile(_cragObject, topoID);
+    let imageFilename = GetTopoImageFile(_crag, topoID);
     if( imageFilename ) {
       let topoImage = await LoadImage(`${imagesPath}${imageFilename}`);
       _topoImages.set(topoID, topoImage);
@@ -52,11 +50,11 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
     }
   });
 
-  RefreshCragRouteTable(_cragObject);
+  RefreshCragRouteTable(_crag);
 }
 
 module.exports = SaveCrag = async () => {
-  const requestBody = JSON.stringify(_cragObject);
+  const requestBody = JSON.stringify(_crag);
 
   let response = await fetch('./save_crag', {
     method: 'POST',
@@ -93,8 +91,8 @@ let OnTopoSelected = event => {
 
   RefreshIcons();
   RefreshMainTopoView();
-  RefreshTopoRouteTable(_cragObject, selectedTopoID);
-  RefreshCragRouteTable(_cragObject, selectedTopoID);
+  RefreshTopoRouteTable(_crag, selectedTopoID);
+  RefreshCragRouteTable(_crag, selectedTopoID);
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
   if( _contentEditable ) AddMouseHandlerToMainTopoCanvas();
@@ -141,7 +139,7 @@ module.exports = RefreshMainTopoView = () => {
   let selectedTopoImage = _topoImages.get(selectedTopoID);
   let mainTopoCanvas = document.getElementById('main-topo-image');
   DrawMainTopoImage(mainTopoCanvas, selectedTopoImage);
-  DrawMainTopoOverlay(mainTopoCanvas, _cragObject, selectedTopoID);
+  DrawMainTopoOverlay(mainTopoCanvas, _crag, selectedTopoID);
 }
 
 module.exports = CreateTopoImageContainer = (topoID) => {
@@ -269,7 +267,7 @@ let AddMouseHandlerToMainTopoCanvas = () => {
     }
     else {
       let topoID = GetSelectedTopoID();
-      let nearestPointInfo = GetNearestTopoPointInfo(_cragObject, topoID, _mousePos.x, _mousePos.y);
+      let nearestPointInfo = GetNearestTopoPointInfo(_crag, topoID, _mousePos.x, _mousePos.y);
       _nearestPointInfo = ( nearestPointInfo && nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
     }
     RefreshMainTopoView();
@@ -286,15 +284,15 @@ let AddMouseHandlerToMainTopoCanvas = () => {
     let mousePos = GetMousePositionFromEvent(topoCanvas, event);
     let topoID = GetSelectedTopoID();
     if( _dragPointInfo ) {
-      MovePoint(_cragObject, topoID, _dragPointInfo.id, mousePos.x, mousePos.y);
+      MovePoint(_crag, topoID, _dragPointInfo.id, mousePos.x, mousePos.y);
       _dragPointInfo = null;
     }
     else {
       let routeID  = GetSelectedTopoRouteTableID();
-      let route = GetTopoRoute(_cragObject, topoID, routeID);
+      let route = GetTopoRoute(_crag, topoID, routeID);
       if( route ) AppendPointToRoute(route, mousePos.x, mousePos.y);
       RefreshMainTopoView();
-      RefreshTopoRouteTable(_cragObject, topoID);
+      RefreshTopoRouteTable(_crag, topoID);
     }
   }
 
