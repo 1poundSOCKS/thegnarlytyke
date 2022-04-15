@@ -1,5 +1,7 @@
+let uuid = require('uuid');
+
 let Crag = function() {
-  this.id = null;
+  this.id = uuid.v4();
   this.routes = [];
   this.topos = [];
 }
@@ -27,6 +29,12 @@ Crag.prototype.SwapTopos = function(index1, index2) {
   const firstTopo = this.topos[index1];
   this.topos[index1] = this.topos[index2];
   this.topos[index2] = firstTopo;
+}
+
+Crag.prototype.GetMatchingTopo = function(id) {
+  let matchingTopos = this.topos.filter( topo => topo.id === id );
+  if( matchingTopos.length != 1 ) return null;
+  return matchingTopos[0];
 }
 
 module.exports = Crag;

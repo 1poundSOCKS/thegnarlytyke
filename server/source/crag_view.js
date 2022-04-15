@@ -42,9 +42,9 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   
   topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
-    let imageFilename = GetTopoImageFile(_crag, topoID);
-    if( imageFilename ) {
-      let topoImage = await LoadImage(`${imagesPath}${imageFilename}`);
+    let topo = _crag.GetMatchingTopo(topoID);
+    if( topo && topo.imageFile ) {
+        let topoImage = await LoadImage(`${imagesPath}${topo.imageFile}`);
       _topoImages.set(topoID, topoImage);
       DisplayTopoImage(canvas, topoImage);
     }

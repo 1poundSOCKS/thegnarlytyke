@@ -2,7 +2,7 @@ const Crag = require('../../source/new/crag.cjs');
 
 test("Create new Crag object", () => {
   let crag = new Crag();
-  expect(crag.id).toBeNull();
+  expect(crag.id.length).toBeGreaterThan(0);
   expect(crag.routes).toEqual([]);
   expect(crag.topos).toEqual([]);
 });
@@ -119,4 +119,23 @@ test("SwapTopos: switch when 3 topos", () => {
   crag.Attach(cragObject);
   crag.SwapTopos(2, 0);
   expect(crag.topos).toEqual([{id: 3}, {id: 2}, {id: 1}])
+});
+
+test("GetMatchingTopo: when there aren't any return null", () => {
+  let crag = new Crag();
+  let topo = crag.GetMatchingTopo('12345');
+  expect(topo).toBeNull();
+});
+
+test("GetMatchingTopo: when there's a matching topo", () => {
+  let crag = new Crag();
+  crag.topos.push({id: '123', matchCheck: 'x'});
+  crag.topos.push({id: '456', matchCheck: 'y'});
+  crag.topos.push({id: '789', matchCheck: 'z'});
+  let topo1 = crag.GetMatchingTopo('789');
+  expect(topo1.matchCheck).toEqual('z');
+  let topo2 = crag.GetMatchingTopo('456');
+  expect(topo2.matchCheck).toEqual('y');
+  let topo3 = crag.GetMatchingTopo('123');
+  expect(topo3.matchCheck).toEqual('x');
 });
