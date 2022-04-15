@@ -1,5 +1,6 @@
 const Config = require('./config.cjs');
 const Crag = require('./new/crag.cjs');
+const TopoOverlay = require('./new/topo-overlay.cjs');
 
 let _crag = new Crag();
 let _topoImages = new Map();
@@ -171,38 +172,36 @@ module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
   ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
 }
 
-module.exports =  DrawMainTopoOverlay = (topoCanvas, cragObject, topoID) => {
-  let topoOverlay = CreateTopoOverlay(cragObject, topoID);
-  let renderLines = GetTopoOverlayRenderLines(topoOverlay);
-  let renderPoints = _dragPointInfo ?
-  GetTopoOverlayRenderPointsWithDragPoint(topoOverlay, _dragPointInfo) :
-  GetTopoOverlayRenderPoints(topoOverlay);
+module.exports =  DrawMainTopoOverlay = (topoCanvas, crag, topoID) => {
+  const topo = crag.GetMatchingTopo(topoID);
+  const topoOverlay = new TopoOverlay();
+  topoOverlay.GenerateFromTopo(topo);
+  const renderLines = topoOverlay.lines;
+  if( _dragPointInfo ) topoOverlay.UpdatePoints(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
+  if( _dragPointInfo ) topoOverlay.UpdateLines(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
+  const renderPoints = topoOverlay.points;
   let ctx = topoCanvas.getContext('2d');
 
-  renderLines.forEach( routeLines => {
-    routeLines.forEach( line => {
-      DrawRouteLine(ctx,
-        topoCanvas.width * line.startX, topoCanvas.height * line.startY, 
-        topoCanvas.width * line.endX, topoCanvas.height * line.endY, 1);
-    });
+  renderLines.forEach( line => {
+    DrawRouteLine(ctx,
+      topoCanvas.width * line.startX, topoCanvas.height * line.startY, 
+      topoCanvas.width * line.endX, topoCanvas.height * line.endY, 1);
   })
 
-  renderPoints.forEach( (routePoints, routeIndex) => {
-    let routeLabel = routeIndex + 1;
-    routePoints.forEach( point => {
-      switch( point.type ) {
-        case rsRouteJoin:
-          if( _contentEditable )
-            DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 150, 150)");
-          break;
-        case rsRouteStart:
-          DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(40, 150, 40)");
-          break;
-        case rsRouteEnd:
-          DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 20, 20)");
-          break;
-        }
-    });
+  renderPoints.forEach( point => {
+    let routeLabel = point.routeIndex + 1;
+    switch( point.type ) {
+      case rsRouteJoin:
+        if( _contentEditable )
+          DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 150, 150)");
+        break;
+      case rsRouteStart:
+        DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(40, 150, 40)");
+        break;
+      case rsRouteEnd:
+        DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 20, 20)");
+        break;
+    }
   });
 
   if( _nearestPointInfo ) {

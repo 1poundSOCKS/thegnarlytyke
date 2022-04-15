@@ -6,10 +6,10 @@ let Crag = function() {
   this.topos = [];
 }
 
-Crag.prototype.Attach = function(oldCragObject) {
-  this.id = oldCragObject.id;
-  this.routes = oldCragObject.routes;
-  this.topos = oldCragObject.topos;
+Crag.prototype.Attach = function(cragObject) {
+  this.id = cragObject.id;
+  this.routes = cragObject.routes;
+  this.topos = cragObject.topos;
 }
 
 Crag.prototype.GetTopoIndex = function(topoID) {
