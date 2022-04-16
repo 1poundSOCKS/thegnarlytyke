@@ -57,9 +57,23 @@ TopoOverlay.prototype.GenerateFromTopo = function(topo) {
 }
 
 TopoOverlay.prototype.UpdatePoints = function(id, x, y) {
-}
+  this.lines.forEach( line => {
+    if( line.startID === id ) {
+      line.startX = x;
+      line.startY = y;
+    }
+    if( line.endID === id ) {
+      line.endX = x;
+      line.endY = y;
+    }
+  });
 
-TopoOverlay.prototype.UpdateLines = function(id, x, y) {
+  this.points.forEach( point => {
+    if( point.id === id ) {
+      point.x = x;
+      point.y = y;
+    }
+  });
 }
 
 module.exports = TopoOverlay;

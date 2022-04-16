@@ -177,7 +177,6 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, crag, topoID) => {
   const topoOverlay = new TopoOverlay();
   topoOverlay.GenerateFromTopo(topo);
   if( _dragPointInfo ) topoOverlay.UpdatePoints(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
-  if( _dragPointInfo ) topoOverlay.UpdateLines(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
 
   let ctx = topoCanvas.getContext('2d');
 
