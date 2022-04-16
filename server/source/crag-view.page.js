@@ -1,4 +1,4 @@
-const Config = require('./config.cjs');
+const Config = require('./objects/config.cjs');
 require('./crag_view.js');
 require('./route_tables.js');
 

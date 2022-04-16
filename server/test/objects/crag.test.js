@@ -1,4 +1,4 @@
-const Crag = require('../../source/new/crag.cjs');
+const Crag = require('source/objects/crag.cjs');
 
 test("Create new Crag object", () => {
   let crag = new Crag();

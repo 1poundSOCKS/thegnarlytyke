@@ -1,6 +1,6 @@
-const Config = require('./config.cjs');
-const Crag = require('./new/crag.cjs');
-const TopoOverlay = require('./new/topo-overlay.cjs');
+const Config = require('./objects/config.cjs');
+const Crag = require('./objects/crag.cjs');
+const TopoOverlay = require('./objects/topo-overlay.cjs');
 
 let _crag = new Crag();
 let _topoImages = new Map();
