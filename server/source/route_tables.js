@@ -1,3 +1,5 @@
+require('./crag_object.js');
+
 const columnIndex_ID = 0;
 const columnIndex_Index = 1;
 const columnIndex_Name = 2;

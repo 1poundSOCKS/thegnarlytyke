@@ -176,19 +176,18 @@ module.exports =  DrawMainTopoOverlay = (topoCanvas, crag, topoID) => {
   const topo = crag.GetMatchingTopo(topoID);
   const topoOverlay = new TopoOverlay();
   topoOverlay.GenerateFromTopo(topo);
-  const renderLines = topoOverlay.lines;
   if( _dragPointInfo ) topoOverlay.UpdatePoints(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
   if( _dragPointInfo ) topoOverlay.UpdateLines(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
-  const renderPoints = topoOverlay.points;
+
   let ctx = topoCanvas.getContext('2d');
 
-  renderLines.forEach( line => {
+  topoOverlay.lines.forEach( line => {
     DrawRouteLine(ctx,
       topoCanvas.width * line.startX, topoCanvas.height * line.startY, 
       topoCanvas.width * line.endX, topoCanvas.height * line.endY, 1);
   })
 
-  renderPoints.forEach( point => {
+  topoOverlay.points.forEach( point => {
     let routeLabel = point.routeIndex + 1;
     switch( point.type ) {
       case rsRouteJoin:
