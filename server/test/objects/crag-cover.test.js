@@ -1,5 +1,4 @@
-// require('../source/crag-covers.js');
-let CragCover = require('../source/crag-cover.js');
+const CragCover = require('../../source/objects/crag-cover.cjs');
 
 test("Crag covers with new IDs", () => {
   let baildonBank = new CragCover(null, "Baildon Bank");

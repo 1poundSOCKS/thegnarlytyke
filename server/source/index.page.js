@@ -1,7 +1,4 @@
-require('./crag_object.js');
-require('./crag_view.js');
-require('./route_tables.js');
+const CragCover = require('./objects/crag-cover.cjs');
 
 window.onload = () => {
-  LoadAndDisplayCrag('./data/crag.json', './images/');
 }
