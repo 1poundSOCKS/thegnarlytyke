@@ -1,11 +1,11 @@
 const TopoOverlay = require('./topo-overlay.cjs');
+const Topo = require('./topo.cjs');
 
 let TopoImage = function(canvas) {
   this.canvas = canvas;
   this.image = null;
   this.topo = null;
   this.contentEditable = false;
-  this.nearestPointInfo = null;
   this.mousePos = null;
   this.nearestPointInfo = null;
   this.dragStartPos = null;
@@ -14,6 +14,7 @@ let TopoImage = function(canvas) {
 }
 
 TopoImage.prototype.Refresh = function() {
+  if( !this.image ) return;
   this.canvas.setAttribute('width', this.image.width);
   this.canvas.setAttribute('height', this.image.height);
   let ctx = this.canvas.getContext('2d');
@@ -22,6 +23,8 @@ TopoImage.prototype.Refresh = function() {
 }
 
 TopoImage.prototype.DrawOverlay = function() {
+  if( !this.topo ) return;
+
   const topoOverlay = new TopoOverlay();
   topoOverlay.GenerateFromTopo(this.topo);
   
@@ -52,7 +55,7 @@ TopoImage.prototype.DrawOverlay = function() {
   });
 
   if( this.nearestPointInfo ) {
-    HighlightPoint(ctx, this.canvas.width * nearestPointInfo.x, this.canvas.height * nearestPointInfo.y, 1);
+    HighlightPoint(ctx, this.canvas.width * this.nearestPointInfo.x, this.canvas.height * this.nearestPointInfo.y, 1);
   }
 
   if( _selectedTopoRouteTableRow && _mousePos && _mouseDown && !_dragPointInfo ) {
@@ -69,7 +72,7 @@ TopoImage.prototype.AddMouseHandler = function() {
 }
 
 TopoImage.prototype.OnMouseMove = function(event) {
-  this.mousePos = GetMousePositionFromEvent(event);
+  this.mousePos = this.GetMousePositionFromEvent(event);
   if( this.mouseDown ) {
     if( this.dragPointInfo ) {
       this.dragPointInfo.x = this.mousePos.x;
@@ -77,25 +80,25 @@ TopoImage.prototype.OnMouseMove = function(event) {
     }
   }
   else {
-    let topoID = GetSelectedTopoID();
-    let nearestPointInfo = GetNearestTopoPointInfo(_crag, topoID, _mousePos.x, _mousePos.y);
-    this.nearestPointInfo = ( nearestPointInfo && nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
+    const topo = new Topo(this.topo);
+    this.nearestPointInfo = topo.GetNearestPointWithin(this.mousePos.x, this.mousePos.y, 0.03);
   }
   this.Refresh();
 }
 
 TopoImage.prototype.OnMouseDown = function(event) {
   this.mouseDown = true;
-  this.dragStartPos = GetMousePositionFromEvent(event);
+  this.dragStartPos = this.GetMousePositionFromEvent(event);
   this.dragPointInfo = this.nearestPointInfo;
 }
 
 TopoImage.prototype.OnMouseUp = function(event) {
   this.mouseDown = false;
-  let mousePos = GetMousePositionFromEvent(event);
+  this.mousePos = this.GetMousePositionFromEvent(event);
   let topoID = GetSelectedTopoID();
-  if( _dragPointInfo ) {
-    MovePoint(_crag, topoID, _dragPointInfo.id, mousePos.x, mousePos.y);
+  if( this.dragPointInfo ) {
+    this.dragPointInfo.x = this.mousePos.x;
+    this.dragPointInfo.y = this.mousePos.y;
     this.dragPointInfo = null;
   }
   else {

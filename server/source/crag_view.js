@@ -96,7 +96,6 @@ let OnTopoSelected = event => {
   RefreshCragRouteTable(_crag, selectedTopoID);
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
-  if( _contentEditable ) AddMouseHandlerToMainTopoCanvas();
 }
 
 module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.id;
