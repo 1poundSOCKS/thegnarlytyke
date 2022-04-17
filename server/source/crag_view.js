@@ -1,16 +1,13 @@
 const Config = require('./objects/config.cjs');
 const Crag = require('./objects/crag.cjs');
 const TopoOverlay = require('./objects/topo-overlay.cjs');
+const TopoImage = require('./objects/topo-image.cjs');
 
 let _crag = new Crag();
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
-let _mousePos = null;
-let _nearestPointInfo = null;
-let _dragStartPos = null;
-let _dragPointInfo = null;
-let _mouseDown = false;
+let _mainTopoImage = null;
 
 module.exports = SetViewContentEditable = editable => {
   _contentEditable = editable;
@@ -18,6 +15,9 @@ module.exports = SetViewContentEditable = editable => {
 }
 
 module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
+  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'));
+  if( _contentEditable ) _mainTopoImage.AddMouseHandler();
+
   const env = Config.environment;
   const cragURL = `env/${env}/data/${cragID}.crag.json`;
   const imagesPath = `env/${env}/images/`;
@@ -137,10 +137,9 @@ module.exports = ShiftSelectedTopoRight = () => {
 
 module.exports = RefreshMainTopoView = () => {
   let selectedTopoID = _selectedTopoImageContainer.dataset.id;
-  let selectedTopoImage = _topoImages.get(selectedTopoID);
-  let mainTopoCanvas = document.getElementById('main-topo-image');
-  DrawMainTopoImage(mainTopoCanvas, selectedTopoImage);
-  DrawMainTopoOverlay(mainTopoCanvas, _crag, selectedTopoID);
+  _mainTopoImage.image = _topoImages.get(selectedTopoID);
+  _mainTopoImage.topo = _crag.GetMatchingTopo(selectedTopoID);
+  _mainTopoImage.Refresh();
 }
 
 module.exports = CreateTopoImageContainer = (topoID) => {
@@ -163,148 +162,4 @@ module.exports = ResizeTopoCanvas = (topoCanvas, topoImage, heightInRem) => {
   topoCanvas.setAttribute('width', topoImage.width);
   topoCanvas.setAttribute('height', topoImage.height);
   return topoCanvas;
-}
-
-module.exports =  DrawMainTopoImage = (topoCanvas, topoImage, widthInRem) => {
-  topoCanvas.setAttribute('width', topoImage.width);
-  topoCanvas.setAttribute('height', topoImage.height);
-  let ctx = topoCanvas.getContext('2d');
-  ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
-}
-
-module.exports =  DrawMainTopoOverlay = (topoCanvas, crag, topoID) => {
-  const topo = crag.GetMatchingTopo(topoID);
-  const topoOverlay = new TopoOverlay();
-  topoOverlay.GenerateFromTopo(topo);
-  if( _dragPointInfo ) topoOverlay.UpdatePoints(_dragPointInfo.id, _dragPointInfo.x, _dragPointInfo.y);
-
-  let ctx = topoCanvas.getContext('2d');
-
-  topoOverlay.lines.forEach( line => {
-    DrawRouteLine(ctx,
-      topoCanvas.width * line.startX, topoCanvas.height * line.startY, 
-      topoCanvas.width * line.endX, topoCanvas.height * line.endY, 1);
-  })
-
-  topoOverlay.points.forEach( point => {
-    let routeLabel = point.routeIndex + 1;
-    switch( point.type ) {
-      case rsRouteJoin:
-        if( _contentEditable )
-          DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 150, 150)");
-        break;
-      case rsRouteStart:
-        DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(40, 150, 40)");
-        break;
-      case rsRouteEnd:
-        DrawRoutePoint(ctx, topoCanvas.width * point.x, topoCanvas.height * point.y, routeLabel, 1, "rgb(150, 20, 20)");
-        break;
-    }
-  });
-
-  if( _nearestPointInfo ) {
-    HighlightPoint(ctx, topoCanvas.width * _nearestPointInfo.x, topoCanvas.height * _nearestPointInfo.y, 1);
-  }
-
-  if( _selectedTopoRouteTableRow && _mousePos && _mouseDown && !_dragPointInfo ) {
-    let routeLabel = _selectedTopoRouteTableRow.rowIndex + 1;
-    DrawRoutePoint(ctx, topoCanvas.width * _mousePos.x, topoCanvas.height * _mousePos.y, routeLabel, 1, "rgb(150, 150, 150)");
-  }
-}
-
-module.exports = DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
-  ctx.font = `bold ${fontSize}rem serif`;
-  const metrics = ctx.measureText(routeIndex);
-  let widthOfRouteIndex = metrics.width;
-  ctx.beginPath();
-  ctx.setLineDash([]);
-  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
-  ctx.fillStyle = colour;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
-  ctx.lineWidth = fontSize;
-  ctx.strokeStyle = "#000000";
-  ctx.stroke();
-  ctx.fillStyle = "rgb(230,230,230)";
-  ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.6));
-}
-
-let HighlightPoint = (ctx, canvasX, canvasY, fontSize) => {
-  ctx.font = `bold ${fontSize}rem serif`;
-  const metrics = ctx.measureText('X');
-  let widthOfRouteIndex = metrics.width;
-  ctx.beginPath();
-  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
-  ctx.lineWidth = fontSize * 3;
-  ctx.strokeStyle = "rgb(250, 250, 250)";
-  ctx.stroke();
-}
-
-module.exports =  DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {
-  ctx.beginPath();
-  ctx.setLineDash([10, 10]);
-  ctx.moveTo(canvasStartX, canvasStartY);
-  ctx.lineTo(canvasEndX, canvasEndY);
-  ctx.lineWidth = "4";
-  ctx.strokeStyle = '#FFFFFF';
-  ctx.stroke();
-}
-
-let AddMouseHandlerToMainTopoCanvas = () => {
-  let topoCanvas = document.getElementById('main-topo-image');
-
-  topoCanvas.onmousemove = event => {
-    _mousePos = GetMousePositionFromEvent(topoCanvas, event);
-    if( _mouseDown ) {
-      if( _dragPointInfo ) {
-        _dragPointInfo.x = _mousePos.x;
-        _dragPointInfo.y = _mousePos.y;
-      }
-    }
-    else {
-      let topoID = GetSelectedTopoID();
-      let nearestPointInfo = GetNearestTopoPointInfo(_crag, topoID, _mousePos.x, _mousePos.y);
-      _nearestPointInfo = ( nearestPointInfo && nearestPointInfo.distance < 0.03 ) ? nearestPointInfo : null;
-    }
-    RefreshMainTopoView();
-  }
-
-  topoCanvas.onmousedown = event => {
-    _mouseDown = true;
-    _dragStartPos = GetMousePositionFromEvent(topoCanvas, event);
-    _dragPointInfo = _nearestPointInfo;
-  }
-
-  topoCanvas.onmouseup = event => {
-    _mouseDown = false;
-    let mousePos = GetMousePositionFromEvent(topoCanvas, event);
-    let topoID = GetSelectedTopoID();
-    if( _dragPointInfo ) {
-      MovePoint(_crag, topoID, _dragPointInfo.id, mousePos.x, mousePos.y);
-      _dragPointInfo = null;
-    }
-    else {
-      let routeID  = GetSelectedTopoRouteTableID();
-      let route = GetTopoRoute(_crag, topoID, routeID);
-      if( route ) AppendPointToRoute(route, mousePos.x, mousePos.y);
-      RefreshMainTopoView();
-      RefreshTopoRouteTable(_crag, topoID);
-    }
-  }
-
-  topoCanvas.onmouseleave = event => {
-    _mouseDown = false;
-  }
-}
-
-let GetMousePositionFromEvent = (element, event) => {
-  let rect = element.getBoundingClientRect();
-  let clientRectWidth = rect.right - rect.left;
-  let clientRectHeight = rect.bottom - rect.top;
-  let clientMouseX = event.clientX - rect.left;
-  let clientMouseY = event.clientY - rect.top;
-  let mousePercentX = clientMouseX / clientRectWidth;
-  let mousePercentY = clientMouseY / clientRectHeight;
-  return { x: mousePercentX, y: mousePercentY };
 }
