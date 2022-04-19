@@ -175,7 +175,41 @@ test("UpdatePoints: update the first point", () => {
 });
 
 test("UpdatePoints: update the last point", () => {
+  const point1 = {id: 'p1', x: 1, y: 2};
+  const point2 = {id: 'p2', x: 3, y: 4};
+  const point3 = {id: 'p3', x: 5, y: 6};
+  const route = {points: [point1, point2, point3]};
+  const topo = {routes:[route]};
+  const overlay = new TopoOverlay();
+  overlay.GenerateFromTopo(topo);
+  overlay.UpdatePoints('p3', 7, 8);
+  expect(overlay.lines).toEqual([
+    {startID: 'p1', startX: 1, startY: 2, endID: 'p2', endX: 3, endY: 4},
+    {startID: 'p2', startX: 3, startY: 4, endID: 'p3', endX: 7, endY: 8}
+  ]);
+  expect(overlay.points).toEqual([
+    {routeIndex: 0, type: rsRouteStart, id: 'p1', x: 1, y: 2},
+    {routeIndex: 0, type: rsRouteJoin, id: 'p2', x: 3, y: 4},
+    {routeIndex: 0, type: rsRouteEnd, id: 'p3', x: 7, y: 8},
+  ]);
 });
 
 test("UpdatePoints: update the middle point of three", () => {
+  const point1 = {id: 'p1', x: 1, y: 2};
+  const point2 = {id: 'p2', x: 3, y: 4};
+  const point3 = {id: 'p3', x: 5, y: 6};
+  const route = {points: [point1, point2, point3]};
+  const topo = {routes:[route]};
+  const overlay = new TopoOverlay();
+  overlay.GenerateFromTopo(topo);
+  overlay.UpdatePoints('p2', 7, 8);
+  expect(overlay.lines).toEqual([
+    {startID: 'p1', startX: 1, startY: 2, endID: 'p2', endX: 7, endY: 8},
+    {startID: 'p2', startX: 7, startY: 8, endID: 'p3', endX: 5, endY: 6}
+  ]);
+  expect(overlay.points).toEqual([
+    {routeIndex: 0, type: rsRouteStart, id: 'p1', x: 1, y: 2},
+    {routeIndex: 0, type: rsRouteJoin, id: 'p2', x: 7, y: 8},
+    {routeIndex: 0, type: rsRouteEnd, id: 'p3', x: 5, y: 6},
+  ]);
 });

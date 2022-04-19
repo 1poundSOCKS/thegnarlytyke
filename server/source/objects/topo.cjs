@@ -2,6 +2,13 @@ let Topo = function(topo) {
   this.topo = topo;
 }
 
+Topo.prototype.GetRoute = function(id) {
+  if( !this.topo.routes ) return null;
+  let matchingRoutes = this.topo.routes.filter(route => route.id === id);
+  if( matchingRoutes.length != 1 ) return null;
+  return matchingRoutes[0];
+}
+
 Topo.prototype.GetNearestPointWithin = function(x, y, within) {
   if( !this.topo.routes ) return null;
   let nearestPointsForTopo = this.topo.routes.map( route => GetNearestPointForRoute(x, y, route) )

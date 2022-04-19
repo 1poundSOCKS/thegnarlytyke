@@ -1,5 +1,6 @@
 const TopoOverlay = require('./topo-overlay.cjs');
 const Topo = require('./topo.cjs');
+const Route = require('./route.cjs');
 
 let TopoImage = function(canvas) {
   this.canvas = canvas;
@@ -101,15 +102,13 @@ TopoImage.prototype.OnMouseUp = function(event) {
     this.dragPointInfo = null;
   }
   else {
-    let topoID = GetSelectedTopoID();
+    const topo = new Topo(this.topo);
     let routeID  = GetSelectedTopoRouteTableID();
     if( routeID ) {
-      const route = new Route(this.topo.GetRoute(routeID));
+      const route = new Route(topo.GetRoute(routeID));
       route.AppendPoint(this.mousePos.x, this.mousePos.y);
+      this.Refresh();
     }
-    // let route = GetTopoRoute(_crag, topoID, routeID);
-    // if( route ) AppendPointToRoute(route, mousePos.x, mousePos.y);
-    // this.Refresh();
     // RefreshTopoRouteTable(_crag, topoID);
   }
 }
