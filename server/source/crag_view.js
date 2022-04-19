@@ -16,7 +16,7 @@ module.exports = SetViewContentEditable = editable => {
 
 module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'));
-  if( _contentEditable ) _mainTopoImage.AddMouseHandler();
+  _mainTopoImage.contentEditable = _contentEditable;
 
   const env = Config.environment;
   const cragURL = `env/${env}/data/${cragID}.crag.json`;
@@ -96,6 +96,8 @@ let OnTopoSelected = event => {
   RefreshCragRouteTable(_crag, selectedTopoID);
 
   document.getElementById('main-topo-container').classList.remove('do-not-display');
+
+  if( _contentEditable ) _mainTopoImage.AddMouseHandler();
 }
 
 module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.id;

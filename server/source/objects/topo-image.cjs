@@ -58,9 +58,9 @@ TopoImage.prototype.DrawOverlay = function() {
     HighlightPoint(ctx, this.canvas.width * this.nearestPointInfo.x, this.canvas.height * this.nearestPointInfo.y, 1);
   }
 
-  if( _selectedTopoRouteTableRow && _mousePos && _mouseDown && !_dragPointInfo ) {
+  if( _selectedTopoRouteTableRow && this.mousePos && this.mouseDown && !this.dragPointInfo ) {
     let routeLabel = _selectedTopoRouteTableRow.rowIndex + 1;
-    DrawRoutePoint(ctx, topoCanvas.width * _mousePos.x, topoCanvas.height * _mousePos.y, routeLabel, 1, "rgb(150, 150, 150)");
+    DrawRoutePoint(ctx, this.canvas.width * this.mousePos.x, this.canvas.height * this.mousePos.y, routeLabel, 1, "rgb(150, 150, 150)");
   }
 }
 
@@ -95,23 +95,28 @@ TopoImage.prototype.OnMouseDown = function(event) {
 TopoImage.prototype.OnMouseUp = function(event) {
   this.mouseDown = false;
   this.mousePos = this.GetMousePositionFromEvent(event);
-  let topoID = GetSelectedTopoID();
   if( this.dragPointInfo ) {
     this.dragPointInfo.x = this.mousePos.x;
     this.dragPointInfo.y = this.mousePos.y;
     this.dragPointInfo = null;
   }
   else {
+    let topoID = GetSelectedTopoID();
     let routeID  = GetSelectedTopoRouteTableID();
-    let route = GetTopoRoute(_crag, topoID, routeID);
-    if( route ) AppendPointToRoute(route, mousePos.x, mousePos.y);
-    this.Refresh();
-    RefreshTopoRouteTable(_crag, topoID);
+    if( routeID ) {
+      const route = new Route(this.topo.GetRoute(routeID));
+      route.AppendPoint(this.mousePos.x, this.mousePos.y);
+    }
+    // let route = GetTopoRoute(_crag, topoID, routeID);
+    // if( route ) AppendPointToRoute(route, mousePos.x, mousePos.y);
+    // this.Refresh();
+    // RefreshTopoRouteTable(_crag, topoID);
   }
 }
 
 TopoImage.prototype.OnMouseLeave = function(event) {
   this.mouseDown = false;
+  this.Refresh();
 }
 
 TopoImage.prototype.GetMousePositionFromEvent = function(event) {
