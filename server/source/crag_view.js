@@ -116,6 +116,13 @@ let RefreshIcons = () => {
   }
 }
 
+module.exports = RefreshMainTopoView = () => {
+  let selectedTopoID = GetSelectedTopoID();
+  _mainTopoImage.image = _topoImages.get(selectedTopoID);
+  _mainTopoImage.topo = _crag.GetMatchingTopo(selectedTopoID);
+  _mainTopoImage.Refresh();
+}
+
 module.exports = ShiftSelectedTopoLeft = () => {
   const parentNode = _selectedTopoImageContainer.parentNode;
   const previousContainer = _selectedTopoImageContainer.previousSibling;
@@ -134,13 +141,6 @@ module.exports = ShiftSelectedTopoRight = () => {
   RefreshIcons();
   const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
   _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
-}
-
-module.exports = RefreshMainTopoView = () => {
-  let selectedTopoID = _selectedTopoImageContainer.dataset.id;
-  _mainTopoImage.image = _topoImages.get(selectedTopoID);
-  _mainTopoImage.topo = _crag.GetMatchingTopo(selectedTopoID);
-  _mainTopoImage.Refresh();
 }
 
 module.exports = CreateTopoImageContainer = (topoID) => {

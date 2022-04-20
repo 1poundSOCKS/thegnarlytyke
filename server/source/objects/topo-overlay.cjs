@@ -28,7 +28,6 @@ TopoOverlay.prototype.GeneratePointsFromRoute = function(route, routeIndex) {
 TopoOverlay.prototype.GeneratePointsFromTopo = function(topo) {
   let topoRoutes = topo.routes ? topo.routes : [];
   let topoRoutesWithPoints = topoRoutes.filter( route => route.points && route.points.length > 0 );
-  topoRoutesWithPoints.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
   topoRoutesWithPoints.forEach( (route, index) => {
     this.GeneratePointsFromRoute(route, index);
   });

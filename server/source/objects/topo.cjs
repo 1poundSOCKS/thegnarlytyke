@@ -18,6 +18,10 @@ Topo.prototype.GetNearestPointWithin = function(x, y, within) {
   return (distance <= within) ? nearestPoint : null;
 }
 
+Topo.prototype.SortRoutesLeftToRight = function() {
+  // this.topo.routes.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
+}
+
 module.exports = Topo;
 
 let GetNearestPointForRoute = (x, y, route) => {

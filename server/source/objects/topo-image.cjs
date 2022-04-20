@@ -96,21 +96,20 @@ TopoImage.prototype.OnMouseDown = function(event) {
 TopoImage.prototype.OnMouseUp = function(event) {
   this.mouseDown = false;
   this.mousePos = this.GetMousePositionFromEvent(event);
+  const topo = new Topo(this.topo);
   if( this.dragPointInfo ) {
     this.dragPointInfo.x = this.mousePos.x;
     this.dragPointInfo.y = this.mousePos.y;
     this.dragPointInfo = null;
   }
   else {
-    const topo = new Topo(this.topo);
     let routeID  = GetSelectedTopoRouteTableID();
     if( routeID ) {
       const route = new Route(topo.GetRoute(routeID));
       route.AppendPoint(this.mousePos.x, this.mousePos.y);
-      this.Refresh();
     }
-    // RefreshTopoRouteTable(_crag, topoID);
   }
+  this.Refresh();
 }
 
 TopoImage.prototype.OnMouseLeave = function(event) {
