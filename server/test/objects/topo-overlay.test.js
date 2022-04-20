@@ -65,23 +65,6 @@ test("GeneratePointsFromTopo: from a minimal topo", () => {
   expect(overlay.points).toEqual([{routeIndex: 0, type: rsRouteStart, id: 'p1', x: 1, y: 2}]);
 });
 
-test("GeneratePointsFromTopo: from a topo with several routes that are not in left to right order", () => {
-  const point1 = {id: 'p1', x: 5, y: 6};
-  const route1 = {points: [point1]};
-  const point2 = {id: 'p2', x: 3, y: 4};
-  const route2 = {points: [point2]};
-  const point3 = {id: 'p3', x: 1, y: 2};
-  const route3 = {points: [point3]};
-  const topo = {routes:[route1, route2, route3]};
-  const overlay = new TopoOverlay();
-  overlay.GeneratePointsFromTopo(topo);
-  expect(overlay.points).toEqual([
-    {routeIndex: 0, type: rsRouteStart, id: 'p3', x: 1, y: 2},
-    {routeIndex: 1, type: rsRouteStart, id: 'p2', x: 3, y: 4},
-    {routeIndex: 2, type: rsRouteStart, id: 'p1', x: 5, y: 6},
-  ]);
-});
-
 test("GenerateLinesFromRoute: an empty route", () => {
   const route = {};
   const overlay = new TopoOverlay();
