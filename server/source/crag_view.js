@@ -2,6 +2,7 @@ const Config = require('./objects/config.cjs');
 const Crag = require('./objects/crag.cjs');
 const TopoOverlay = require('./objects/topo-overlay.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
+const Topo = require('./objects/topo.cjs');
 
 let _crag = new Crag();
 let _topoImages = new Map();
@@ -41,15 +42,23 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
     return topoCanvas;
   });
   
+  const topoImageLoaders = [];
   topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
     let topo = _crag.GetMatchingTopo(topoID);
     if( topo && topo.imageFile ) {
-        let topoImage = await LoadImage(`${imagesPath}${topo.imageFile}`);
+      let topoImageLoader = LoadImage(`${imagesPath}${topo.imageFile}`);
+      topoImageLoaders.push(topoImageLoader);
+      let topoImage = await topoImageLoader;
       _topoImages.set(topoID, topoImage);
       DisplayTopoImage(canvas, topoImage);
     }
   });
+
+  if( topoImageContainers.length > 0 ) {
+    await topoImageLoaders[0];
+    SetCurrentTopoContainer(topoImageContainers[0]);
+  }
 
   RefreshCragRouteTable(_crag);
 }
@@ -80,15 +89,15 @@ module.exports = LoadImage = (url) => new Promise( (resolve, reject) => {
 });
 
 let OnTopoSelected = event => {
+  SetCurrentTopoContainer(event.target.parentElement);
+}
+
+let SetCurrentTopoContainer = topoContainer => {
   if( _selectedTopoImageContainer ) _selectedTopoImageContainer.classList.remove('topo-container-selected');
 
-  _selectedTopoImageContainer = event.target.parentElement;
+  _selectedTopoImageContainer = topoContainer;
   _selectedTopoImageContainer.classList.add('topo-container-selected');
   let selectedTopoID = GetSelectedTopoID();
-
-  let topoImagesContainer = document.getElementById('topo-images-container');
-  topoImagesContainer.classList.remove('topo-images-container-initial');
-  topoImagesContainer.classList.add('topo-images-container');
 
   RefreshIcons();
   RefreshMainTopoView();
@@ -101,6 +110,8 @@ let OnTopoSelected = event => {
 }
 
 module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.id;
+module.exports = GetSelectedTopo = () => new Topo(_crag.GetMatchingTopo(GetSelectedTopoID()));
+
 
 let RefreshIcons = () => {
   const shiftTopoLeftContainer = document.getElementById('shift-topo-left-container');
@@ -141,6 +152,13 @@ module.exports = ShiftSelectedTopoRight = () => {
   RefreshIcons();
   const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
   _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
+}
+
+module.exports = SortSelectedTopoRoutes = () => {
+  const topo = GetSelectedTopo();
+  topo.SortRoutesLeftToRight();
+  RefreshTopoRouteTable(_crag, GetSelectedTopoID());
+  _mainTopoImage.Refresh();
 }
 
 module.exports = CreateTopoImageContainer = (topoID) => {

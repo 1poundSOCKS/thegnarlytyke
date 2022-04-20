@@ -22,4 +22,5 @@ let OnConfigLoad = () => {
 
 module.exports = OnShiftTopoLeft = () => ShiftSelectedTopoLeft();
 module.exports = OnShiftTopoRight = () => ShiftSelectedTopoRight();
+module.exports = OnSortTopoRoutes = () => SortSelectedTopoRoutes();
 module.exports = OnSave = () => SaveCrag();
