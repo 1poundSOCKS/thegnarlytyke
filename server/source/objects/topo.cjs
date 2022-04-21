@@ -1,17 +1,19 @@
 let Topo = function(topo) {
-  this.topo = topo;
+  this.id = topo.id;
+  this.imageFile = topo.imageFile;
+  this.routes = topo.routes ? topo.routes : [];
 }
 
 Topo.prototype.GetRoute = function(id) {
-  if( !this.topo.routes ) return null;
-  let matchingRoutes = this.topo.routes.filter(route => route.id === id);
+  if( !this.routes ) return null;
+  let matchingRoutes = this.routes.filter(route => route.id === id);
   if( matchingRoutes.length != 1 ) return null;
   return matchingRoutes[0];
 }
 
 Topo.prototype.GetNearestPointWithin = function(x, y, within) {
-  if( !this.topo.routes ) return null;
-  let nearestPointsForTopo = this.topo.routes.map( route => GetNearestPointForRoute(x, y, route) )
+  if( !this.routes || this.routes.length == 0 ) return null;
+  let nearestPointsForTopo = this.routes.map( route => GetNearestPointForRoute(x, y, route) )
   .filter( point => point );
   const nearestPoint = GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
   let distance = GetDistanceBetweenPoints(x, y, nearestPoint.x, nearestPoint.y);
@@ -19,7 +21,7 @@ Topo.prototype.GetNearestPointWithin = function(x, y, within) {
 }
 
 Topo.prototype.SortRoutesLeftToRight = function() {
-  // this.topo.routes.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
+  // this.routes.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
 }
 
 module.exports = Topo;
