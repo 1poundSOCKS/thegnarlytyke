@@ -75,16 +75,20 @@ TopoImage.prototype.AddMouseHandler = function() {
 TopoImage.prototype.OnMouseMove = function(event) {
   this.mousePos = this.GetMousePositionFromEvent(event);
   if( this.mouseDown ) {
-    if( this.dragPointInfo ) {
-      this.dragPointInfo.x = this.mousePos.x;
-      this.dragPointInfo.y = this.mousePos.y;
-    }
+    if( this.dragPointInfo ) this.OnMouseDrag();
   }
   else {
     const topo = new Topo(this.topo);
     this.nearestPointInfo = topo.GetNearestPointWithin(this.mousePos.x, this.mousePos.y, 0.03);
   }
   this.Refresh();
+}
+
+TopoImage.prototype.OnMouseDrag = function() {
+  this.dragPointInfo.x = this.mousePos.x;
+  this.dragPointInfo.y = this.mousePos.y;
+  const topo = new Topo(this.topo);
+  this.nearestPointInfo = topo.GetNextNearestPointWithin(this.mousePos.x, this.mousePos.y, 0.03, this.dragPointInfo.id);
 }
 
 TopoImage.prototype.OnMouseDown = function(event) {

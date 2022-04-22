@@ -29,7 +29,7 @@ test("GetRoute: return the middle route", () => {
 
 test("GetNearestPointWithin: empty topo returns null", () => {
   const topo = new Topo({});
-  expect(topo.GetNearestPointWithin(1000)).toBeNull();
+  expect(topo.GetNearestPointWithin(1, 2, 1000)).toBeNull();
 });
 
 test("GetNearestPointWithin: a single point that is just within range", () => {
@@ -44,4 +44,31 @@ test("GetNearestPointWithin: a single point that is just out of range", () => {
   const route = {id: 'r1', points: [point]};
   const topo = new Topo({routes: [route]});
   expect(topo.GetNearestPointWithin(5, 1, 2.99)).toBeNull();
+});
+
+test("GetNextNearestPointWithin: empty topo returns null", () => {
+  const topo = new Topo({});
+  expect(topo.GetNextNearestPointWithin(1, 2, 1000)).toBeNull();
+});
+
+test("GetNextNearestPointWithin: a single point that is just within range and not excluded", () => {
+  const point = {id: 'p1', x: 1, y: 2};
+  const route = {id: 'r1', points: [point]};
+  const topo = new Topo({routes: [route]});
+  expect(topo.GetNextNearestPointWithin(1, 4, 2, 'p2')).toEqual({id: 'p1', x: 1, y: 2});
+});
+
+test("GetNextNearestPointWithin: a single point that is just within range and is excluded", () => {
+  const point = {id: 'p1', x: 1, y: 2};
+  const route = {id: 'r1', points: [point]};
+  const topo = new Topo({routes: [route]});
+  expect(topo.GetNextNearestPointWithin(1, 4, 2, 'p1')).toBeNull();
+});
+
+test("GetNextNearestPointWithin: nearest point is excluded, so return the next point", () => {
+  const point1 = {id: 'p1', x: 1, y: 2};
+  const point2 = {id: 'p2', x: 3, y: 4};
+  const route = {id: 'r1', points: [point1, point2]};
+  const topo = new Topo({routes: [route]});
+  expect(topo.GetNextNearestPointWithin(1, 2, 5, 'p1')).toEqual({id: 'p2', x: 3, y: 4});
 });
