@@ -15,13 +15,15 @@ TopoOverlay.prototype.GeneratePointsFromRoute = function(route, routeIndex) {
     let pointType = rsRouteJoin;
     if( index == 0 ) pointType = rsRouteStart;
     else if( index == lastPointIndex ) pointType = rsRouteEnd;
-    this.points.push({
-      routeIndex: routeIndex,
-      type: pointType,
-      id: point.id,
-      x: point.x,
-      y: point.y
-    });
+    if( !point.attachedTo ) {
+      this.points.push({
+        routeIndex: routeIndex,
+        type: pointType,
+        id: point.id,
+        x: point.x,
+        y: point.y
+      });
+    }
   });
 }
 
@@ -35,13 +37,14 @@ TopoOverlay.prototype.GeneratePointsFromTopo = function(topo) {
 
 TopoOverlay.prototype.GenerateLinesFromRoute = function(route) {
   if( !route.points ) return;
-  const lines = route.points.map( (point, index, points) => {
+  route.points.forEach( (point, index, points) => {
     let nextPoint = points[index + 1];
-    return nextPoint ? { startID: point.id, startX: point.x, startY: point.y, endID: nextPoint.id, endX: nextPoint.x, endY: nextPoint.y } : null;
-  });
-  const validLines = lines.filter( line => line );
-  validLines.forEach( line => {
-    this.lines.push(line);
+    if( nextPoint ) {
+      const startPoint = CreateNewPointIfDetached(point);
+      const endPoint = CreateNewPointIfDetached(nextPoint);
+      this.lines.push({ startID: startPoint.id, startX: startPoint.x, startY: startPoint.y, 
+        endID: endPoint.id, endX: endPoint.x, endY: endPoint.y });
+    }
   });
 }
 
@@ -76,3 +79,15 @@ TopoOverlay.prototype.UpdatePoints = function(id, x, y) {
 }
 
 module.exports = TopoOverlay;
+
+let CreateNewPointIfDetached = (point) => {
+  if( point.attachedTo ) {
+    return {
+      id: point.id,
+      x: point.attachedTo.x,
+      y: point.attachedTo.y
+    }
+  }
+
+  return point;
+}

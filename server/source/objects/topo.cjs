@@ -31,31 +31,30 @@ Topo.prototype.GetNextNearestPointWithin = function(x, y, within, exludedPointID
 }
 
 Topo.prototype.SortRoutesLeftToRight = function() {
-  // this.routes.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
+  this.routes.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
 }
 
 module.exports = Topo;
 
-let GetNearestPointForRoute = (x, y, route) => {
-  return route.points ? GetNearestPointForArrayOfPoints(x, y, route.points) : null;
-}
+let GetNearestPointForRoute = (x, y, route) => GetNextNearestPointForRoute(x, y, route, null);
 
 let GetNextNearestPointForRoute = (x, y, route, excludedPointID) => {
   if( !route.points ) return null;
   const includedPoints = route.points.filter( point => point.id !== excludedPointID );
-  return GetNearestPointForArrayOfPoints(x, y, includedPoints);
+  const nearestPoint = GetNearestPointForArrayOfPoints(x, y, includedPoints);
+  if( nearestPoint ) nearestPoint.parent = route;
+  return nearestPoint;
 }
 
 let GetNearestPointForArrayOfPoints = (x, y, points) => {
-  if( points.length == 0 ) return null;
-  let nearestPoint = points.reduce( (previousPoint, currentPoint) => {
-    let distanceFromPrevious = GetDistanceBetweenPoints(previousPoint.x, previousPoint.y, x, y);
-    let distanceFromCurrent = GetDistanceBetweenPoints(currentPoint.x, currentPoint.y, x, y);
-    if( distanceFromCurrent < distanceFromPrevious ) return currentPoint;
-    else return previousPoint;
-  });
+  const unattachedPoints = points.filter( point => !point.attachedTo );
+  let nearestPoint = unattachedPoints.reduce( (previousResult, currentPoint) => {
+    if( !previousResult.point ) return {point: currentPoint, distance: GetDistanceBetweenPoints(currentPoint.x, currentPoint.y, x, y)};
+    const currentResult = {point: currentPoint, distance: GetDistanceBetweenPoints(currentPoint.x, currentPoint.y, x, y)};
+    return previousResult.distance < currentResult.distance ? previousResult : currentResult;
+  }, {});
 
-  return nearestPoint;
+  return nearestPoint.point;
 }
 
 let GetDistanceBetweenPoints = (x1, y1, x2, y2) => {

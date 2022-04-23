@@ -1,6 +1,7 @@
 const TopoOverlay = require('./topo-overlay.cjs');
 const Topo = require('./topo.cjs');
 const Route = require('./route.cjs');
+const Point = require('./point.cjs');
 
 let TopoImage = function(canvas) {
   this.canvas = canvas;
@@ -101,7 +102,11 @@ TopoImage.prototype.OnMouseUp = function(event) {
   this.mouseDown = false;
   this.mousePos = this.GetMousePositionFromEvent(event);
   const topo = new Topo(this.topo);
-  if( this.dragPointInfo ) {
+  if( this.dragPointInfo && this.nearestPointInfo ) {
+    const droppedPoint = new Point(this.dragPointInfo);
+    droppedPoint.AttachTo(this.nearestPointInfo);
+  }
+  else if( this.dragPointInfo && !this.nearestPointInfo ) {
     this.dragPointInfo.x = this.mousePos.x;
     this.dragPointInfo.y = this.mousePos.y;
     this.dragPointInfo = null;

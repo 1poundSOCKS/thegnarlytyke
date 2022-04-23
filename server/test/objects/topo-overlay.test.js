@@ -49,6 +49,46 @@ test("GeneratePointsFromRoute: a route with 3 points", () => {
   ]);
 });
 
+test("GeneratePointsFromRoute: two routes with a shared start", () => {
+  const point1 = {id: 'p1', x: 1, y: 2};
+  const route1 = {points: [point1]};
+  const point2 = {id: 'p2', attachedTo: point1};
+  const point3 = {id: 'p3', x: 3, y: 4};
+  const route2 = {points: [point2, point3]};
+
+  const overlay1 = new TopoOverlay();
+  overlay1.GeneratePointsFromRoute(route1, 1);
+  expect(overlay1.points).toEqual([
+    {routeIndex: 1, type: rsRouteStart, id: 'p1', x: 1, y: 2}
+  ]);
+
+  const overlay2 = new TopoOverlay();
+  overlay2.GeneratePointsFromRoute(route2, 2);
+  expect(overlay2.points).toEqual([
+    {routeIndex: 2, type: rsRouteEnd, id: 'p3', x: 3, y: 4}
+  ]);
+});
+
+test("GeneratePointsFromRoute: two routes with a shared finish", () => {
+  const point1 = {id: 'p1', x: 1, y: 2};
+  const route1 = {points: [point1]};
+  const point2 = {id: 'p2', x: 3, y: 4};
+  const point3 = {id: 'p3', attachedTo: point1};
+  const route2 = {points: [point2, point3]};
+
+  const overlay1 = new TopoOverlay();
+  overlay1.GeneratePointsFromRoute(route1, 1);
+  expect(overlay1.points).toEqual([
+    {routeIndex: 1, type: rsRouteStart, id: 'p1', x: 1, y: 2}
+  ]);
+
+  const overlay2 = new TopoOverlay();
+  overlay2.GeneratePointsFromRoute(route2, 2);
+  expect(overlay2.points).toEqual([
+    {routeIndex: 2, type: rsRouteStart, id: 'p2', x: 3, y: 4}
+  ]);
+});
+
 test("GeneratePointsFromTopo: from an empty topo", () => {
   const topo = {};
   const overlay = new TopoOverlay();
@@ -101,6 +141,24 @@ test("GenerateLinesFromRoute: a route with three points generates two lines", ()
   expect(overlay.lines).toEqual([
     {startID: 'p1', startX: 1, startY: 2, endID: 'p2', endX: 3, endY: 4},
     {startID: 'p2', startX: 3, startY: 4, endID: 'p3', endX: 5, endY: 6}
+  ]);
+});
+
+test("GenerateLinesFromRoute: two routes with a shared start", () => {
+  const point1 = {id: 'p1', x: 1, y: 2};
+  const route1 = {points: [point1]};
+  const point2 = {id: 'p2', attachedTo: point1};
+  const point3 = {id: 'p3', x: 3, y: 4};
+  const route2 = {points: [point2, point3]};
+
+  const overlay1 = new TopoOverlay();
+  overlay1.GenerateLinesFromRoute(route1, 1);
+  expect(overlay1.lines).toEqual([]);
+
+  const overlay2 = new TopoOverlay();
+  overlay2.GenerateLinesFromRoute(route2, 2);
+  expect(overlay2.lines).toEqual([
+    {startID: 'p2', startX: 1, startY: 2, endID: 'p3', endX: 3, endY: 4}
   ]);
 });
 

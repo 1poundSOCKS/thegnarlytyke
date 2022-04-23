@@ -36,7 +36,25 @@ test("GetNearestPointWithin: a single point that is just within range", () => {
   const point = {id: 'p1', x: 1, y: 2};
   const route = {id: 'r1', points: [point]};
   const topo = new Topo({routes: [route]});
-  expect(topo.GetNearestPointWithin(1, 4, 2)).toEqual({id: 'p1', x: 1, y: 2});
+  expect(topo.GetNearestPointWithin(1, 4, 2)).toEqual({parent: route, id: 'p1', x: 1, y: 2});
+});
+
+test("GetNearestPointWithin: a single point that is within range and an attached point on the next route", () => {
+  const point = {id: 'p1', x: 1, y: 2};
+  const attachedPoint = {id: 'p2', attachedTo: point};
+  const route1 = {id: 'r1', points: [point]};
+  const route2 = {id: 'r2', points: [attachedPoint]};
+  const topo = new Topo({routes: [route1, route2]});
+  expect(topo.GetNearestPointWithin(1, 2, 2)).toEqual({parent: route1, id: 'p1', x: 1, y: 2});
+});
+
+test("GetNearestPointWithin: a single point that is within range and an attached point on the previous route", () => {
+  const point = {id: 'p1', x: 1, y: 2};
+  const attachedPoint = {id: 'p2', attachedTo: point};
+  const route1 = {id: 'r1', points: [attachedPoint]};
+  const route2 = {id: 'r2', points: [point]};
+  const topo = new Topo({routes: [route1, route2]});
+  expect(topo.GetNearestPointWithin(1, 2, 2)).toEqual({parent: route2, id: 'p1', x: 1, y: 2});
 });
 
 test("GetNearestPointWithin: a single point that is just out of range", () => {
@@ -55,7 +73,7 @@ test("GetNextNearestPointWithin: a single point that is just within range and no
   const point = {id: 'p1', x: 1, y: 2};
   const route = {id: 'r1', points: [point]};
   const topo = new Topo({routes: [route]});
-  expect(topo.GetNextNearestPointWithin(1, 4, 2, 'p2')).toEqual({id: 'p1', x: 1, y: 2});
+  expect(topo.GetNextNearestPointWithin(1, 4, 2, 'p2')).toEqual({parent: route, id: 'p1', x: 1, y: 2});
 });
 
 test("GetNextNearestPointWithin: a single point that is just within range and is excluded", () => {
@@ -70,5 +88,5 @@ test("GetNextNearestPointWithin: nearest point is excluded, so return the next p
   const point2 = {id: 'p2', x: 3, y: 4};
   const route = {id: 'r1', points: [point1, point2]};
   const topo = new Topo({routes: [route]});
-  expect(topo.GetNextNearestPointWithin(1, 2, 5, 'p1')).toEqual({id: 'p2', x: 3, y: 4});
+  expect(topo.GetNextNearestPointWithin(1, 2, 5, 'p1')).toEqual({parent: route, id: 'p2', x: 3, y: 4});
 });
