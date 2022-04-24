@@ -3,6 +3,7 @@ const Crag = require('./objects/crag.cjs');
 const TopoOverlay = require('./objects/topo-overlay.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const Topo = require('./objects/topo.cjs');
+const CragLoader = require('./objects/crag-loader.cjs');
 
 let _crag = new Crag();
 let _topoImages = new Map();
@@ -19,11 +20,8 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'));
   _mainTopoImage.contentEditable = _contentEditable;
 
-  const env = Config.environment;
-  const cragURL = `env/${env}/data/${cragID}.crag.json`;
-  const imagesPath = `env/${env}/images/`;
-  let response = await fetch(cragURL);
-  let crag = await response.json();
+  const loader = new CragLoader(cragID);
+  const crag = await loader.LoadFromClient();
 
   if( headerElement && crag.name ) headerElement.innerText = crag.name;
   
@@ -42,6 +40,9 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
     return topoCanvas;
   });
   
+  const env = Config.environment;
+  const imagesPath = `env/${env}/images/`;
+
   const topoImageLoaders = [];
   topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
