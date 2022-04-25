@@ -8,6 +8,7 @@ let Crag = function() {
 
 Crag.prototype.Attach = function(cragObject) {
   this.id = cragObject.id;
+  this.name = cragObject.name;
   this.routes = cragObject.routes;
   this.topos = cragObject.topos;
 }

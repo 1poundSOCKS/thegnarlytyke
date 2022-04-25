@@ -2,11 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path'
 import * as _crag from './crag.js'
-import Config from './source/config.cjs';
+import Config from './source/objects/config.cjs';
 
 const app = express();
 app.use(express.static('public'));
-app.use(express.static('node_modules/@fortawesome'));
 app.use(bodyParser.json());
 
 app.get('/ping', (req, res) => {
@@ -46,7 +45,7 @@ app.get('/get_crag', (req, res) => {
 });
 
 app.post('/save_crag', (req, res) => {
-  console.log('GET /save_crag');
+  console.log('POST /save_crag');
   SaveCrag(req.body)
   .then( () => {
     res.send({result: 'success'});

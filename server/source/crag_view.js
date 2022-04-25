@@ -1,6 +1,5 @@
 const Config = require('./objects/config.cjs');
 const Crag = require('./objects/crag.cjs');
-const TopoOverlay = require('./objects/topo-overlay.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const Topo = require('./objects/topo.cjs');
 const CragLoader = require('./objects/crag-loader.cjs');
@@ -20,8 +19,8 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'));
   _mainTopoImage.contentEditable = _contentEditable;
 
-  const loader = new CragLoader(cragID);
-  const crag = await loader.LoadFromClient();
+  const cragStorage = new CragLoader('client');
+  const crag = await cragStorage.Load(cragID);
 
   if( headerElement && crag.name ) headerElement.innerText = crag.name;
   
@@ -65,21 +64,8 @@ module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
 }
 
 module.exports = SaveCrag = async () => {
-  const requestBody = JSON.stringify(_crag);
-
-  let response = await fetch('./save_crag', {
-    method: 'POST',
-    mode: 'same-origin',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'same-origin',
-    body: requestBody
-  });
-  let parsedResponse = await response.json();
+  const cragStorage = new CragLoader('client');
+  cragStorage.Save(_crag);
 }
 
 module.exports = LoadImage = (url) => new Promise( (resolve, reject) => {
