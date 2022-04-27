@@ -32,3 +32,10 @@ test("Format a crag object for storage and ensure all properties included", () =
   const cragForStorage = cragLoader.FormatCragForStorage(crag);
   expect(cragForStorage).toEqual(crag);
 });
+
+test("Format points for storage when there aren't any", () => {
+  const topoRoutes = [{id: 'tr1'}];
+  const cragStorage = new CragLoader();
+  const routesForStorage = cragStorage.FormatTopoRoutesForStorage(topoRoutes);
+  expect(routesForStorage).toEqual([{id: 'tr1', points:[]}]);
+});

@@ -101,6 +101,7 @@ CragLoader.prototype.FormatTopoRoutesForStorage = function(routes) {
 }
 
 CragLoader.prototype.FormatPointsForStorage = function(points) {
+  if( !points ) return [];
   return points.map( point => {
     const pointToSave = {id: point.id};
     if( point.attachedTo ) {

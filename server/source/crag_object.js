@@ -216,10 +216,12 @@ let GetDistanceBetweenPoints = (x1, y1, x2, y2) => {
 
 let AddRenderIndexToTopoRoutes = (topoObject) => {
   let routesInLeftToRightOrder = topoObject.routes.sort( (route1, route2) => {
-    if( !route1.points && !route2.points ) return 0;
-    else if( route1.points && !route2.points ) return -1;
-    else if( !route1.points && route2.points ) return 1;
-    else return route1.points[0].x - route2.points[0].x;
+    const points1 = route1.points ? route1.points : [];
+    const points2 = route2.points ? route2.points : [];
+    if( points1.length == 0 && points2.length == 0 ) return 0;
+    if( points1.length == 0 ) return 1;
+    if( points2.length == 0 ) return -1;
+    else return points1[0].x - points2[0].x;
   });
 
   let nextRenderIndex = 0;
