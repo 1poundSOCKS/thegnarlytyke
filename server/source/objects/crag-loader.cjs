@@ -46,16 +46,22 @@ CragLoader.prototype.SaveFromClient = async function(crag) {
 }
 
 CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
+  const routeInfoMap = new Map();
+  crag.routes.forEach( route => routeInfoMap.set(route.id, route) );
+
   const pointArray = [];
   const pointMap = new Map();
+
   crag.topos.forEach( topo => {
     topo.routes.forEach( route => {
+      route.info = routeInfoMap.get(route.id);
       route.points.forEach( point => {
         pointArray.push(point);
         pointMap.set(point.id, point);
       });
     });
   });
+
   pointArray.forEach( point => {
     if( point.attachedTo ) point.attachedTo = pointMap.get(point.attachedTo);
   });

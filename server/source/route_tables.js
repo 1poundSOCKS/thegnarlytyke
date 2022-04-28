@@ -1,3 +1,7 @@
+const Crag = require('./objects/crag.cjs');
+const Topo = require('./objects/topo.cjs');
+const RouteTable = require('./objects/route-table.cjs');
+
 require('./crag_object.js');
 
 const columnIndex_ID = 0;
@@ -31,6 +35,15 @@ module.exports = EnableCommandsInCragRouteTable = (cragObject, topoID) => {
 }
 
 module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
+  const crag = new Crag(cragObject);
+  const topoData = crag.GetMatchingTopo(topoID);
+  const topo = new Topo(topoData);
+  const routeInfo = topo.GetSortedRouteInfo();
+  const routeTable = new RouteTable(document.getElementById("topo-route-table"));
+  routeTable.Refresh(routeInfo);
+}
+
+module.exports = RefreshTopoRouteTable_OLD = (cragObject, topoID) => {
   let selectedID = GetSelectedTopoRouteTableID();
   _selectedTopoRouteTableRow = null;
   let topoRouteTable = document.getElementById("topo-route-table");

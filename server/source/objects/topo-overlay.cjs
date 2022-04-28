@@ -1,3 +1,6 @@
+const Route = require("../../source/objects/route.cjs");
+const Topo = require("../../source/objects/topo.cjs");
+
 module.exports = rsRouteStart = Symbol("rsRouteStart");
 module.exports = rsRouteEnd = Symbol("rsRouteEnd");
 module.exports = rsRouteJoin = Symbol("rsRouteJoin");
@@ -27,23 +30,23 @@ TopoOverlay.prototype.GeneratePointsFromRoute = function(route, routeIndex) {
   });
 }
 
-TopoOverlay.prototype.GeneratePointsFromTopo = function(topo) {
-  let topoRoutes = topo.routes ? topo.routes : [];
-  let topoRoutesWithPoints = topoRoutes.filter( route => route.points && route.points.length > 0 );
-  topoRoutesWithPoints.forEach( (route, index) => {
+TopoOverlay.prototype.GeneratePointsFromTopo = function(topoData) {
+  const topo = new Topo(topoData);
+  const routes = topo.GetSortedRoutes();
+  let routesToRender = routes.filter( route => route.points && route.points.length > 0 );
+  routesToRender.forEach( (route, index) => {
     this.GeneratePointsFromRoute(route, index);
   });
 }
 
-TopoOverlay.prototype.GenerateLinesFromRoute = function(route) {
-  if( !route.points ) return;
-  route.points.forEach( (point, index, points) => {
+TopoOverlay.prototype.GenerateLinesFromRoute = function(routeData) {
+  const route = new Route(routeData);
+  const points = route.GetResolvedPoints();
+  points.forEach( (point, index, points) => {
     let nextPoint = points[index + 1];
     if( nextPoint ) {
-      const startPoint = CreateNewPointIfDetached(point);
-      const endPoint = CreateNewPointIfDetached(nextPoint);
-      this.lines.push({ startID: startPoint.id, startX: startPoint.x, startY: startPoint.y, 
-        endID: endPoint.id, endX: endPoint.x, endY: endPoint.y });
+      this.lines.push({ startID: point.id, startX: point.x, startY: point.y, 
+        endID: nextPoint.id, endX: nextPoint.x, endY: nextPoint.y });
     }
   });
 }
@@ -79,15 +82,3 @@ TopoOverlay.prototype.UpdatePoints = function(id, x, y) {
 }
 
 module.exports = TopoOverlay;
-
-let CreateNewPointIfDetached = (point) => {
-  if( point.attachedTo ) {
-    return {
-      id: point.id,
-      x: point.attachedTo.x,
-      y: point.attachedTo.y
-    }
-  }
-
-  return point;
-}

@@ -1,9 +1,14 @@
 let uuid = require('uuid');
 
-let Crag = function() {
-  this.id = uuid.v4();
-  this.routes = [];
-  this.topos = [];
+let Crag = function(cragObject) {
+  if( cragObject ) {
+    this.Attach(cragObject);
+  }
+  else {
+    this.id = uuid.v4();
+    this.routes = [];
+    this.topos = [];
+  }
 }
 
 Crag.prototype.Attach = function(cragObject) {

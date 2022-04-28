@@ -1,3 +1,6 @@
+const Crag = require("./crag.cjs");
+const Route = require("./route.cjs");
+
 let Topo = function(topo) {
   this.id = topo.id;
   this.imageFile = topo.imageFile;
@@ -30,8 +33,21 @@ Topo.prototype.GetNextNearestPointWithin = function(x, y, within, exludedPointID
   return (distance <= within) ? nearestPoint : null;
 }
 
-Topo.prototype.SortRoutesLeftToRight = function() {
-  this.routes.sort( (point1, point2) => point1.points[0].x - point2.points[0].x );
+Topo.prototype.GetSortedRoutes = function() {
+  const routes = this.routes.map(route=>route);
+  return routes.sort( (route1, route2) => {
+    const route = new Route(route1);
+    return route.CalculateSortOrder(route2);
+  });
+}
+
+Topo.prototype.GetSortedRouteInfo = function() {
+  const routeInfo = [];
+  const routes = this.GetSortedRoutes();
+  routes.forEach(route => {
+    routeInfo.push({id:route.info.id,name:route.info.name,grade:route.info.grade});
+  });
+  return routeInfo;
 }
 
 module.exports = Topo;
