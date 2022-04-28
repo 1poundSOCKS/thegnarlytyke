@@ -47,6 +47,7 @@ CragLoader.prototype.SaveFromClient = async function(crag) {
 
 CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
   const routeInfoMap = new Map();
+  if( !crag.routes ) crag.routes = [];
   crag.routes.forEach( route => routeInfoMap.set(route.id, route) );
 
   const pointArray = [];
