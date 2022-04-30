@@ -41,7 +41,7 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
   const routeInfo = topo.GetSortedRouteInfo();
   const routeTable = new RouteTable(document.getElementById("topo-route-table"));
   routeTable.Refresh(routeInfo);
-  if( _contentEditable ) routeTable.AppendEditButtons();
+  if( _contentEditable ) routeTable.AppendEditButtons(SelectTopoRouteTableRow);
 }
 
 module.exports = RefreshTopoRouteTable_OLD = (cragObject, topoID) => {

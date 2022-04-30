@@ -28,11 +28,14 @@ RouteTable.prototype.AppendRow = function(routeInfo) {
   return newRow;
 }
 
-RouteTable.prototype.AppendEditButtons = function() {
+RouteTable.prototype.AppendEditButtons = function(callback) {
   Array.from(this.element.rows).forEach( row => {
     let buttonCell = row.insertCell(columnIndex_Button);
     buttonCell.classList.add('fa');
     buttonCell.classList.add('fa-edit');
+    row.onclick = event => {
+      callback(event.target.parentElement);
+    }
   });
 }
 
