@@ -1,32 +1,30 @@
-const Crag = require('../../source/objects/crag.cjs');
-const Route = require('../../source/objects/route.cjs');
 const Topo = require('../../source/objects/topo.cjs');
 
-test("GetRoute: empty topo returns null", () => {
+test("empty topo returns null for a matching route", () => {
   const topo = new Topo({});
-  expect(topo.GetRoute('r1')).toBeNull();
+  expect(topo.GetMatchingRoute('r1')).toBeNull();
 });
 
-test("GetRoute: return the only route", () => {
+test("return the only matching route", () => {
   const route = {id: 'r1'};
   const topo = new Topo({routes: [route]});
-  expect(topo.GetRoute('r1')).toEqual({id: 'r1'});
+  expect(topo.GetMatchingRoute('r1')).toEqual({id: 'r1'});
 });
 
-test("GetRoute: return the last route", () => {
+test("return the last matching route", () => {
   const route1 = {id: 'r1'};
   const route2 = {id: 'r2'};
   const route3 = {id: 'r3'};
   const topo = new Topo({routes: [route1, route2, route3]});
-  expect(topo.GetRoute('r3')).toEqual({id: 'r3'});
+  expect(topo.GetMatchingRoute('r3')).toEqual({id: 'r3'});
 });
 
-test("GetRoute: return the middle route", () => {
+test("return the middle matching route", () => {
   const route1 = {id: 'r1'};
   const route2 = {id: 'r2'};
   const route3 = {id: 'r3'};
   const topo = new Topo({routes: [route1, route2, route3]});
-  expect(topo.GetRoute('r2')).toEqual({id: 'r2'});
+  expect(topo.GetMatchingRoute('r2')).toEqual({id: 'r2'});
 });
 
 test("GetNearestPointWithin: empty topo returns null", () => {
@@ -153,4 +151,28 @@ test("Routes info is sorted left to right", () => {
   const route2 = {id:'r2',points:[{id:'p2',x:1,y:2}],info:routeInfo2};
   const topo = new Topo({id:'t1',routes:[route1,route2]});
   expect(topo.GetSortedRouteInfo()).toEqual([routeInfo2,routeInfo1]);
+});
+
+test("append a new route to an empty topo", () => {
+  const routeInfo1 = {id:'r1',name:'route#1',grade:'vdiff'};
+  const topo = new Topo({id:'t1'});
+  topo.AppendRoute(routeInfo1);
+  expect(topo.GetMatchingRoute('r1')).toEqual({id:'r1',info:routeInfo1});
+});
+
+test("remove a route that doesn't exist", () => {
+  const route1 = {id:'r1'};
+  const topoData1 = {id:'t1',routes:[route1]};
+  const topo1 = new Topo(topoData1);
+  topo1.RemoveMatchingRoute('r2');
+  expect(topoData1).toEqual({id:'t1',routes:[route1]});
+});
+
+test("remove a route that does exist", () => {
+  const route1 = {id:'r1'};
+  const route2 = {id:'r2'};
+  const topoData1 = {id:'t1',routes:[route1,route2]};
+  const topo1 = new Topo(topoData1);
+  topo1.RemoveMatchingRoute('r2');
+  expect(topoData1).toEqual({id:'t1',routes:[route1]});
 });

@@ -44,24 +44,6 @@ module.exports = RefreshTopoRouteTable = (cragObject, topoID) => {
   if( _contentEditable ) routeTable.AppendEditButtons(SelectTopoRouteTableRow);
 }
 
-module.exports = RefreshTopoRouteTable_OLD = (cragObject, topoID) => {
-  let selectedID = GetSelectedTopoRouteTableID();
-  _selectedTopoRouteTableRow = null;
-  let topoRouteTable = document.getElementById("topo-route-table");
-  if( !topoRouteTable ) return;
-  let topoRouteIDs = GetTopoRouteIDs(cragObject, topoID);
-  RefreshRouteTable(topoRouteTable, cragObject, topoRouteIDs, false);
-  if( _contentEditable ) {
-    AddTopoRouteTableButtons(topoRouteTable);
-    Array.from(topoRouteTable.rows).forEach( row => {
-      row.onclick = event => {
-        SelectTopoRouteTableRow(event.target.parentElement);
-      }
-    });
-    if( selectedID ) SelectTopoRouteTableRowByID(selectedID);
-  }
-}
-
 let SelectTopoRouteTableRowByID = (routeID) => {
   let topoRouteTable = document.getElementById("topo-route-table");
   let firstMatchingRow = Array.from(topoRouteTable.rows).filter( row => row.cells[columnIndex_ID].innerText === routeID )[0];
@@ -130,13 +112,18 @@ let UpdateCragRouteCommands = (row, cragObject, topoID) => {
     let row = event.target.parentElement;
     let routeID = row.cells[columnIndex_ID].innerText;
     if( button.classList.contains('fa-toggle-off') ) {
-      AddCragRouteToTopo(cragObject, routeID, topoID);
+      const crag = new Crag(cragObject);
+      const route = crag.GetMatchingRoute(routeID);
+      const topo = new Topo(crag.GetMatchingTopo(topoID));
+      topo.AppendRoute(route);
       RefreshTopoRouteTable(cragObject, topoID);
       button.classList.remove('fa-toggle-off');
       button.classList.add('fa-toggle-on');
     }
     else {
-      RemoveCragRouteFromTopo(cragObject, routeID, topoID);
+      const crag = new Crag(cragObject);
+      const topo = new Topo(crag.GetMatchingTopo(topoID));
+      topo.RemoveMatchingRoute(routeID);
       RefreshTopoRouteTable(cragObject, topoID);
       button.classList.remove('fa-toggle-on');
       button.classList.add('fa-toggle-off');

@@ -43,4 +43,11 @@ Crag.prototype.GetMatchingTopo = function(id) {
   return matchingTopos[0];
 }
 
+Crag.prototype.GetMatchingRoute = function(id) {
+  if( !this.routes ) return null;
+  let matchingRoutes =  this.routes.filter( route => route.id === id);
+  if( matchingRoutes.length != 1 ) return null;
+  return matchingRoutes[0];
+}
+
 module.exports = Crag;

@@ -114,7 +114,7 @@ TopoImage.prototype.OnMouseUp = function(event) {
   else {
     let routeID  = GetSelectedTopoRouteTableID();
     if( routeID ) {
-      const route = new Route(topo.GetRoute(routeID));
+      const route = new Route(topo.GetMatchingRoute(routeID));
       route.AppendPoint(this.mousePos.x, this.mousePos.y);
     }
   }

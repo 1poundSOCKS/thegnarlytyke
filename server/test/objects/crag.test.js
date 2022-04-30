@@ -139,3 +139,18 @@ test("GetMatchingTopo: when there's a matching topo", () => {
   let topo3 = crag.GetMatchingTopo('123');
   expect(topo3.matchCheck).toEqual('x');
 });
+
+test("return null when there aren't any matching routes", () => {
+  let crag1 = new Crag({id: 'c1'});
+  expect(crag1.GetMatchingRoute('r1')).toBeNull();
+  let crag2 = new Crag({id: 'c2'});
+  expect(crag2.GetMatchingRoute('r1')).toBeNull();
+});
+
+test("return a matching route", () => {
+  const route1 = {id:'r1',name:'route#1',grade:'vdiff'};
+  const route2 = {id:'r2',name:'route#2',grade:'e1'};
+  let crag1 = new Crag({id: 'c1',routes:[route1,route2]});
+  expect(crag1.GetMatchingRoute('r1')).toEqual(route1);
+  expect(crag1.GetMatchingRoute('r2')).toEqual(route2);
+});

@@ -2,21 +2,19 @@ const Crag = require("./crag.cjs");
 const Route = require("./route.cjs");
 
 let Topo = function(topo) {
-  this.id = topo.id;
-  this.imageFile = topo.imageFile;
-  this.routes = topo.routes ? topo.routes : [];
+  this.topo = topo;
 }
 
-Topo.prototype.GetRoute = function(id) {
-  if( !this.routes ) return null;
-  let matchingRoutes = this.routes.filter(route => route.id === id);
+Topo.prototype.GetMatchingRoute = function(id) {
+  if( !this.topo.routes ) return null;
+  let matchingRoutes = this.topo.routes.filter(route => route.id === id);
   if( matchingRoutes.length != 1 ) return null;
   return matchingRoutes[0];
 }
 
 Topo.prototype.GetNearestPointWithin = function(x, y, within) {
-  if( !this.routes || this.routes.length == 0 ) return null;
-  let nearestPointsForTopo = this.routes.map( route => GetNearestPointForRoute(x, y, route) )
+  if( !this.topo.routes || this.topo.routes.length == 0 ) return null;
+  let nearestPointsForTopo = this.topo.routes.map( route => GetNearestPointForRoute(x, y, route) )
   .filter( point => point );
   const nearestPoint = GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
   let distance = GetDistanceBetweenPoints(x, y, nearestPoint.x, nearestPoint.y);
@@ -24,8 +22,8 @@ Topo.prototype.GetNearestPointWithin = function(x, y, within) {
 }
 
 Topo.prototype.GetNextNearestPointWithin = function(x, y, within, exludedPointID) {
-  if( !this.routes || this.routes.length == 0 ) return null;
-  let nearestPointsForTopo = this.routes.map( route => GetNextNearestPointForRoute(x, y, route, exludedPointID) )
+  if( !this.topo.routes || this.topo.routes.length == 0 ) return null;
+  let nearestPointsForTopo = this.topo.routes.map( route => GetNextNearestPointForRoute(x, y, route, exludedPointID) )
   .filter( point => point );
   const nearestPoint = GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
   if( !nearestPoint ) return null;
@@ -34,7 +32,8 @@ Topo.prototype.GetNextNearestPointWithin = function(x, y, within, exludedPointID
 }
 
 Topo.prototype.GetSortedRoutes = function() {
-  const routes = this.routes.map(route=>route);
+  if( !this.topo.routes ) return [];
+  const routes = this.topo.routes.map(route=>route);
   return routes.sort( (route1, route2) => {
     const route = new Route(route1);
     return route.CalculateSortOrder(route2);
@@ -48,6 +47,16 @@ Topo.prototype.GetSortedRouteInfo = function() {
     routeInfo.push({id:route.info.id,name:route.info.name,grade:route.info.grade});
   });
   return routeInfo;
+}
+
+Topo.prototype.AppendRoute = function(route) {
+  if( !this.topo.routes ) this.topo.routes = [];
+  this.topo.routes.push({id:route.id,info:route})
+}
+
+Topo.prototype.RemoveMatchingRoute = function(id) {
+  const remainingRoutes = this.topo.routes.filter( route => route.id != id );
+  this.topo.routes = remainingRoutes;
 }
 
 module.exports = Topo;
