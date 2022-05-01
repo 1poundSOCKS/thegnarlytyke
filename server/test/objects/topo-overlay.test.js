@@ -158,7 +158,7 @@ test("GenerateLinesFromRoute: two routes with a shared start", () => {
   const overlay2 = new TopoOverlay();
   overlay2.GenerateLinesFromRoute(route2, 2);
   expect(overlay2.lines).toEqual([
-    {startID: 'p2', startX: 1, startY: 2, endID: 'p3', endX: 3, endY: 4}
+    {startID: 'p1', startX: 1, startY: 2, endID: 'p3', endX: 3, endY: 4}
   ]);
 });
 

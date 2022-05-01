@@ -91,6 +91,77 @@ test("GetNextNearestPointWithin: nearest point is excluded, so return the next p
   expect(topo.GetNextNearestPointWithin(1, 2, 5, 'p1')).toEqual({parent: route, id: 'p2', x: 3, y: 4});
 });
 
+test("The route start and end point is null when there aren't any", () => {
+  const route1 = {id:'r1'};
+  const topo1 = new Topo({id:'t1',routes:[route1]});
+  expect(topo1.GetRouteStartPoint(route1)).toBeNull();
+  expect(topo1.GetRouteEndPoint(route1)).toBeNull();
+  const route2 = {id:'r1',points:[]};
+  const topo2 = new Topo({id:'t1',routes:[route1]});
+  expect(topo2.GetRouteStartPoint(route2)).toBeNull();
+  expect(topo2.GetRouteEndPoint(route2)).toBeNull();
+});
+
+test("The route start point and end point are the same when there's only one", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const route1 = {id:'r1',points:[point1]};
+  const topo1 = new Topo({id:'t1',routes:[route1]});
+  const startPoint = topo1.GetRouteStartPoint(route1);
+  expect(startPoint).toEqual(point1);
+  const endPoint = topo1.GetRouteEndPoint(route1);
+  expect(endPoint).toEqual(startPoint);
+});
+
+test("The route start point when it's attached to another route with one point", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p2',attachedTo:point1};
+  const route1 = {id:'r1',points:[point1]};
+  const route2 = {id:'r2',points:[point2]};
+  const topo1 = new Topo({id:'t1',routes:[route1,route2]});
+  const startPoint = topo1.GetRouteStartPoint(route2);
+  expect(startPoint).toEqual(point1);
+});
+
+test("The route start point when it's attached to the end of another", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p2',x:3,y:4};
+  const point3 = {id:'p3',attachedTo:point2};
+  const point4 = {id:'p4',x:5,y:6};
+  const route1 = {id:'r1',points:[point1,point2]};
+  const route2 = {id:'r2',points:[point3,point4]};
+  const topo1 = new Topo({id:'t1',routes:[route1,route2]});
+  const startPoint = topo1.GetRouteStartPoint(route2);
+  expect(startPoint).toEqual(point1);
+});
+
+test("The route start point when it's attached to the start of another", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p2',x:3,y:4};
+  const point3 = {id:'p3',attachedTo:point1};
+  const point4 = {id:'p4',x:5,y:6};
+  const route1 = {id:'r1',points:[point1,point2]};
+  const route2 = {id:'r2',points:[point3,point4]};
+  const topo1 = new Topo({id:'t1',routes:[route1,route2]});
+  const startPoint = topo1.GetRouteStartPoint(route2);
+  expect(startPoint).toEqual(point1);
+});
+
+test("The route start point when it's attached to a route is then attached to a third", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p2',x:3,y:4};
+  const point3 = {id:'p3',attachedTo:point1};
+  const point4 = {id:'p4',x:5,y:6};
+  const point5 = {id:'p5',attachedTo:point4};
+  const point6 = {id:'p6',x:7,y:8};
+  const route1 = {id:'r1',points:[point1,point2]};
+  const route2 = {id:'r2',points:[point3,point4]};
+  const route3 = {id:'r3',points:[point5,point6]};
+  const topo1 = new Topo({id:'t1',routes:[route1,route2,route3]});
+  expect(topo1.GetRouteStartPoint(route3)).toEqual(point1);
+  const topo2 = new Topo({id:'t2',routes:[route3,route2,route1]});
+  expect(topo2.GetRouteStartPoint(route3)).toEqual(point1);
+});
+
 test("Get routes left to right when there aren't any routes", () => {
   const topo1 = new Topo({id:'t1'});
   expect(topo1.GetSortedRoutes()).toEqual([]);
@@ -139,6 +210,18 @@ test("Routes that branch after the start, but have a shared start, are sorted on
   const route1 = {id:'r1', points:[point1,point2,point3]};
   const point4 = {id:'p4',attachedTo:point2};
   const point5 = {id: 'p5',x:1,y:3};
+  const route2 = {id:'r2', points:[point4,point5]};
+  const topo1 = new Topo({id:'t1',routes:[route1,route2]});
+  expect(topo1.GetSortedRoutes()).toEqual([route2,route1]);
+});
+
+test("Routes that share a finish are sorted on the start point x-axis position", () => {
+  const point1 = {id:'p1',x:3,y:1};
+  const point2 = {id:'p2',x:4,y:2};
+  const point3 = {id:'p3',x:2,y:3};
+  const route1 = {id:'r1', points:[point1,point2,point3]};
+  const point4 = {id:'p4',x:1,y:6};
+  const point5 = {id: 'p5',attachedTo:point3};
   const route2 = {id:'r2', points:[point4,point5]};
   const topo1 = new Topo({id:'t1',routes:[route1,route2]});
   expect(topo1.GetSortedRoutes()).toEqual([route2,route1]);

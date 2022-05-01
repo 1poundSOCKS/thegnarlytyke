@@ -34,10 +34,49 @@ Topo.prototype.GetNextNearestPointWithin = function(x, y, within, exludedPointID
 Topo.prototype.GetSortedRoutes = function() {
   if( !this.topo.routes ) return [];
   const routes = this.topo.routes.map(route=>route);
-  return routes.sort( (route1, route2) => {
-    const route = new Route(route1);
-    return route.CalculateSortOrder(route2);
+  return routes.sort( (route1, route2) => this.CalculateSortOrder(route1, route2) );
+}
+
+Topo.prototype.CalculateSortOrder = function(route1, route2) {
+  const route1Start = this.GetRouteStartPoint(route1);
+  const route2Start = this.GetRouteStartPoint(route2);
+
+  if( !route1Start && !route2Start ) return 0;
+  if( !route2Start ) return -1;
+  if( !route1Start ) return 1;
+
+  const route1End = this.GetRouteEndPoint(route1);
+  const route2End = this.GetRouteEndPoint(route2);
+
+  if( route1Start.x < route2Start.x ) return -1;
+  if( route2Start.x < route1Start.x ) return 1;
+  if( route1End.x < route2End.x ) return -1;
+  if( route2End.x < route1End.x ) return 1;
+
+  return 0;
+}
+
+Topo.prototype.GetRouteStartPoint = function(route) {
+  if( !route.points || route.points.length == 0 ) return null;
+  if( route.points[0].attachedTo ) {
+    const attachedToRoute = this.GetRouteContainingPoint(route.points[0].attachedTo);
+    return this.GetRouteStartPoint(attachedToRoute);
+  }
+  return route.points[0];
+}
+
+Topo.prototype.GetRouteEndPoint = function(route) {
+  if( !route.points || route.points.length === 0 ) return null;
+  return route.points[route.points.length-1];
+}
+
+Topo.prototype.GetRouteContainingPoint = function(pointToFind) {
+  const matchingRoutes = this.topo.routes.filter( route => {
+    const matchingPoints = route.points.filter( point => point == pointToFind );
+    return matchingPoints.length > 0;
   });
+  if( matchingRoutes.length == 0 ) return null;
+  return matchingRoutes[0];
 }
 
 Topo.prototype.GetSortedRouteInfo = function() {
