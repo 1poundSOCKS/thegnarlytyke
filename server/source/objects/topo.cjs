@@ -132,8 +132,8 @@ Topo.prototype.GetSortedRouteEndPoints = function() {
   .filter( point => point );
 }
 
-Topo.prototype.GetRouteJoinPoints = function() {
-  
+Topo.prototype.GetRouteJoinPoints = function(route) {
+  return [];
 }
 
 module.exports = Topo;

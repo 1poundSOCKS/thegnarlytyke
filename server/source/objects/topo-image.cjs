@@ -1,4 +1,4 @@
-const TopoOverlay2 = require('./topo-overlay-2.cjs');
+const TopoOverlay2 = require('./topo-overlay.cjs');
 const Topo = require('./topo.cjs');
 const Route = require('./route.cjs');
 const Point = require('./point.cjs');
