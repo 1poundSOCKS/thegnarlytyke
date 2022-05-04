@@ -18,7 +18,10 @@ TopoOverlay.prototype.GeneratePointsFromRoute = function(route, routeIndex) {
     let pointType = rsRouteJoin;
     if( index == 0 ) pointType = rsRouteStart;
     else if( index == lastPointIndex ) pointType = rsRouteEnd;
-    if( !point.attachedTo ) {
+    if( point.attachedTo ) {
+      // this.attachedStarts.push({routeIndex:routeIndex,point:point});
+    }
+    else {
       this.points.push({
         routeIndex: routeIndex,
         type: pointType,
@@ -30,12 +33,16 @@ TopoOverlay.prototype.GeneratePointsFromRoute = function(route, routeIndex) {
   });
 }
 
-TopoOverlay.prototype.GeneratePointsFromTopo = function(topoData) {
+TopoOverlay.prototype.GeneratePointsFromTopo = function(topoData, includeIntermediatePoints) {
+  if( includeIntermediatePoints == undefined ) includeIntermediatePoints = true;
+  this.points = [];
   const topo = new Topo(topoData);
   const routes = topo.GetSortedRoutes();
   let routesToRender = routes.filter( route => route.points && route.points.length > 0 );
-  routesToRender.forEach( (route, index) => {
-    this.GeneratePointsFromRoute(route, index);
+  routesToRender.forEach( (route, index) => this.GeneratePointsFromRoute(route, index) );
+  this.points = this.points.filter( point => point.type != rsRouteJoin || includeIntermediatePoints );
+  const startMap = topo.GetMapOfRouteStarts();
+  this.points.forEach( point => {
   });
 }
 
@@ -56,9 +63,17 @@ TopoOverlay.prototype.GenerateLinesFromTopo = function(topo) {
   topo.routes.forEach( route => this.GenerateLinesFromRoute(route) );
 }
 
-TopoOverlay.prototype.GenerateFromTopo = function(topo) {
+TopoOverlay.prototype.GenerateFromTopo = function(topo, includeIntermediatePoints) {
   this.GenerateLinesFromTopo(topo);
-  this.GeneratePointsFromTopo(topo);
+  this.GeneratePointsFromTopo(topo, includeIntermediatePoints);
+  this.GenerateRouteMarkersFromTopo(topo);
+}
+
+TopoOverlay.prototype.GenerateRouteMarkersFromTopo = function(topoData) {
+  const startPoints = this.points.filter( point => point.type == rsRouteStart );
+  startPoints.forEach( point => {
+
+  });
 }
 
 TopoOverlay.prototype.UpdatePoints = function(id, x, y) {

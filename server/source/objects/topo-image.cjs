@@ -1,4 +1,4 @@
-const TopoOverlay = require('./topo-overlay.cjs');
+const TopoOverlay2 = require('./topo-overlay-2.cjs');
 const Topo = require('./topo.cjs');
 const Route = require('./route.cjs');
 const Point = require('./point.cjs');
@@ -27,34 +27,10 @@ TopoImage.prototype.Refresh = function() {
 TopoImage.prototype.DrawOverlay = function() {
   if( !this.topo ) return;
 
-  const topoOverlay = new TopoOverlay();
-  topoOverlay.GenerateFromTopo(this.topo);
+  const topoOverlay = new TopoOverlay2(this.topo,this.contentEditable);
+  topoOverlay.Draw(this.canvas);
   
   if( this.dragPointInfo ) topoOverlay.UpdatePoints(this.dragPointInfo.id, this.dragPointInfo.x, this.dragPointInfo.y);
-
-  let ctx = this.canvas.getContext('2d');
-
-  topoOverlay.lines.forEach( line => {
-    DrawRouteLine(ctx,
-      this.canvas.width * line.startX, this.canvas.height * line.startY, 
-      this.canvas.width * line.endX, this.canvas.height * line.endY, 1);
-  })
-
-  topoOverlay.points.forEach( point => {
-    let routeLabel = point.routeIndex + 1;
-    switch( point.type ) {
-      case rsRouteJoin:
-        if( this.contentEditable )
-          DrawRoutePoint(ctx, this.canvas.width * point.x, this.canvas.height * point.y, routeLabel, 1, "rgb(150, 150, 150)");
-        break;
-      case rsRouteStart:
-        DrawRoutePoint(ctx, this.canvas.width * point.x, this.canvas.height * point.y, routeLabel, 1, "rgb(40, 150, 40)");
-        break;
-      case rsRouteEnd:
-        DrawRoutePoint(ctx, this.canvas.width * point.x, this.canvas.height * point.y, routeLabel, 1, "rgb(150, 20, 20)");
-        break;
-    }
-  });
 
   if( this.nearestPointInfo ) {
     HighlightPoint(ctx, this.canvas.width * this.nearestPointInfo.x, this.canvas.height * this.nearestPointInfo.y, 1);
@@ -143,18 +119,20 @@ let DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
   ctx.font = `bold ${fontSize}rem serif`;
   const metrics = ctx.measureText(routeIndex);
   let widthOfRouteIndex = metrics.width;
+  let radiusOfPoint = widthOfRouteIndex * 1.2;
   ctx.beginPath();
   ctx.setLineDash([]);
-  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
+  ctx.arc(canvasX, canvasY, radiusOfPoint, 0, 2 * Math.PI, false);
   ctx.fillStyle = colour;
   ctx.fill();
   ctx.beginPath();
-  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
+  ctx.arc(canvasX, canvasY, radiusOfPoint, 0, 2 * Math.PI, false);
   ctx.lineWidth = fontSize;
   ctx.strokeStyle = "#000000";
   ctx.stroke();
   ctx.fillStyle = "rgb(230,230,230)";
   ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.6));
+  return radiusOfPoint * 2;
 }
 
 let HighlightPoint = (ctx, canvasX, canvasY, fontSize) => {
@@ -165,15 +143,5 @@ let HighlightPoint = (ctx, canvasX, canvasY, fontSize) => {
   ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
   ctx.lineWidth = fontSize * 3;
   ctx.strokeStyle = "rgb(250, 250, 250)";
-  ctx.stroke();
-}
-
-let DrawRouteLine = (ctx, canvasStartX, canvasStartY, canvasEndX, canvasEndY, width) => {
-  ctx.beginPath();
-  ctx.setLineDash([10, 10]);
-  ctx.moveTo(canvasStartX, canvasStartY);
-  ctx.lineTo(canvasEndX, canvasEndY);
-  ctx.lineWidth = "4";
-  ctx.strokeStyle = '#FFFFFF';
   ctx.stroke();
 }

@@ -1,4 +1,5 @@
 const TopoOverlay = require('../../source/objects/topo-overlay.cjs');
+const Topo = require('../../source/objects/topo.cjs');
 
 test("Create a new TopoOverlay object", () => {
   const overlay = new TopoOverlay();

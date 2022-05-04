@@ -1,6 +1,3 @@
-const Crag = require("./crag.cjs");
-const Route = require("./route.cjs");
-
 let Topo = function(topo) {
   this.topo = topo;
 }
@@ -50,6 +47,11 @@ Topo.prototype.CalculateSortOrder = function(route1, route2) {
 
   if( route1Start.x < route2Start.x ) return -1;
   if( route2Start.x < route1Start.x ) return 1;
+
+  if( !route1End && !route2End ) return 0;
+  if( !route2End ) return -1;
+  if( !route1End ) return 1;
+
   if( route1End.x < route2End.x ) return -1;
   if( route2End.x < route1End.x ) return 1;
 
@@ -66,8 +68,13 @@ Topo.prototype.GetRouteStartPoint = function(route) {
 }
 
 Topo.prototype.GetRouteEndPoint = function(route) {
-  if( !route.points || route.points.length === 0 ) return null;
-  return route.points[route.points.length-1];
+  if( !route.points || route.points.length < 2 ) return null;
+  const lastPointIndex = route.points.length - 1;
+  if( route.points[lastPointIndex].attachedTo ) {
+    const attachedToRoute = this.GetRouteContainingPoint(route.points[lastPointIndex].attachedTo);
+    return this.GetRouteEndPoint(attachedToRoute);
+  }
+  return route.points[lastPointIndex];
 }
 
 Topo.prototype.GetRouteContainingPoint = function(pointToFind) {
@@ -96,6 +103,37 @@ Topo.prototype.AppendRoute = function(route) {
 Topo.prototype.RemoveMatchingRoute = function(id) {
   const remainingRoutes = this.topo.routes.filter( route => route.id != id );
   this.topo.routes = remainingRoutes;
+}
+
+Topo.prototype.GetRouteLines = function() {
+  if( !this.topo.routes ) return [];
+  const lines = [];
+  this.topo.routes.forEach( route => {
+    if( route.points ) {
+      const points = route.points.map( point => point.attachedTo ? point.attachedTo : point );
+      points.forEach( (point, index, points) => {
+        const nextPoint = points[index + 1];
+        if( nextPoint ) lines.push({startPoint:point, endPoint:nextPoint});
+      });
+    }
+  });
+  return lines;
+}
+
+Topo.prototype.GetSortedRouteStartPoints = function() {
+  const sortedRoutes = this.GetSortedRoutes();
+  return sortedRoutes.map( route => this.GetRouteStartPoint(route) )
+  .filter( point => point );
+}
+
+Topo.prototype.GetSortedRouteEndPoints = function() {
+  const sortedRoutes = this.GetSortedRoutes();
+  return sortedRoutes.map( route => this.GetRouteEndPoint(route) )
+  .filter( point => point );
+}
+
+Topo.prototype.GetRouteJoinPoints = function() {
+  
 }
 
 module.exports = Topo;
