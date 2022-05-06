@@ -1,4 +1,4 @@
-const TopoOverlay2 = require('./topo-overlay.cjs');
+const TopoOverlay = require('./topo-overlay.cjs');
 const Topo = require('./topo.cjs');
 const Route = require('./route.cjs');
 const Point = require('./point.cjs');
@@ -27,15 +27,10 @@ TopoImage.prototype.Refresh = function() {
 TopoImage.prototype.DrawOverlay = function() {
   if( !this.topo ) return;
 
-  const topoOverlay = new TopoOverlay2(this.topo,this.contentEditable);
+  const topoOverlay = new TopoOverlay(this.topo,this.contentEditable);
+  topoOverlay.highlightedPoint = this.nearestPointInfo;
   topoOverlay.Draw(this.canvas);
   
-  if( this.dragPointInfo ) topoOverlay.UpdatePoints(this.dragPointInfo.id, this.dragPointInfo.x, this.dragPointInfo.y);
-
-  if( this.nearestPointInfo ) {
-    HighlightPoint(ctx, this.canvas.width * this.nearestPointInfo.x, this.canvas.height * this.nearestPointInfo.y, 1);
-  }
-
   if( _selectedTopoRouteTableRow && this.mousePos && this.mouseDown && !this.dragPointInfo ) {
     let routeLabel = _selectedTopoRouteTableRow.rowIndex + 1;
     DrawRoutePoint(ctx, this.canvas.width * this.mousePos.x, this.canvas.height * this.mousePos.y, routeLabel, 1, "rgb(150, 150, 150)");
@@ -114,34 +109,3 @@ TopoImage.prototype.GetMousePositionFromEvent = function(event) {
 }
 
 module.exports = TopoImage;
-
-let DrawRoutePoint = (ctx, canvasX, canvasY, routeIndex, fontSize, colour) => {
-  ctx.font = `bold ${fontSize}rem serif`;
-  const metrics = ctx.measureText(routeIndex);
-  let widthOfRouteIndex = metrics.width;
-  let radiusOfPoint = widthOfRouteIndex * 1.2;
-  ctx.beginPath();
-  ctx.setLineDash([]);
-  ctx.arc(canvasX, canvasY, radiusOfPoint, 0, 2 * Math.PI, false);
-  ctx.fillStyle = colour;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(canvasX, canvasY, radiusOfPoint, 0, 2 * Math.PI, false);
-  ctx.lineWidth = fontSize;
-  ctx.strokeStyle = "#000000";
-  ctx.stroke();
-  ctx.fillStyle = "rgb(230,230,230)";
-  ctx.fillText(routeIndex, canvasX - (widthOfRouteIndex * 0.5), canvasY + (widthOfRouteIndex * 0.6));
-  return radiusOfPoint * 2;
-}
-
-let HighlightPoint = (ctx, canvasX, canvasY, fontSize) => {
-  ctx.font = `bold ${fontSize}rem serif`;
-  const metrics = ctx.measureText('X');
-  let widthOfRouteIndex = metrics.width;
-  ctx.beginPath();
-  ctx.arc(canvasX, canvasY, widthOfRouteIndex * 1.2, 0, 2 * Math.PI, false);
-  ctx.lineWidth = fontSize * 3;
-  ctx.strokeStyle = "rgb(250, 250, 250)";
-  ctx.stroke();
-}

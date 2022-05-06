@@ -43,3 +43,33 @@ test("Resolve points when one is attached", () => {
   const route1 = new Route({id:'r1',points:[point1,point3]});
   expect(route1.GetResolvedPoints()).toEqual([point1,point2]);
 });
+
+test("No join points returned when there are 2 points or less", () => {
+  const route1 = new Route({id:'r1'});
+  expect(route1.GetJoinPoints()).toEqual([]);
+  const route2 = new Route({id:'r2',points:[]});
+  expect(route2.GetJoinPoints()).toEqual([]);
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p1',x:1,y:2};
+  const route3 = new Route({id:'r3',points:[point1,point2]});
+  expect(route3.GetJoinPoints()).toEqual([]);
+});
+
+test("No join points when the only points excluding the start and end are attached", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p2',x:3,y:4};
+  const point3 = {id:'p3',attachedTo:point1};
+  const point4 = {id:'p4',x:5,y:6};
+  const route1 = new Route({id:'r3',points:[point2,point3,point4]});
+  expect(route1.GetJoinPoints()).toEqual([]);
+});
+
+test("Valid join points returned", () => {
+  const point1 = {id:'p1',x:1,y:2};
+  const point2 = {id:'p2',x:3,y:4};
+  const point3 = {id:'p3',attachedTo:point1};
+  const point4 = {id:'p4',x:5,y:6};
+  const point5 = {id:'p5',x:7,y:8};
+  const route1 = new Route({id:'r1',points:[point1,point2,point3,point4,point5]});
+  expect(route1.GetJoinPoints()).toEqual([point2,point4]);
+});

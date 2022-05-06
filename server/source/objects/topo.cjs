@@ -132,10 +132,6 @@ Topo.prototype.GetSortedRouteEndPoints = function() {
   .filter( point => point );
 }
 
-Topo.prototype.GetRouteJoinPoints = function(route) {
-  return [];
-}
-
 module.exports = Topo;
 
 let GetNearestPointForRoute = (x, y, route) => GetNextNearestPointForRoute(x, y, route, null);

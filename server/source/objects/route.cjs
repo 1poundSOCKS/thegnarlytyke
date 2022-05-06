@@ -13,15 +13,17 @@ Route.prototype.AppendPoint = function(x, y) {
 
 Route.prototype.GetResolvedPoints = function() {
   if( !this.route.points ) this.route.points = [];
-  return this.route.points.map(point => ResolvePoint(point));
+  return this.route.points.map(point => {
+      if( point.attachedTo ) {
+        return point.attachedTo;
+      }  
+      return point;
+    });
+}
+
+Route.prototype.GetJoinPoints = function() {
+  if( !this.route.points || this.route.points.length < 3 ) return [];
+  return this.route.points.filter( (point, index) => !point.attachedTo && index > 0 && index < this.route.points.length-1 );
 }
 
 module.exports = Route;
-
-let ResolvePoint = (point) => {
-  if( point.attachedTo ) {
-    return point.attachedTo;
-  }
-
-  return point;
-}
