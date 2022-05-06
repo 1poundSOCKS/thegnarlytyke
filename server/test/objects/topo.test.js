@@ -102,16 +102,6 @@ test("The route start and end point is null when there aren't any", () => {
   expect(topo2.GetRouteEndPoint(route2)).toBeNull();
 });
 
-// test("The route start point and end point are the same when there's only one", () => {
-//   const point1 = {id:'p1',x:1,y:2};
-//   const route1 = {id:'r1',points:[point1]};
-//   const topo1 = new Topo({id:'t1',routes:[route1]});
-//   const startPoint = topo1.GetRouteStartPoint(route1);
-//   expect(startPoint).toEqual(point1);
-//   const endPoint = topo1.GetRouteEndPoint(route1);
-//   expect(endPoint).toEqual(startPoint);
-// });
-
 test("The route start point when it's attached to another route with one point", () => {
   const point1 = {id:'p1',x:1,y:2};
   const point2 = {id:'p2',attachedTo:point1};
@@ -423,4 +413,11 @@ test("two route ends returned left to right when the routes share a start point 
   const route2 = {id:'r2',points:[point3,point4]};
   const topo1 = new Topo({id:'t1',routes:[route1,route2]});
   expect(topo1.GetSortedRouteEndPoints()).toEqual([point4,point2]);
+});
+
+test("Get a route containing a point when it has no points", () => {
+  const point1 = {id:'p1'};
+  const route1 = {id:'r1'};
+  const topo1 = new Topo({id:'t1',routes:[route1]});
+  expect(topo1.GetRouteContainingPoint(point1)).toBeNull();
 });

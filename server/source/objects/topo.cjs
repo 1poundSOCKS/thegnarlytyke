@@ -79,6 +79,7 @@ Topo.prototype.GetRouteEndPoint = function(route) {
 
 Topo.prototype.GetRouteContainingPoint = function(pointToFind) {
   const matchingRoutes = this.topo.routes.filter( route => {
+    if( !route.points ) return false;
     const matchingPoints = route.points.filter( point => point == pointToFind );
     return matchingPoints.length > 0;
   });
