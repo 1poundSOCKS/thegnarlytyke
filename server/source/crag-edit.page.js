@@ -20,6 +20,7 @@ let OnConfigLoad = () => {
   LoadAndDisplayCrag(cragID, cragNameDisplayElement);
 }
 
+module.exports = OnAddTopo = () => AddTopo();
 module.exports = OnShiftTopoLeft = () => ShiftSelectedTopoLeft();
 module.exports = OnShiftTopoRight = () => ShiftSelectedTopoRight();
 module.exports = OnSortTopoRoutes = () => SortSelectedTopoRoutes();

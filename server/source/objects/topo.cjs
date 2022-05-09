@@ -1,5 +1,8 @@
+let uuid = require('uuid');
+
 let Topo = function(topo) {
-  this.topo = topo;
+  if( !topo ) this.topo = {id:uuid.v4()};
+  else this.topo = topo;
 }
 
 Topo.prototype.GetMatchingRoute = function(id) {

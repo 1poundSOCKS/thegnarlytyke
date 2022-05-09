@@ -3,11 +3,13 @@ const Crag = require('./objects/crag.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const Topo = require('./objects/topo.cjs');
 const CragLoader = require('./objects/crag-loader.cjs');
+const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 
 let _crag = new Crag();
 let _topoImages = new Map();
 let _selectedTopoImageContainer = null;
 let _contentEditable = false;
+let _topoMediaScroller = null;
 let _mainTopoImage = null;
 
 module.exports = SetViewContentEditable = editable => {
@@ -16,6 +18,7 @@ module.exports = SetViewContentEditable = editable => {
 }
 
 module.exports = LoadAndDisplayCrag = async (cragID, headerElement) => {
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, _contentEditable);
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'));
   _mainTopoImage.contentEditable = _contentEditable;
 
@@ -100,7 +103,7 @@ module.exports = GetSelectedTopoID = () => _selectedTopoImageContainer?.dataset.
 module.exports = GetSelectedTopo = () => new Topo(_crag.GetMatchingTopo(GetSelectedTopoID()));
 
 
-let RefreshIcons = () => {
+module.exports = RefreshIcons = () => {
   const shiftTopoLeftContainer = document.getElementById('shift-topo-left-container');
   if( shiftTopoLeftContainer ) {
     if( _selectedTopoImageContainer.previousSibling ) shiftTopoLeftContainer.classList.remove('do-not-display');
@@ -119,6 +122,11 @@ module.exports = RefreshMainTopoView = () => {
   _mainTopoImage.image = _topoImages.get(selectedTopoID);
   _mainTopoImage.topo = _crag.GetMatchingTopo(selectedTopoID);
   _mainTopoImage.Refresh();
+}
+
+module.exports = AddTopo = () => {
+  const topo = new Topo();
+  _topoMediaScroller.AddTopo(topo.topo);
 }
 
 module.exports = ShiftSelectedTopoLeft = () => {

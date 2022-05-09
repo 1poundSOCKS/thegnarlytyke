@@ -1,5 +1,10 @@
 const Topo = require('../../source/objects/topo.cjs');
 
+test("create a new topo", () => {
+  const topo  = new Topo();
+  expect(topo.topo.id.length).toBeGreaterThan(0);
+});
+
 test("empty topo returns null for a matching route", () => {
   const topo = new Topo({});
   expect(topo.GetMatchingRoute('r1')).toBeNull();
