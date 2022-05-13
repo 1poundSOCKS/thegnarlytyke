@@ -3,11 +3,11 @@ const Topo = require('./topo.cjs');
 const Route = require('./route.cjs');
 const Point = require('./point.cjs');
 
-let TopoImage = function(canvas) {
+let TopoImage = function(canvas, editable) {
   this.canvas = canvas;
   this.image = null;
   this.topo = null;
-  this.contentEditable = false;
+  this.contentEditable = editable;
   this.mousePos = null;
   this.nearestPointInfo = null;
   this.dragStartPos = null;
@@ -30,11 +30,6 @@ TopoImage.prototype.DrawOverlay = function() {
   const topoOverlay = new TopoOverlay(this.topo,this.contentEditable);
   topoOverlay.highlightedPoint = this.nearestPointInfo;
   topoOverlay.Draw(this.canvas);
-  
-  if( _selectedTopoRouteTableRow && this.mousePos && this.mouseDown && !this.dragPointInfo ) {
-    let routeLabel = _selectedTopoRouteTableRow.rowIndex + 1;
-    DrawRoutePoint(ctx, this.canvas.width * this.mousePos.x, this.canvas.height * this.mousePos.y, routeLabel, 1, "rgb(150, 150, 150)");
-  }
 }
 
 TopoImage.prototype.AddMouseHandler = function() {

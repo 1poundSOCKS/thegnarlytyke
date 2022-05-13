@@ -45,7 +45,7 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imagesPath) {
 }
 
 TopoMediaScroller.prototype.AddTopo = function(topo) {
-  const container = this.element.appendChild(CreateTopoImageContainer(topo.id));
+  const container = this.element.appendChild(this.CreateTopoImageContainer(topo.id));
   let canvas = document.createElement('canvas');
   canvas.classList.add('topo-image');
   canvas = container.appendChild(canvas);

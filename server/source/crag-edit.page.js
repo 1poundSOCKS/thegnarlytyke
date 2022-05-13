@@ -1,4 +1,6 @@
 const Config = require('./objects/config.cjs');
+const CragLoader = require('./objects/crag-loader.cjs');
+const Topo = require('./objects/topo.cjs');
 require('./crag_view.js');
 require('./route_tables.js');
 
@@ -20,8 +22,39 @@ let OnConfigLoad = () => {
   LoadAndDisplayCrag(cragID, cragNameDisplayElement);
 }
 
-module.exports = OnAddTopo = () => AddTopo();
-module.exports = OnShiftTopoLeft = () => ShiftSelectedTopoLeft();
-module.exports = OnShiftTopoRight = () => ShiftSelectedTopoRight();
-module.exports = OnSortTopoRoutes = () => SortSelectedTopoRoutes();
-module.exports = OnSave = () => SaveCrag();
+module.exports = OnAddTopo = () => {
+  const topo = new Topo();
+  _topoMediaScroller.AddTopo(topo.topo);
+}
+
+module.exports = OnShiftTopoLeft = () => {
+  const parentNode = _selectedTopoImageContainer.parentNode;
+  const previousContainer = _selectedTopoImageContainer.previousSibling;
+  _selectedTopoImageContainer.remove();
+  parentNode.insertBefore(_selectedTopoImageContainer, previousContainer);
+  RefreshIcons();
+  const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
+  _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex - 1);
+}
+
+module.exports = OnShiftTopoRight = () => {
+  const parentNode = _selectedTopoImageContainer.parentNode;
+  const nextContainer = _selectedTopoImageContainer.nextSibling;
+  nextContainer.remove();
+  parentNode.insertBefore(nextContainer, _selectedTopoImageContainer);
+  RefreshIcons();
+  const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
+  _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
+}
+
+module.exports = OnSortTopoRoutes = () => {
+  const topo = GetSelectedTopo();
+  topo.SortRoutesLeftToRight();
+  RefreshTopoRouteTable(_crag, GetSelectedTopoID());
+  _mainTopoImage.Refresh();
+}
+
+module.exports = OnSave = () => {
+  const cragStorage = new CragLoader('client');
+  cragStorage.Save(_crag);
+}
