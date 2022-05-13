@@ -41,24 +41,9 @@ let OnConfigLoad = async () => {
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {
-  RefreshIcons(topoContainer);
   document.getElementById('main-topo-container').classList.remove('do-not-display');
   _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
   _mainTopoImage.topo = new Crag(_crag).GetMatchingTopo(topoID);
   _mainTopoImage.Refresh();
   RefreshTopoRouteTable(_crag, topoID);
-}
-
-let RefreshIcons = (topoContainer) => {
-  const shiftTopoLeftContainer = document.getElementById('shift-topo-left-container');
-  if( shiftTopoLeftContainer ) {
-    if( topoContainer.previousSibling ) shiftTopoLeftContainer.classList.remove('do-not-display');
-    else shiftTopoLeftContainer.classList.add('do-not-display');
-  }
-
-  const shiftTopoRightContainer = document.getElementById('shift-topo-right-container');
-  if( shiftTopoRightContainer ) {
-    if( topoContainer.nextSibling ) shiftTopoRightContainer.classList.remove('do-not-display');
-    else shiftTopoRightContainer.classList.add('do-not-display');
-  }
 }
