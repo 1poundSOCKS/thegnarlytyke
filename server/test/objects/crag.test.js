@@ -154,3 +154,19 @@ test("return a matching route", () => {
   expect(crag1.GetMatchingRoute('r1')).toEqual(route1);
   expect(crag1.GetMatchingRoute('r2')).toEqual(route2);
 });
+
+test("Append a new topo to an empty crag", () => {
+  const topo = {id:'t1'};
+  const crag = new Crag({id:'c1'});
+  expect(crag.AppendTopo(topo)).toEqual(1);
+  expect(crag.topos).toEqual([topo]);
+});
+
+test("Append a new topo to a crag with topos", () => {
+  const topo1 = {id:'t1'};
+  const topo2 = {id:'t2'};
+  const topo3 = {id:'t3'};
+  const crag = new Crag({id:'c1',topos:[topo1,topo2]});
+  expect(crag.AppendTopo(topo3)).toEqual(3);
+  expect(crag.topos).toEqual([topo1,topo2,topo3]);
+});

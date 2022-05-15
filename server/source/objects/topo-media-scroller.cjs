@@ -89,4 +89,20 @@ TopoMediaScroller.prototype.LoadImage = function(url) {
   });
 }
 
+TopoMediaScroller.prototype.ShiftCurrentTopoLeft = function() {
+  if( !this.currentTopoContainer ) return;
+  const parentNode = this.currentTopoContainer.parentNode;
+  const previousContainer = this.currentTopoContainer.previousSibling;
+  this.currentTopoContainer.remove();
+  parentNode.insertBefore(this.currentTopoContainer, previousContainer);
+}
+
+TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
+  if( !this.currentTopoContainer ) return;
+  const parentNode = this.currentTopoContainer.parentNode;
+  const nextContainer = this.currentTopoContainer.nextSibling;
+  nextContainer.remove();
+  parentNode.insertBefore(nextContainer, this.currentTopoContainer);
+}
+
 module.exports = TopoMediaScroller;

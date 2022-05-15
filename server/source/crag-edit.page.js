@@ -25,7 +25,7 @@ let OnConfigLoad = async () => {
   const cragID = urlParams.get('id');
 
   const cragStorage = new CragLoader('client');
-  _crag = await cragStorage.Load(cragID);
+  _crag = new Crag(await cragStorage.Load(cragID));
   
   document.getElementById('crag-view-header').innerText = _crag.name;
 
@@ -63,24 +63,19 @@ module.exports = RefreshIcons = (topoContainer) => {
 module.exports = OnAddTopo = () => {
   const topo = new Topo();
   _topoMediaScroller.AddTopo(topo.topo);
+  _crag.AppendTopo(topo.topo);
 }
 
 module.exports = OnShiftTopoLeft = () => {
-  const parentNode = _selectedTopoImageContainer.parentNode;
-  const previousContainer = _selectedTopoImageContainer.previousSibling;
-  _selectedTopoImageContainer.remove();
-  parentNode.insertBefore(_selectedTopoImageContainer, previousContainer);
-  RefreshIcons();
+  _topoMediaScroller.ShiftCurrentTopoLeft();
   const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
   _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex - 1);
+  RefreshIcons(_topoMediaScroller.currentTopoContainer);
 }
 
 module.exports = OnShiftTopoRight = () => {
-  const parentNode = _selectedTopoImageContainer.parentNode;
-  const nextContainer = _selectedTopoImageContainer.nextSibling;
-  nextContainer.remove();
-  parentNode.insertBefore(nextContainer, _selectedTopoImageContainer);
-  RefreshIcons();
+  _topoMediaScroller.ShiftCurrentTopoRight();
+  RefreshIcons(_topoMediaScroller.currentTopoContainer);
   const selectedTopoIndex = _crag.GetTopoIndex(GetSelectedTopoID());
   _crag.SwapTopos(selectedTopoIndex, selectedTopoIndex + 1);
 }
@@ -95,4 +90,8 @@ module.exports = OnSortTopoRoutes = () => {
 module.exports = OnSave = () => {
   const cragStorage = new CragLoader('client');
   cragStorage.Save(_crag);
+}
+
+module.exports = GetSelectedTopoID = () => {
+  return _topoMediaScroller.GetSelectedTopoID();
 }

@@ -14,8 +14,12 @@ let Crag = function(cragObject) {
 Crag.prototype.Attach = function(cragObject) {
   this.id = cragObject.id;
   this.name = cragObject.name;
-  this.routes = cragObject.routes;
-  this.topos = cragObject.topos;
+  this.routes = cragObject.routes ? cragObject.routes : [];
+  this.topos = cragObject.topos ? cragObject.topos : [];
+}
+
+Crag.prototype.AppendTopo = function(topo) {
+  return this.topos.push(topo);
 }
 
 Crag.prototype.GetTopoIndex = function(topoID) {
