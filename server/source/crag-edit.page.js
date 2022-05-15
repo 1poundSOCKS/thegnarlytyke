@@ -1,8 +1,14 @@
 const Config = require('./objects/config.cjs');
 const CragLoader = require('./objects/crag-loader.cjs');
+const Crag = require('./objects/crag.cjs');
 const Topo = require('./objects/topo.cjs');
-require('./crag_view.js');
+const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
+const TopoImage = require('./objects/topo-image.cjs');
 require('./route_tables.js');
+
+let _crag = null;
+let _topoMediaScroller = null;
+let _mainTopoImage = null;
 
 window.onload = () => {
   fetch('config.json')
@@ -13,13 +19,45 @@ window.onload = () => {
   });
 }
 
-let OnConfigLoad = () => {
+let OnConfigLoad = async () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
-  const cragNameDisplayElement = document.getElementById('crag-view-header');
-  SetViewContentEditable(true);
-  LoadAndDisplayCrag(cragID, cragNameDisplayElement);
+
+  const cragStorage = new CragLoader('client');
+  _crag = await cragStorage.Load(cragID);
+  
+  document.getElementById('crag-view-header').innerText = _crag.name;
+
+  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
+
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
+  _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
+}
+
+let OnTopoSelected = (topoID, topoContainer) => {
+  document.getElementById('main-topo-container').classList.remove('do-not-display');
+  _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
+  _mainTopoImage.topo = new Crag(_crag).GetMatchingTopo(topoID);
+  _mainTopoImage.Refresh();
+  RefreshIcons(topoContainer);
+  RefreshTopoRouteTable(_crag, topoID);
+  RefreshCragRouteTable(_crag, topoID);
+  _mainTopoImage.AddMouseHandler(topoContainer);
+}
+
+module.exports = RefreshIcons = (topoContainer) => {
+  const shiftTopoLeftContainer = document.getElementById('shift-topo-left-container');
+  if( shiftTopoLeftContainer ) {
+    if( topoContainer.previousSibling ) shiftTopoLeftContainer.classList.remove('do-not-display');
+    else shiftTopoLeftContainer.classList.add('do-not-display');
+  }
+
+  const shiftTopoRightContainer = document.getElementById('shift-topo-right-container');
+  if( shiftTopoRightContainer ) {
+    if( topoContainer.nextSibling ) shiftTopoRightContainer.classList.remove('do-not-display');
+    else shiftTopoRightContainer.classList.add('do-not-display');
+  }
 }
 
 module.exports = OnAddTopo = () => {

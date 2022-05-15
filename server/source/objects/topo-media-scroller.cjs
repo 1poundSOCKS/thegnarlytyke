@@ -67,6 +67,11 @@ TopoMediaScroller.prototype.OnTopoSelected = function(topoContainer) {
   this.OnTopoSelectedCallback(this.currentTopoContainer.dataset.id, this.currentTopoContainer);
 }
 
+TopoMediaScroller.prototype.GetSelectedTopoID = function() {
+  if( !this.currentTopoContainer ) return null;
+  return this.currentTopoContainer.dataset.id;
+}
+
 TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage, heightInRem) {
   topoCanvas.setAttribute('width', topoImage.width);
   topoCanvas.setAttribute('height', topoImage.height);
