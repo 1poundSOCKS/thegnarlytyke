@@ -17,6 +17,7 @@ Topo.prototype.GetNearestPointWithin = function(x, y, within) {
   let nearestPointsForTopo = this.topo.routes.map( route => GetNearestPointForRoute(x, y, route) )
   .filter( point => point );
   const nearestPoint = GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
+  if( !nearestPoint ) return null;
   let distance = GetDistanceBetweenPoints(x, y, nearestPoint.x, nearestPoint.y);
   return (distance <= within) ? nearestPoint : null;
 }

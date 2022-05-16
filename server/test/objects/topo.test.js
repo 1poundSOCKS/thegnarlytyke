@@ -96,6 +96,12 @@ test("GetNextNearestPointWithin: nearest point is excluded, so return the next p
   expect(topo.GetNextNearestPointWithin(1, 2, 5, 'p1')).toEqual({parent: route, id: 'p2', x: 3, y: 4});
 });
 
+test("Get the nearest point for a topo with a route without points", () => {
+  const route = {id:'r1'};
+  const topo = new Topo({id:'t1',routes:[route]});
+  expect(topo.GetNearestPointWithin(1, 2, 3)).toBeNull();
+});
+
 test("The route start and end point is null when there aren't any", () => {
   const route1 = {id:'r1'};
   const topo1 = new Topo({id:'t1',routes:[route1]});

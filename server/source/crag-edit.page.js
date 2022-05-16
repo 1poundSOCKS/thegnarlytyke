@@ -29,7 +29,7 @@ let OnConfigLoad = async () => {
   
   document.getElementById('crag-view-header').innerText = _crag.name;
 
-  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
+  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), true);
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
   _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
