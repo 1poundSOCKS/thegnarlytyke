@@ -4,11 +4,15 @@ const Crag = require('./objects/crag.cjs');
 const Topo = require('./objects/topo.cjs');
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
+const CragRouteTable = require('./objects/crag-route-table.cjs');
+const TopoRouteTable = require('./objects/topo-route-table.cjs');
 require('./route_tables.js');
 
 let _crag = null;
 let _topoMediaScroller = null;
 let _mainTopoImage = null;
+let _topoRouteTable = null;
+let _cragRouteTable = null;
 
 window.onload = () => {
   fetch('config.json')
@@ -33,17 +37,24 @@ let OnConfigLoad = async () => {
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
   _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
+
+  _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'));
+  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'));
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {
+  const selectedTopo = new Crag(_crag).GetMatchingTopo(topoID);
   document.getElementById('main-topo-container').classList.remove('do-not-display');
   _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
-  _mainTopoImage.topo = new Crag(_crag).GetMatchingTopo(topoID);
+  _mainTopoImage.topo = selectedTopo;
   _mainTopoImage.Refresh();
-  RefreshIcons(topoContainer);
-  RefreshTopoRouteTable(_crag, topoID);
-  RefreshCragRouteTable(_crag, topoID);
   _mainTopoImage.AddMouseHandler(topoContainer);
+  RefreshIcons(topoContainer);
+  _topoRouteTable.topo = selectedTopo;
+  _topoRouteTable.Refresh(true, (element) => {
+  });
+  _cragRouteTable.crag = _crag;
+  _cragRouteTable.Refresh();
 }
 
 module.exports = RefreshIcons = (topoContainer) => {
