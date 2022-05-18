@@ -6,7 +6,6 @@ const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
-// require('./route_tables.js');
 
 let _crag = null;
 let _topoMediaScroller = null;

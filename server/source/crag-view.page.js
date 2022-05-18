@@ -8,6 +8,7 @@ const TopoRouteTable = require('./objects/topo-route-table.cjs');
 let _crag = null;
 let _topoMediaScroller = null;
 let _mainTopoImage = null;
+let _topoRouteTable = null;
 
 window.onload = () => {
   fetch('config.json')
@@ -50,5 +51,4 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.Refresh();
   _topoRouteTable.topo = selectedTopo;
   _topoRouteTable.Refresh();
-  // RefreshTopoRouteTable(_crag, topoID);
 }
