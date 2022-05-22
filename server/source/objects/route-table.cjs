@@ -2,7 +2,6 @@ const columnIndex_ID = 0;
 const columnIndex_Index = 1;
 const columnIndex_Name = 2;
 const columnIndex_Grade = 3;
-const columnIndex_Button = 4;
 
 let RouteTable = function(element) {
   this.element = element;
@@ -28,15 +27,8 @@ RouteTable.prototype.AppendRow = function(routeInfo) {
   return newRow;
 }
 
-RouteTable.prototype.AppendEditButtons = function(callback) {
-  Array.from(this.element.rows).forEach( row => {
-    let buttonCell = row.insertCell(columnIndex_Button);
-    buttonCell.classList.add('fa');
-    buttonCell.classList.add('fa-edit');
-    row.onclick = event => {
-      callback(event.target.parentElement);
-    }
-  });
+RouteTable.prototype.GetRowID = function(row) {
+  return row.cells[columnIndex_ID].innerText;
 }
 
 module.exports = RouteTable;

@@ -8,6 +8,7 @@ let TopoImage = function(canvas, editable) {
   this.image = null;
   this.topo = null;
   this.contentEditable = editable;
+  this.routeID = null;
   this.mousePos = null;
   this.nearestPointInfo = null;
   this.dragStartPos = null;
@@ -78,9 +79,8 @@ TopoImage.prototype.OnMouseUp = function(event) {
     this.dragPointInfo = null;
   }
   else {
-    let routeID  = GetSelectedTopoRouteTableID();
-    if( routeID ) {
-      const route = new Route(topo.GetMatchingRoute(routeID));
+    if( this.routeID ) {
+      const route = new Route(topo.GetMatchingRoute(this.routeID));
       route.AppendPoint(this.mousePos.x, this.mousePos.y);
     }
   }

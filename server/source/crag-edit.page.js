@@ -6,6 +6,7 @@ const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
+const RouteTable = require('./objects/route-table.cjs');
 
 let _crag = null;
 let _topoMediaScroller = null;
@@ -38,7 +39,9 @@ let OnConfigLoad = async () => {
   _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
 
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'));
-  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'));
+  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), (rowElement) => {
+    _mainTopoImage.routeID = _topoRouteTable.selectedRouteID;
+  });
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {
@@ -50,8 +53,7 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.AddMouseHandler(topoContainer);
   RefreshIcons(topoContainer);
   _topoRouteTable.topo = selectedTopo;
-  _topoRouteTable.Refresh(true, (element) => {
-  });
+  _topoRouteTable.Refresh(true);
   _cragRouteTable.crag = _crag;
   _cragRouteTable.Refresh();
 }
