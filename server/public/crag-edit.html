@@ -12,6 +12,8 @@
   <h2 id="crag-view-header" class="tgt-subheader"></h2>
   <div id="crag-view-icon-bar" class="crag-view-icon-bar">
     <i id="add-topo" class="crag-view-icon fa-solid fa-plus fa-border do-not-display" onclick="OnAddTopo()" title="Add topo"></i>
+    <i id="upload-topo" class="crag-view-icon fa-solid fa-file-arrow-up fa-border do-not-display" onclick="document.getElementById('topo-image-file').click()" title="Upload image"></i>
+    <input type="file" id="topo-image-file" name="filename" style="display:none"></input>
     <span id="shift-topo-left-container" class="do-not-display">
       <i id="shift-topo-left" class="crag-view-icon fa-solid fa-arrow-left fa-border do-not-display" onclick="OnShiftTopoLeft()" title="Shift topo left"></i>
     </span>

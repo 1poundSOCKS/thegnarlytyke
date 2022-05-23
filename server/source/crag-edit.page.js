@@ -41,7 +41,9 @@ let OnConfigLoad = async () => {
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'));
   _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), (rowElement) => {
     _mainTopoImage.routeID = _topoRouteTable.selectedRouteID;
+
   });
+  document.getElementById('topo-image-file').onchange = OnUploadImageFile;
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {
@@ -77,6 +79,32 @@ module.exports = OnAddTopo = () => {
   _topoMediaScroller.AddTopo(topo.topo);
   _crag.AppendTopo(topo.topo);
 }
+
+let OnUploadImageFile = async () => {
+  const imageFiles = document.getElementById('topo-image-file');
+  const topoImageFiles = Array.from(imageFiles.files).map( file => {
+    return { file: file }
+  });
+  console.log(topoImageFiles);
+  const result = await LoadTopoImageFile(topoImageFiles[0].file);
+  console.log(result);
+  _mainTopoImage.image = await LoadImage(result.contents);
+  _mainTopoImage.Refresh();
+}
+
+let LoadTopoImageFile = file => new Promise( resolve => {
+  console.log(file);
+  let fileReader = new FileReader();
+  fileReader.onload = () => resolve({file: file, contents: fileReader.result});
+  fileReader.readAsDataURL(file);
+});
+
+let LoadImage = (url) => new Promise( (resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = (err) => reject(err);
+  img.src = url;
+});
 
 module.exports = OnShiftTopoLeft = () => {
   _topoMediaScroller.ShiftCurrentTopoLeft();

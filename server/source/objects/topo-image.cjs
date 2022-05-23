@@ -17,9 +17,21 @@ let TopoImage = function(canvas, editable) {
 }
 
 TopoImage.prototype.Refresh = function() {
-  if( !this.image ) return;
-  this.canvas.setAttribute('width', this.image.width);
-  this.canvas.setAttribute('height', this.image.height);
+  if( !this.image ) {
+    const ctx = this.canvas.getContext('2d');
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    return;
+  }
+
+  if( this.image.height == 500 ) {
+    this.canvas.setAttribute('width', this.image.width);
+    this.canvas.setAttribute('height', this.image.height);  
+  }
+  else {
+    this.canvas.height = 500;
+    this.canvas.width = this.image.width * this.canvas.height / this.image.height;  
+  }
+
   let ctx = this.canvas.getContext('2d');
   ctx.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height);
   this.DrawOverlay();
