@@ -37,7 +37,6 @@ let OnConfigLoad = async () => {
   _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'));
 
   if( Config.mode === "edit" ) {
-    document.getElementById('upload-topos-address').setAttribute('href', `./upload-topos.html?id=${cragID}`);
     document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);
     document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
   }

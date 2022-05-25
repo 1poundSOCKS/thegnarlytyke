@@ -85,9 +85,7 @@ let OnUploadImageFile = async () => {
   const topoImageFiles = Array.from(imageFiles.files).map( file => {
     return { file: file }
   });
-  console.log(topoImageFiles);
   const result = await LoadTopoImageFile(topoImageFiles[0].file);
-  console.log(result);
   _mainTopoImage.image = await LoadImage(result.contents);
   _mainTopoImage.Refresh();
 }
