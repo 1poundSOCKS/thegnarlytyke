@@ -6,7 +6,6 @@ const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
-const RouteTable = require('./objects/route-table.cjs');
 
 let _crag = null;
 let _topoMediaScroller = null;
@@ -86,12 +85,14 @@ let OnUploadImageFile = async () => {
     return { file: file }
   });
   const result = await LoadTopoImageFile(topoImageFiles[0].file);
-  _mainTopoImage.image = await LoadImage(result.contents);
+  const imageData = result.contents;
+  const image = await LoadImage(imageData);
+  const topoImage = _topoMediaScroller.UpdateSelectedTopoImage(image);
+  _mainTopoImage.image = topoImage;
   _mainTopoImage.Refresh();
 }
 
 let LoadTopoImageFile = file => new Promise( resolve => {
-  console.log(file);
   let fileReader = new FileReader();
   fileReader.onload = () => resolve({file: file, contents: fileReader.result});
   fileReader.readAsDataURL(file);
