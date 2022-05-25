@@ -72,9 +72,15 @@ TopoMediaScroller.prototype.GetSelectedTopoID = function() {
   return this.currentTopoContainer.dataset.id;
 }
 
-TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage, heightInRem) {
-  topoCanvas.setAttribute('width', topoImage.width);
-  topoCanvas.setAttribute('height', topoImage.height);
+TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage, resize) {
+  if( resize ) {
+    topoCanvas.height = 500;
+    topoCanvas.width = topoImage.width * topoCanvas.height / topoImage.height;
+  }
+  else {
+    topoCanvas.setAttribute('width', topoImage.width);
+    topoCanvas.setAttribute('height', topoImage.height);
+  }
   let ctx = topoCanvas.getContext('2d');
   ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
   return topoCanvas;
@@ -103,6 +109,15 @@ TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
   const nextContainer = this.currentTopoContainer.nextSibling;
   nextContainer.remove();
   parentNode.insertBefore(nextContainer, this.currentTopoContainer);
+}
+
+TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
+  const canvas = this.currentTopoContainer.children[0];
+  this.DisplayTopoImage(canvas, image, true);
+  const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
+  const topoID = this.GetSelectedTopoID();
+  this.topoImages.set(topoID, image);
+  return image;
 }
 
 module.exports = TopoMediaScroller;
