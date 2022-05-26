@@ -6,7 +6,6 @@ let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
   this.currentTopoContainer = null;
   this.edit = edit;
   this.topoImages = new Map();
-  // this.topoImagesData = new Map();
   this.OnTopoSelectedCallback = OnTopoSelectedCallback;
 }
 
@@ -113,25 +112,5 @@ TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
   nextContainer.remove();
   parentNode.insertBefore(nextContainer, this.currentTopoContainer);
 }
-
-// TopoMediaScroller.prototype.CompressAndUpdateSelectedTopoImage = async function(imageData) {
-//   const image = await this.LoadImage(imageData);
-//   const canvas = this.currentTopoContainer.children[0];
-//   this.DisplayTopoImage(canvas, image);
-//   const topoImageURL = canvas.toDataURL('image/jpeg', 0.3);
-//   const compressedImage = await this.LoadImage(topoImageURL);
-//   this.DisplayTopoImage(canvas, compressedImage);
-//   const topoID = this.GetSelectedTopoID();
-//   this.topoImages.set(topoID, compressedImage);
-//   this.topoImagesData.set(topoID, compressedImage);
-//   return compressedImage;
-// }
-
-// TopoMediaScroller.prototype.LoadImage = (url) => new Promise( (resolve, reject) => {
-//   const img = new Image();
-//   img.onload = () => resolve(img);
-//   img.onerror = (err) => reject(err);
-//   img.src = url;
-// });
 
 module.exports = TopoMediaScroller;

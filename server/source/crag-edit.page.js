@@ -93,20 +93,11 @@ let OnUploadImageFile = async () => {
     _topoMediaScroller.GetSelectedTopoID(),
     _topoMediaScroller.GetSelectedTopoCanvas()
   );
+  
   _topoMediaScroller.UpdateSelectedTopoImage(image);
-  // const result = await LoadTopoImageFile(topoImageFiles[0].file);
-  // const imageData = result.contents;
-  // const topoImage = await _topoMediaScroller.CompressAndUpdateSelectedTopoImage(imageData);
-  // _mainTopoImage.image = topoImage;
   _mainTopoImage.image = image;
   _mainTopoImage.Refresh();
 }
-
-// let LoadTopoImageFile = file => new Promise( resolve => {
-//   let fileReader = new FileReader();
-//   fileReader.onload = () => resolve({file: file, contents: fileReader.result});
-//   fileReader.readAsDataURL(file);
-// });
 
 module.exports = OnShiftTopoLeft = () => {
   _topoMediaScroller.ShiftCurrentTopoLeft();
