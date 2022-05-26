@@ -6,6 +6,7 @@ let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
   this.currentTopoContainer = null;
   this.edit = edit;
   this.topoImages = new Map();
+  // this.topoImagesData = new Map();
   this.OnTopoSelectedCallback = OnTopoSelectedCallback;
 }
 
@@ -72,18 +73,20 @@ TopoMediaScroller.prototype.GetSelectedTopoID = function() {
   return this.currentTopoContainer.dataset.id;
 }
 
-TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage, resize) {
-  if( resize ) {
-    topoCanvas.height = 500;
-    topoCanvas.width = topoImage.width * topoCanvas.height / topoImage.height;
-  }
-  else {
-    topoCanvas.setAttribute('width', topoImage.width);
-    topoCanvas.setAttribute('height', topoImage.height);
-  }
+TopoMediaScroller.prototype.GetSelectedTopoCanvas = function() {
+  return this.currentTopoContainer.children[0]
+};
+
+TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
+  topoCanvas.setAttribute('width', topoImage.width);
+  topoCanvas.setAttribute('height', topoImage.height);
   let ctx = topoCanvas.getContext('2d');
   ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
   return topoCanvas;
+}
+
+TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
+  this.topoImages.set(this.GetSelectedTopoID(), image);
 }
 
 TopoMediaScroller.prototype.LoadImage = function(url) {
@@ -111,13 +114,24 @@ TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
   parentNode.insertBefore(nextContainer, this.currentTopoContainer);
 }
 
-TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
-  const canvas = this.currentTopoContainer.children[0];
-  this.DisplayTopoImage(canvas, image, true);
-  const topoImageURL = canvas.toDataURL('image/jpeg', 0.5);
-  const topoID = this.GetSelectedTopoID();
-  this.topoImages.set(topoID, image);
-  return image;
-}
+// TopoMediaScroller.prototype.CompressAndUpdateSelectedTopoImage = async function(imageData) {
+//   const image = await this.LoadImage(imageData);
+//   const canvas = this.currentTopoContainer.children[0];
+//   this.DisplayTopoImage(canvas, image);
+//   const topoImageURL = canvas.toDataURL('image/jpeg', 0.3);
+//   const compressedImage = await this.LoadImage(topoImageURL);
+//   this.DisplayTopoImage(canvas, compressedImage);
+//   const topoID = this.GetSelectedTopoID();
+//   this.topoImages.set(topoID, compressedImage);
+//   this.topoImagesData.set(topoID, compressedImage);
+//   return compressedImage;
+// }
+
+// TopoMediaScroller.prototype.LoadImage = (url) => new Promise( (resolve, reject) => {
+//   const img = new Image();
+//   img.onload = () => resolve(img);
+//   img.onerror = (err) => reject(err);
+//   img.src = url;
+// });
 
 module.exports = TopoMediaScroller;

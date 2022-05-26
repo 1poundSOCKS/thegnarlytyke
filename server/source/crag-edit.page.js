@@ -6,12 +6,14 @@ const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
+const ImageUploadCache = require('./objects/image-upload-cache.cjs');
 
 let _crag = null;
 let _topoMediaScroller = null;
 let _mainTopoImage = null;
 let _topoRouteTable = null;
 let _cragRouteTable = null;
+let _imageUploadCache = null;
 
 window.onload = () => {
   fetch('config.json')
@@ -40,8 +42,9 @@ let OnConfigLoad = async () => {
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'));
   _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), (rowElement) => {
     _mainTopoImage.routeID = _topoRouteTable.selectedRouteID;
-
   });
+
+  _imageUploadCache = new ImageUploadCache();
   document.getElementById('topo-image-file').onchange = OnUploadImageFile;
 }
 
@@ -84,26 +87,26 @@ let OnUploadImageFile = async () => {
   const topoImageFiles = Array.from(imageFiles.files).map( file => {
     return { file: file }
   });
-  const result = await LoadTopoImageFile(topoImageFiles[0].file);
-  const imageData = result.contents;
-  const image = await LoadImage(imageData);
-  const topoImage = _topoMediaScroller.UpdateSelectedTopoImage(image);
-  _mainTopoImage.image = topoImage;
+
+  const image = await _imageUploadCache.LoadAndCompress(
+    topoImageFiles[0].file, 
+    _topoMediaScroller.GetSelectedTopoID(),
+    _topoMediaScroller.GetSelectedTopoCanvas()
+  );
+  _topoMediaScroller.UpdateSelectedTopoImage(image);
+  // const result = await LoadTopoImageFile(topoImageFiles[0].file);
+  // const imageData = result.contents;
+  // const topoImage = await _topoMediaScroller.CompressAndUpdateSelectedTopoImage(imageData);
+  // _mainTopoImage.image = topoImage;
+  _mainTopoImage.image = image;
   _mainTopoImage.Refresh();
 }
 
-let LoadTopoImageFile = file => new Promise( resolve => {
-  let fileReader = new FileReader();
-  fileReader.onload = () => resolve({file: file, contents: fileReader.result});
-  fileReader.readAsDataURL(file);
-});
-
-let LoadImage = (url) => new Promise( (resolve, reject) => {
-  const img = new Image();
-  img.onload = () => resolve(img);
-  img.onerror = (err) => reject(err);
-  img.src = url;
-});
+// let LoadTopoImageFile = file => new Promise( resolve => {
+//   let fileReader = new FileReader();
+//   fileReader.onload = () => resolve({file: file, contents: fileReader.result});
+//   fileReader.readAsDataURL(file);
+// });
 
 module.exports = OnShiftTopoLeft = () => {
   _topoMediaScroller.ShiftCurrentTopoLeft();
