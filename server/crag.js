@@ -3,7 +3,7 @@ import fs, { writeFile } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
 const dataFolder = './public.test/data';
-const imagesFolder = './public.test/images';
+const imagesFolder = './public/env/test/images';
 
 let GetCragFilename = (cragID) => path.resolve(dataFolder, `${cragID}.crag.json`);
 let GetBackupCragFilename = (cragID) => path.resolve(dataFolder, `${cragID}.crag.backup.${new Date().getTime()}.json`);
@@ -16,6 +16,11 @@ export let AddTopo = async (cragID, imageData) => {
   topo.imageFile = imageFilename;
   await AppendTopoToCrag(cragID, topo);
   return topo;
+}
+
+export let SaveImage = async (ID, imageData) => {
+  let imageFilename = await SaveTopoURIImageDataToJEPGFile(ID, imageData);
+  return imageFilename;
 }
 
 let CreateTopo = () => {

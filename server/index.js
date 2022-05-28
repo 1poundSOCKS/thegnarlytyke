@@ -4,9 +4,11 @@ import path from 'path'
 import * as _crag from './crag.js'
 import Config from './source/objects/config.cjs';
 
+const imagesFolder = './public.test/images';
+
 const app = express();
 app.use(express.static('public'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '10mb'}));
 
 app.get('/ping', (req, res) => {
   console.log('GET /ping');
@@ -25,6 +27,18 @@ app.post('/add_topo', (req, res) => {
   })
   .catch( err => {
     console.error(err.toString());
+    res.send({result: "error", details: err.toString()});
+  })
+});
+
+app.post('/save-image', (req, res) => {
+  console.log('POST /save-image');
+  _crag.SaveImage(req.body.ID, req.body.imageData)
+  .then( filename => {
+    res.send({result: "success", filename: filename});
+  })
+  .catch( err => {
+    // console.error(err.toString());
     res.send({result: "error", details: err.toString()});
   })
 });

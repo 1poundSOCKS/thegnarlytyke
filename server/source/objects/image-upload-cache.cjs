@@ -10,7 +10,7 @@ ImageUploadCache.prototype.LoadAndCompress = async function(file, id, canvas) {
   canvas.setAttribute('height', image.height);
   let ctx = canvas.getContext('2d');
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const compressedImageData = canvas.toDataURL('image/jpeg', 0.3);
+  const compressedImageData = canvas.toDataURL('image/jpeg', 0.5);
   const compressedImage = await this.LoadImage(compressedImageData);
   ctx.drawImage(compressedImage, 0, 0, canvas.width, canvas.height);
   this.imageDataMap.set(id, compressedImageData);

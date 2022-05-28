@@ -7,6 +7,7 @@ const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
 const ImageUploadCache = require('./objects/image-upload-cache.cjs');
+const ImageStorage = require('./objects/image-storage.cjs');
 
 let _crag = null;
 let _topoMediaScroller = null;
@@ -121,8 +122,14 @@ module.exports = OnSortTopoRoutes = () => {
 }
 
 module.exports = OnSave = () => {
-  const cragStorage = new CragLoader('client');
-  cragStorage.Save(_crag);
+  _imageUploadCache.imageDataMap.forEach( (imageData, ID) => {
+    console.log(`ID: ${ID}, image data length: ${imageData.length}`);
+    ImageStorage.prototype.SaveImage(ID, imageData).then( filename => {
+      console.log(`saved filename: ${filename}`);
+    });
+  });
+  // const cragStorage = new CragLoader('client');
+  // cragStorage.Save(_crag);
 }
 
 module.exports = GetSelectedTopoID = () => {
