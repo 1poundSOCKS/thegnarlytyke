@@ -39,3 +39,18 @@ test("Format points for storage when there aren't any", () => {
   const routesForStorage = cragStorage.FormatTopoRoutesForStorage(topoRoutes);
   expect(routesForStorage).toEqual([{id: 'tr1', points:[]}]);
 });
+
+test("Save a crag when the topo has no routes", () => {
+  const topo1 = {id:'t1'};
+  const crag = {topos:[topo1]};
+  const cragStorage = new CragLoader();
+  expect(cragStorage.FormatCragForStorage(crag)).toEqual(crag);
+});
+
+test("Restore a crag with an empty topo", () => {
+  const topo1 = {id:'t1'};
+  const crag = {topos:[topo1]};
+  const cragStorage = new CragLoader();
+  cragStorage.UpdateCragAfterRestore(crag);
+  expect(crag).toEqual({topos:[topo1]});
+});

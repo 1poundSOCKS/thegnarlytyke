@@ -1,5 +1,12 @@
 let ImageStorage = function() {
+}
 
+ImageStorage.prototype.SaveImageAndUpdateFilename = async function(ID, imageData, filenameObject) {
+  const filename = await this.SaveImage(ID, imageData);
+  return new Promise( resolve => {
+    filenameObject.imageFile = filename;
+    resolve(filename);
+  });
 }
 
 ImageStorage.prototype.SaveImage = async function(ID, imageData) {
@@ -22,4 +29,4 @@ ImageStorage.prototype.SaveImage = async function(ID, imageData) {
   return parsedResponse.filename;
 }
 
-module.exports = ImageStorage;
+module.exports = new ImageStorage;

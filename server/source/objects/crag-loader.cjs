@@ -47,13 +47,14 @@ CragLoader.prototype.SaveFromClient = async function(crag) {
 
 CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
   const routeInfoMap = new Map();
-  if( !crag.routes ) crag.routes = [];
-  crag.routes.forEach( route => routeInfoMap.set(route.id, route) );
+  if( crag.routes ) crag.routes.forEach( route => routeInfoMap.set(route.id, route) );
 
   const pointArray = [];
   const pointMap = new Map();
 
-  crag.topos.forEach( topo => {
+  const toposWithRoutes = crag.topos.filter( topo => topo.routes && topo.routes.length > 0 );
+
+  toposWithRoutes.forEach( topo => {
     topo.routes.forEach( route => {
       route.info = routeInfoMap.get(route.id);
       route.points.forEach( point => {
@@ -69,12 +70,11 @@ CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
 }
 
 CragLoader.prototype.FormatCragForStorage = function(crag) {
-  const cragForStorage = {
-    id: crag.id,
-    name: crag.name,
-    routes: crag.routes ? this.FormatRoutesForStorage(crag.routes) : [],
-    topos: crag.topos ? this.FormatToposForStorage(crag.topos) : []
-  }
+  const cragForStorage = {};
+  if( crag.id ) cragForStorage.id = crag.id;
+  if( crag.name ) cragForStorage.name = crag.name;
+  if( crag.routes ) cragForStorage.routes = this.FormatRoutesForStorage(crag.routes);
+  if( crag.topos ) cragForStorage.topos = this.FormatToposForStorage(crag.topos);
   return cragForStorage;
 }
 
@@ -90,11 +90,11 @@ CragLoader.prototype.FormatRoutesForStorage = function(routes) {
 
 CragLoader.prototype.FormatToposForStorage = function(topos) {
   return topos.map( topo => {
-    return {
-      id: topo.id,
-      imageFile: topo.imageFile,
-      routes: this.FormatTopoRoutesForStorage(topo.routes)
-    };
+    const topoForStorage = {};
+    if( topo.id ) topoForStorage.id = topo.id;
+    if( topo.imageFile ) topoForStorage.imageFile = topo.imageFile;
+    if( topo.routes ) topoForStorage.routes = this.FormatTopoRoutesForStorage(topo.routes);
+    return topoForStorage;
   });
 }
 
