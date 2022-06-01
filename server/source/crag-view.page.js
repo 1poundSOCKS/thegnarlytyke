@@ -48,6 +48,6 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
   _mainTopoImage.topo = selectedTopo;
   _mainTopoImage.Refresh();
-  _topoRouteTable.topo = selectedTopo;
+  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo);
   _topoRouteTable.Refresh();
 }

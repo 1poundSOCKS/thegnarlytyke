@@ -41,9 +41,7 @@ let OnConfigLoad = async () => {
   _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
 
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _crag);
-  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), (rowElement) => {
-    _mainTopoImage.routeID = _topoRouteTable.selectedRouteID;
-  });
+  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'));
 
   _imageUploadCache = new ImageUploadCache();
   document.getElementById('topo-image-file').onchange = OnUploadImageFile;
@@ -57,7 +55,7 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.Refresh();
   _mainTopoImage.AddMouseHandler(topoContainer);
   RefreshIcons(topoContainer);
-  _topoRouteTable.topo = selectedTopo;
+  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo, OnTopoRouteSelected);
   _topoRouteTable.Refresh(true);
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _crag, selectedTopo, OnCragRouteToggled);
   _cragRouteTable.Refresh();
@@ -139,5 +137,9 @@ module.exports = GetSelectedTopoID = () => {
 }
 
 let OnCragRouteToggled = (route) => {
-  console.log(route);
+  _topoRouteTable.Refresh(true);
+}
+
+let OnTopoRouteSelected = (route) => {
+  _mainTopoImage.routeID = route.id;
 }

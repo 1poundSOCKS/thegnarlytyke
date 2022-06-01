@@ -30,13 +30,10 @@ CragRouteTable.prototype.Refresh = function() {
 }
 
 CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
-  // let id = row.cells[columnIndex_ID].innerText;
   let buttonCell = row.cells[columnIndex_Button];
   if( !buttonCell ) buttonCell = row.insertCell(columnIndex_Button);
-  // if( id.length > 0 ) {
-    buttonCell.classList.add('fa');
-    buttonCell.classList.add(topoRoute ? 'fa-toggle-on' : 'fa-toggle-off');
-  // }
+  buttonCell.classList.add('fa');
+  buttonCell.classList.add(topoRoute ? 'fa-toggle-on' : 'fa-toggle-off');
   buttonCell.onclick = event => {
     let row = event.target.parentElement;
     let routeID = cragRoute.id;
@@ -49,12 +46,10 @@ CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
     }
     else {
       this.topo.RemoveMatchingRoute(routeID);
-      // RefreshTopoRouteTable(cragObject, topoID);
       buttonCell.classList.remove('fa-toggle-on');
       buttonCell.classList.add('fa-toggle-off');
       if( this.OnRouteToggled ) this.OnRouteToggled(cragRoute);
     }
-    // RefreshMainTopoView();
   }
 }
 
