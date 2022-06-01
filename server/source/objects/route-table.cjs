@@ -31,4 +31,52 @@ RouteTable.prototype.GetRowID = function(row) {
   return row.cells[columnIndex_ID].innerText;
 }
 
+RouteTable.prototype.EnableRowEdit = function(row, cragObject) {
+  row.cells[columnIndex_Name].setAttribute('contenteditable', true);
+  this.DisableCellMultilineEdit(row.cells[columnIndex_Name]);
+  row.cells[columnIndex_Name].addEventListener('focusout', event => {
+    let row = event.target.parentElement;
+    let id = row.cells[columnIndex_ID].innerText;
+    let name = event.target.innerText;
+    // let topoID = GetSelectedTopoID();
+    // if( id.length > 0 ) SetCragRouteName(cragObject, id, name);
+    // else if( name.length > 0 ) {
+    //   let row = event.target.parentElement;
+    //   id = AppendNewCragRoute(row, cragObject);
+    //   SetCragRouteName(cragObject, id, name);
+    //   if( topoID ) {
+    //     AddButtonsToCragTableRow(row);
+    //     UpdateCragRouteCommands(row, cragObject, topoID);
+    //   }
+    // }
+    // if( topoID ) RefreshTopoRouteTable(cragObject, topoID);
+  });
+
+  row.cells[columnIndex_Grade].setAttribute('contenteditable', true);
+  this.DisableCellMultilineEdit(row.cells[columnIndex_Grade]);
+  row.cells[columnIndex_Grade].addEventListener('focusout', event => {
+    let row = event.target.parentElement;
+    let id = row.cells[columnIndex_ID].innerText;
+    let grade = event.target.innerText;
+    // let topoID = GetSelectedTopoID();
+    // if( id.length > 0 ) SetCragRouteGrade(cragObject, id, grade);
+    // else if( grade.length > 0 ) {
+    //   id = AppendNewCragRoute(row, cragObject);
+    //   SetCragRouteGrade(cragObject, id, grade);
+    //   AddButtonsToCragTableRow(row);
+    //   UpdateCragRouteCommands(row, cragObject, topoID);
+    // }
+    // if( topoID ) RefreshTopoRouteTable(cragObject, topoID);
+  });
+}
+
+RouteTable.prototype.DisableCellMultilineEdit = function(cell) {
+  cell.onkeydown = event => {
+    if( event.keyCode == 13 ) {
+      event.preventDefault();
+      document.activeElement.blur();
+    }
+  }
+}
+
 module.exports = RouteTable;

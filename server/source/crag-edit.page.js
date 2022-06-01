@@ -60,7 +60,7 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _topoRouteTable.topo = selectedTopo;
   _topoRouteTable.Refresh(true);
   _cragRouteTable.crag = _crag;
-  _cragRouteTable.Refresh();
+  _cragRouteTable.Refresh(selectedTopo);
 }
 
 module.exports = RefreshIcons = (topoContainer) => {
