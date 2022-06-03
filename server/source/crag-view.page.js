@@ -34,8 +34,6 @@ let OnConfigLoad = async () => {
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
   _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
 
-  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'));
-
   if( Config.mode === "edit" ) {
     document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);
     document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
@@ -49,5 +47,4 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.topo = selectedTopo;
   _mainTopoImage.Refresh();
   _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo);
-  _topoRouteTable.Refresh();
 }

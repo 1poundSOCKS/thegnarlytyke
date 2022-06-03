@@ -6,7 +6,6 @@ const columnIndex_AddRouteToTopoSwitch = 4;
 
 let CragRouteTable = function(element, crag, topoData, OnRouteToggled) {
   this.element = element;
-  console.table(crag.routes);
   this.table = new RouteTable(element, crag.routes, true);
   this.crag = crag;
   this.topo = topoData ? new Topo(topoData) : null;
