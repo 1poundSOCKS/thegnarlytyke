@@ -4,28 +4,22 @@ const Topo = require('./topo.cjs');
 const columnIndex_Button = 4;
 
 let TopoRouteTable = function(element, topoData, OnRouteSelectedCallback) {
-  this.table = new RouteTable(element);
+  this.element = element;
   this.topo = new Topo(topoData);
   this.OnRouteSelectedCallback = OnRouteSelectedCallback;
+  this.Refresh();
+}
+
+TopoRouteTable.prototype.Refresh = function() {
+  this.routeInfo = this.topo.GetSortedRouteInfo();
+  this.table = new RouteTable(this.element, this.routeInfo);
   this.selectedRow = null;
   this.selectedRouteID = null;
   this.selectedRoute = null;
-}
-
-TopoRouteTable.prototype.Refresh = function(forEdit) {
-  this.selectedRow = null;
-  this.selectedRouteID = null;
   
-  if( !this.topo ) {
-    this.table.Refresh([]);
-    return;
-  }
+  this.table.Refresh();
   
-  const routeInfo = this.topo.GetSortedRouteInfo();
-  console.table(routeInfo);
-  this.table.Refresh(routeInfo);
-  
-  if( forEdit ) {
+  if( this.OnRouteSelectedCallback ) {
     Array.from(this.table.element.rows).forEach( row => {
       row.insertCell(columnIndex_Button);
       row.onclick = event => {

@@ -2,36 +2,38 @@ const Crag = require("./crag.cjs");
 const RouteTable = require("./route-table.cjs");
 const Topo = require("./topo.cjs");
 
-const columnIndex_Button = 4;
+const columnIndex_AddRouteToTopoSwitch = 4;
 
 let CragRouteTable = function(element, crag, topoData, OnRouteToggled) {
   this.element = element;
+  console.table(crag.routes);
+  this.table = new RouteTable(element, crag.routes, true);
   this.crag = crag;
   this.topo = topoData ? new Topo(topoData) : null;
   this.OnRouteToggled = OnRouteToggled;
+  this.Refresh();
 }
 
 CragRouteTable.prototype.Refresh = function() {
-  const table = new RouteTable(this.element);
   if( !this.crag ) {
-    table.Refresh([]);
+    this.table.Refresh([]);
     return;
   }
-  table.Refresh(this.crag.routes);
+  this.table.Refresh();
   Array.from(this.element.rows).forEach( row => {
-    table.EnableRowEdit(row);
     if( this.topo ) {
-      const routeID = table.GetRowID(row);
+      const routeID = this.table.GetRowID(row);
       const cragRoute = this.crag.GetMatchingRoute(routeID);
       const topoRoute = this.topo.GetMatchingRoute(routeID);
       this.AddButtonsToRow(row, cragRoute, topoRoute);
      }
   });
+  this.AddRowForAppend();
 }
 
 CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
-  let buttonCell = row.cells[columnIndex_Button];
-  if( !buttonCell ) buttonCell = row.insertCell(columnIndex_Button);
+  let buttonCell = row.cells[columnIndex_AddRouteToTopoSwitch];
+  if( !buttonCell ) buttonCell = row.insertCell(columnIndex_AddRouteToTopoSwitch);
   buttonCell.classList.add('fa');
   buttonCell.classList.add(topoRoute ? 'fa-toggle-on' : 'fa-toggle-off');
   buttonCell.onclick = event => {
@@ -51,6 +53,11 @@ CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
       if( this.OnRouteToggled ) this.OnRouteToggled(cragRoute);
     }
   }
+}
+
+CragRouteTable.prototype.AddRowForAppend = function() {
+  let row = this.table.AppendRow();
+  row.cells[columnIndex_AddRouteToTopoSwitch];
 }
 
 module.exports = CragRouteTable;

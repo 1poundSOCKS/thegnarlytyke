@@ -3,27 +3,34 @@ const columnIndex_Index = 1;
 const columnIndex_Name = 2;
 const columnIndex_Grade = 3;
 
-let RouteTable = function(element) {
+let RouteTable = function(element, routes, editable) {
   this.element = element;
-  this.contentEditable = false;
+  this.routes = routes;
+  this.contentEditable = editable;
 }
 
-RouteTable.prototype.Refresh = function(routesInfo) {
+RouteTable.prototype.Refresh = function() {
   let tableBody = this.element.getElementsByTagName('tbody')[0];
   if( !tableBody ) tableBody = this.element.createTBody();
   while( this.element.rows.length > 0 ) this.element.deleteRow(0);
-  routesInfo.forEach( routeInfo => {
-    let newRow = this.AppendRow(routeInfo);
-    if( this.contentEditable ) EnableRouteTableRowEdit(newRow, cragObject);
-  });
+  this.routes.forEach( routeInfo => this.AppendRow(routeInfo) );
 }
 
 RouteTable.prototype.AppendRow = function(routeInfo) {
   let newRow = this.element.insertRow(this.element.rows.length);
+  if( !routeInfo ) {
+    newRow.insertCell(columnIndex_ID);
+    newRow.insertCell(columnIndex_Index);
+    newRow.insertCell(columnIndex_Name);
+    newRow.insertCell(columnIndex_Grade);
+    if( this.contentEditable ) this.EnableRowEdit(newRow);
+    return newRow;
+  }
   newRow.insertCell(columnIndex_ID).innerText = routeInfo.id;
   newRow.insertCell(columnIndex_Index).innerText = routeInfo ? this.element.rows.length : '#';
   newRow.insertCell(columnIndex_Name).innerText = routeInfo.name;
   newRow.insertCell(columnIndex_Grade).innerText = routeInfo.grade;
+  if( this.contentEditable ) this.EnableRowEdit(newRow);
   return newRow;
 }
 
@@ -31,7 +38,7 @@ RouteTable.prototype.GetRowID = function(row) {
   return row.cells[columnIndex_ID].innerText;
 }
 
-RouteTable.prototype.EnableRowEdit = function(row, cragObject) {
+RouteTable.prototype.EnableRowEdit = function(row) {
   row.cells[columnIndex_Name].setAttribute('contenteditable', true);
   this.DisableCellMultilineEdit(row.cells[columnIndex_Name]);
   row.cells[columnIndex_Name].addEventListener('focusout', event => {
