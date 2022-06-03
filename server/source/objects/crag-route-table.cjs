@@ -6,7 +6,7 @@ const columnIndex_AddRouteToTopoSwitch = 4;
 
 let CragRouteTable = function(element, crag, topoData, OnRouteToggled) {
   this.element = element;
-  this.table = new RouteTable(element, crag.routes, true);
+  this.table = new RouteTable(element, crag.routes, true, this);
   this.crag = crag;
   this.topo = topoData ? new Topo(topoData) : null;
   this.OnRouteToggled = OnRouteToggled;
@@ -57,6 +57,32 @@ CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
 CragRouteTable.prototype.AddRowForAppend = function() {
   let row = this.table.AppendRow();
   row.cells[columnIndex_AddRouteToTopoSwitch];
+}
+
+CragRouteTable.prototype.OnRouteNameChanged = function(id, name) {
+  console.log(`${id}, ${name}`);
+  if( !id ) {
+    this.AppendRoute(name, '');
+    return;
+  }
+  const route = this.crag.GetMatchingRoute(id);
+  if( !route ) return;
+  route.name = name;
+}
+
+CragRouteTable.prototype.OnRouteGradeChanged = function(id, grade) {
+  console.log(`${id}, ${grade}`);
+  if( !id ) {
+    this.AppendRoute('', grade);
+    return;
+  }
+  const route = this.crag.GetMatchingRoute(id);
+  if( !route ) return;
+  route.grade = grade;
+}
+
+CragRouteTable.prototype.AppendRoute = function(name, grade) {
+  console.log(`append route: name=${name}, grade=${grade}`);
 }
 
 module.exports = CragRouteTable;

@@ -3,10 +3,11 @@ const columnIndex_Index = 1;
 const columnIndex_Name = 2;
 const columnIndex_Grade = 3;
 
-let RouteTable = function(element, routes, editable) {
+let RouteTable = function(element, routes, editable, eventHandlerObject) {
   this.element = element;
   this.routes = routes;
   this.contentEditable = editable;
+  this.eventHandlerObject = eventHandlerObject;
 }
 
 RouteTable.prototype.Refresh = function() {
@@ -45,6 +46,7 @@ RouteTable.prototype.EnableRowEdit = function(row) {
     let row = event.target.parentElement;
     let id = row.cells[columnIndex_ID].innerText;
     let name = event.target.innerText;
+    this.eventHandlerObject.OnRouteNameChanged(id, name);
   });
 
   row.cells[columnIndex_Grade].setAttribute('contenteditable', true);
@@ -53,6 +55,7 @@ RouteTable.prototype.EnableRowEdit = function(row) {
     let row = event.target.parentElement;
     let id = row.cells[columnIndex_ID].innerText;
     let grade = event.target.innerText;
+    this.eventHandlerObject.OnRouteGradeChanged(id, grade);
   });
 }
 
