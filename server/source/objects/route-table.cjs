@@ -46,7 +46,7 @@ RouteTable.prototype.EnableRowEdit = function(row) {
     let row = event.target.parentElement;
     let id = row.cells[columnIndex_ID].innerText;
     let name = event.target.innerText;
-    this.eventHandlerObject.OnRouteNameChanged(id, name);
+    this.eventHandlerObject.OnRouteNameChanged(row, id, name);
   });
 
   row.cells[columnIndex_Grade].setAttribute('contenteditable', true);
@@ -55,7 +55,7 @@ RouteTable.prototype.EnableRowEdit = function(row) {
     let row = event.target.parentElement;
     let id = row.cells[columnIndex_ID].innerText;
     let grade = event.target.innerText;
-    this.eventHandlerObject.OnRouteGradeChanged(id, grade);
+    this.eventHandlerObject.OnRouteGradeChanged(row, id, grade);
   });
 }
 

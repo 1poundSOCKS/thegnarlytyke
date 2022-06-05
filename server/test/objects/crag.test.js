@@ -170,3 +170,21 @@ test("Append a new topo to a crag with topos", () => {
   expect(crag.AppendTopo(topo3)).toEqual(3);
   expect(crag.topos).toEqual([topo1,topo2,topo3]);
 });
+
+test("Append routes to an empty crag", () => {
+  const crag = new Crag();
+  const route1 = crag.AppendRoute('route#1','vdiff');
+  expect(route1.id.length).toBeGreaterThan(0);
+  expect(route1.name).toEqual('route#1');
+  expect(route1.grade).toEqual('vdiff');
+  expect(crag.routes.length).toEqual(1);
+  expect(crag.routes[0]).toEqual(route1);
+  const route2 = crag.AppendRoute('route#2','severe');
+  expect(route1.id).not.toEqual(route2.id);
+  expect(route2.id.length).toBeGreaterThan(0);
+  expect(route2.name).toEqual('route#2');
+  expect(route2.grade).toEqual('severe');
+  expect(crag.routes.length).toEqual(2);
+  expect(crag.routes[0]).toEqual(route1);
+  expect(crag.routes[1]).toEqual(route2);
+});

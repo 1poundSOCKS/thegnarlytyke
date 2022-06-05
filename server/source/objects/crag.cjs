@@ -1,4 +1,5 @@
 let uuid = require('uuid');
+const Route = require('./route.cjs');
 
 let Crag = function(cragObject) {
   if( cragObject ) {
@@ -52,6 +53,14 @@ Crag.prototype.GetMatchingRoute = function(id) {
   let matchingRoutes =  this.routes.filter( route => route.id === id);
   if( matchingRoutes.length != 1 ) return null;
   return matchingRoutes[0];
+}
+
+Crag.prototype.AppendRoute = function(name, grade) {
+  const route = new Route().route;
+  route.name = name;
+  route.grade = grade;
+  this.routes.push(route);
+  return route;
 }
 
 module.exports = Crag;

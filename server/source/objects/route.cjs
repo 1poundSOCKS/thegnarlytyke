@@ -2,7 +2,8 @@ let uuid = require('uuid');
 const Topo = require('./topo.cjs');
 
 let Route = function(route) {
-  this.route = route;
+  if( !route ) this.route = {id:uuid.v4()};
+  else this.route = route;
 }
 
 Route.prototype.AppendPoint = function(x, y) {

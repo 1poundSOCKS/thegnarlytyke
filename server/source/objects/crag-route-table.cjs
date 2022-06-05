@@ -24,17 +24,17 @@ CragRouteTable.prototype.Refresh = function() {
       const routeID = this.table.GetRowID(row);
       const cragRoute = this.crag.GetMatchingRoute(routeID);
       const topoRoute = this.topo.GetMatchingRoute(routeID);
-      this.AddButtonsToRow(row, cragRoute, topoRoute);
+      this.AddButtonsToRow(row, cragRoute, topoRoute ? true : false);
      }
   });
   this.AddRowForAppend();
 }
 
-CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
+CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, routeOnTopo) {
   let buttonCell = row.cells[columnIndex_AddRouteToTopoSwitch];
   if( !buttonCell ) buttonCell = row.insertCell(columnIndex_AddRouteToTopoSwitch);
   buttonCell.classList.add('fa');
-  buttonCell.classList.add(topoRoute ? 'fa-toggle-on' : 'fa-toggle-off');
+  buttonCell.classList.add(routeOnTopo ? 'fa-toggle-on' : 'fa-toggle-off');
   buttonCell.onclick = event => {
     let row = event.target.parentElement;
     let routeID = cragRoute.id;
@@ -57,12 +57,14 @@ CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, topoRoute) {
 CragRouteTable.prototype.AddRowForAppend = function() {
   let row = this.table.AppendRow();
   row.cells[columnIndex_AddRouteToTopoSwitch];
+  return row;
 }
 
-CragRouteTable.prototype.OnRouteNameChanged = function(id, name) {
+CragRouteTable.prototype.OnRouteNameChanged = function(row, id, name) {
   console.log(`${id}, ${name}`);
   if( !id ) {
-    this.AppendRoute(name, '');
+    const route = this.AppendRoute(name, '');
+    this.AddButtonsToRow(row, route, false);
     return;
   }
   const route = this.crag.GetMatchingRoute(id);
@@ -70,10 +72,11 @@ CragRouteTable.prototype.OnRouteNameChanged = function(id, name) {
   route.name = name;
 }
 
-CragRouteTable.prototype.OnRouteGradeChanged = function(id, grade) {
+CragRouteTable.prototype.OnRouteGradeChanged = function(row, id, grade) {
   console.log(`${id}, ${grade}`);
   if( !id ) {
-    this.AppendRoute('', grade);
+    const route = this.AppendRoute('', grade);
+    this.AddButtonsToRow(row, route, false);
     return;
   }
   const route = this.crag.GetMatchingRoute(id);
@@ -83,6 +86,9 @@ CragRouteTable.prototype.OnRouteGradeChanged = function(id, grade) {
 
 CragRouteTable.prototype.AppendRoute = function(name, grade) {
   console.log(`append route: name=${name}, grade=${grade}`);
+  const route = this.crag.AppendRoute(name, grade);
+  const row = this.AddRowForAppend();
+  return route;
 }
 
 module.exports = CragRouteTable;
