@@ -59,6 +59,7 @@ jobs:
     #   run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
     # -name: SAM build
     - run: sam build --use-container
+      working-directory: ./api/github-actions-with-aws-sam
 
     # -name: Deploy API
     - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-hello-world --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
