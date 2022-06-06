@@ -61,10 +61,9 @@ CragRouteTable.prototype.AddRowForAppend = function() {
 }
 
 CragRouteTable.prototype.OnRouteNameChanged = function(row, id, name) {
-  console.log(`${id}, ${name}`);
   if( !id ) {
-    const route = this.AppendRoute(name, '');
-    this.AddButtonsToRow(row, route, false);
+    this.crag.AppendRoute(name, '');
+    this.Refresh();
     return;
   }
   const route = this.crag.GetMatchingRoute(id);
@@ -73,22 +72,14 @@ CragRouteTable.prototype.OnRouteNameChanged = function(row, id, name) {
 }
 
 CragRouteTable.prototype.OnRouteGradeChanged = function(row, id, grade) {
-  console.log(`${id}, ${grade}`);
   if( !id ) {
-    const route = this.AppendRoute('', grade);
-    this.AddButtonsToRow(row, route, false);
+    this.crag.AppendRoute('', grade);
+    this.Refresh();
     return;
   }
   const route = this.crag.GetMatchingRoute(id);
   if( !route ) return;
   route.grade = grade;
-}
-
-CragRouteTable.prototype.AppendRoute = function(name, grade) {
-  console.log(`append route: name=${name}, grade=${grade}`);
-  const route = this.crag.AppendRoute(name, grade);
-  const row = this.AddRowForAppend();
-  return route;
 }
 
 module.exports = CragRouteTable;
