@@ -31,11 +31,11 @@ jobs:
     #   run: npm install
     #   working-directory: ./server
 
-    - name: Setup Python
-      uses: actions/setup-python@v2
+    # - name: Setup Python
+    - uses: actions/setup-python@v2
 
-    -name: Setup SAM
-      uses: aws-actions/setup-sam@v1
+    # -name: Setup SAM
+    - uses: aws-actions/setup-sam@v1
 
     # - name: Build
     #   run: npm run build
