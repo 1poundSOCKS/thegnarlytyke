@@ -6,8 +6,8 @@ ImageUploadCache.prototype.LoadAndCompress = async function(file, id, canvas) {
   const result = await this.LoadTopoImageFile(file);
   const imageData = result.contents;
   const image = await this.LoadImage(imageData);
-  canvas.setAttribute('width', image.width / 4);
-  canvas.setAttribute('height', image.height / 4);
+  canvas.setAttribute('width', image.width / 2);
+  canvas.setAttribute('height', image.height / 2);
   let ctx = canvas.getContext('2d');
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
   const compressedImageData = canvas.toDataURL('image/jpeg', 0.5);
