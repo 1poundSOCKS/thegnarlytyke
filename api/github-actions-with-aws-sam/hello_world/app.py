@@ -33,7 +33,10 @@ def lambda_handler(event, context):
     #     raise e
 
     s3 = boto3.client('s3')
-    obj = s3.get_object(Bucket="data.thegnarlytyke.com", Key="config.json")
+    # obj = s3.get_object(Bucket="data.thegnarlytyke.com", Key="config.json")
+    
+    obj = s3.get_object(Bucket="data.thegnarlytyke.com", Key="data/0b950bd3-ea3b-44d1-ac40-28081c1d732a.crag.json")
+    
     j = json.loads(obj['Body'].read().decode('utf-8'))
 
     return {
