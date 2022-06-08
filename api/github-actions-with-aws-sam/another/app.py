@@ -27,7 +27,7 @@ def save_image(event, context):
     request_data = event['queryStringParameters']
     object_id = request_data['id']
     data_key = "{}.jpg".format(object_id)
-    s3.Bucket("images.thegnarlytyke.com").put_object(Key=data_key, Body=encoded_string)
+    s3.put_object(Bucket="images.thegnarlytyke.com", Key=data_key, Body=encoded_string)
 
 
     return {
