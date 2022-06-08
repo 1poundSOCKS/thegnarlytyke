@@ -18,13 +18,22 @@ def lambda_handler(event, context):
         ),
     }
 
-def save_crag(event, context):
+def save_image(event, context):
+
+    string = "dfghj"
+    encoded_string = string.encode("utf-8")
+    
+    s3 = boto3.client('s3')
+    request_data = event['queryStringParameters']
+    object_id = request_data['id']
+    data_key = "{}.jpg".format(object_id)
+    s3.Bucket("images.thegnarlytyke.com").put_object(Key=data_key, Body=encoded_string)
 
     return {
         "statusCode": 200,
         "body": json.dumps(
             {
-                "message": "save crag call successful"
+                "message": "save image call successful"
             }
         ),
     }
