@@ -20,15 +20,14 @@ def lambda_handler(event, context):
 
 def save_image(event, context):
 
-    string = "dfghj"
+    string = event['body']
     encoded_string = string.encode("utf-8")
 
     s3 = boto3.client('s3')
     request_data = event['queryStringParameters']
     object_id = request_data['id']
-    data_key = "{}.jpg".format(object_id)
+    data_key = "{}.txt".format(object_id)
     s3.put_object(Bucket="images.thegnarlytyke.com", Key=data_key, Body=encoded_string)
-
 
     return {
         "statusCode": 200,
