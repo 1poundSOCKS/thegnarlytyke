@@ -1,6 +1,5 @@
 import json
-
-# import requests
+import boto3
 
 
 def lambda_handler(event, context):
@@ -33,12 +32,17 @@ def lambda_handler(event, context):
 
     #     raise e
 
+    s3 = boto3.client('s3')
+    obj = s3.get_object(Bucket="thegnarlytyke.com", Key="config.json")
+    j = json.loads(obj['Body'].read().decode('utf-8'))
+
     return {
         "statusCode": 200,
         "body": json.dumps(
-            {
-                "message": "hello world",
-                # "location": ip.text.replace("\n", "")
-            }
+            j
+            # {
+            #     "message": "hello world",
+            #     # "location": ip.text.replace("\n", "")
+            # }
         ),
     }
