@@ -39,6 +39,20 @@ Resources:
           Properties:
             Path: /another
             Method: post
+  SaveCragFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: another/
+      Handler: app.save_crag
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /save_crag
+            Method: post
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -53,12 +67,3 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
-  # AnotherApi:
-  #   Description: "API Gateway endpoint URL for Prod stage for Another function"
-  #   Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/another/"
-  # AnotherFunction:
-  #   Description: "Another Lambda Function ARN"
-  #   Value: !GetAtt AnotherFunction.Arn
-  # AnotherFunctionIamRole:
-  #   Description: "Implicit IAM Role created for Another function"
-  #   Value: !GetAtt AnotherFunctionRole.Arn
