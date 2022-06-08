@@ -29,6 +29,7 @@ def save_image(event, context):
     # data_key = "{}.jpg".format(object_id)
     # s3.Bucket("images.thegnarlytyke.com").put_object(Key=data_key, Body=encoded_string)
 
+
     return {
         "statusCode": 200,
         "body": json.dumps(
