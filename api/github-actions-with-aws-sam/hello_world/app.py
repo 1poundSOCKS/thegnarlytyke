@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     crag_id = request_data['id']
     data_key = "data/{}.crag.json".format(crag_id)
     # obj = s3.get_object(Bucket="data.thegnarlytyke.com", Key="data/0b950bd3-ea3b-44d1-ac40-28081c1d732a.crag.json")
-    obj = s3.get_object(Bucket="data.thegnarlytyke.com", Key=data_key)
+    obj = s3.put_object(Bucket="data.thegnarlytyke.com", Key=data_key)
     
     j = json.loads(obj['Body'].read().decode('utf-8'))
 

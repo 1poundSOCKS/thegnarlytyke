@@ -59,9 +59,9 @@ jobs:
     # - name: Update environment configuration to 'prod'
     #   run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
     # -name: SAM build
-    
-    - name: Deploy data files to S3 bucket
-      run: aws s3 sync ./data/ s3://${{ env.DATA_BUCKET_NAME }} --delete
+
+    # - name: Deploy data files to S3 bucket
+    #   run: aws s3 sync ./data/ s3://${{ env.DATA_BUCKET_NAME }} --delete
 
     - run: sam build --use-container
       working-directory: ./api/github-actions-with-aws-sam
