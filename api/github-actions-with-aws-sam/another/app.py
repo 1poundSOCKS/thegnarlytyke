@@ -20,8 +20,8 @@ def lambda_handler(event, context):
 
 def save_image(event, context):
 
-    string = "dfghj"
-    encoded_string = string.encode("utf-8")
+    # string = "dfghj"
+    # encoded_string = string.encode("utf-8")
 
     s3 = boto3.client('s3')
     request_data = event['queryStringParameters']
@@ -34,9 +34,7 @@ def save_image(event, context):
         "statusCode": 200,
         "body": json.dumps(
             {
-                "message": "save image call successful",
-                "key": data_key,
-                "body": encoded_string
+                "message": "save image call successful"
             }
-        ),
+        )
     }
