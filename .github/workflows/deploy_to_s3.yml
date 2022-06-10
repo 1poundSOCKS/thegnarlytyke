@@ -60,5 +60,5 @@ jobs:
     - run: sam build --use-container
       working-directory: ./api/github-actions-with-aws-sam
 
-    - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-hello-world --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
+    - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name gnarly --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
       working-directory: ./api/github-actions-with-aws-sam
