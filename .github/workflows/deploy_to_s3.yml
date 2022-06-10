@@ -52,7 +52,7 @@ jobs:
 
     - name: Update environment configuration to 'prod'
       run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
-    -name: SAM build
+    # -name: SAM build
 
     # - uses: actions/setup-python@v2
 
