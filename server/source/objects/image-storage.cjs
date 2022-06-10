@@ -9,7 +9,7 @@ let ImageStorage = function() {
 
 ImageStorage.prototype.Init = function(config) {
   this.imagesPath = `env/${config.environment}/images/`;
-  this.loadImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/another`;
+  this.loadImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/load_image`;
   this.saveImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/save_image`;
 }
 
@@ -27,7 +27,6 @@ ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
   const url = `${this.loadImageURL}?id=${ID}`;
   const response = await fetch(url, {
     method: 'GET',
-    // mode: 'no-cors',
     // cache: 'no-cache',
     // credentials: 'include',
     // headers: {
