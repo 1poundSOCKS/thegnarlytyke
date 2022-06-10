@@ -1,4 +1,5 @@
 const Crag = require("./crag.cjs");
+const { SaveImageAndUpdateFilename } = require("./image-storage.cjs");
 
 let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
   this.element = element;
@@ -24,14 +25,28 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage) {
     return topoCanvas;
   });
 
-    const topoImageLoaders = [];
-    const crag = new Crag(this.crag);
-    topoImageCanvases.forEach( async canvas => {
+  const topoImageLoaders = [];
+  const crag = new Crag(this.crag);
+  topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
     let topo = crag.GetMatchingTopo(topoID);
-    if( topo && topo.imageFile ) {
+    if( !topo ) return;
+
+    if( topo.imageFile ) {
       try {
         let topoImageLoader = imageStorage.LoadImageFromFile(topo.imageFile);
+        topoImageLoaders.push(topoImageLoader);
+        let topoImage = await topoImageLoader;
+        this.topoImages.set(topoID, topoImage);
+        this.DisplayTopoImage(canvas, topoImage);
+      }
+      catch( e ) {
+        console.error(e);
+      }
+    }
+    else {
+      try {
+        let topoImageLoader = imageStorage.LoadImageFromAPI(topo.imageFile);
         topoImageLoaders.push(topoImageLoader);
         let topoImage = await topoImageLoader;
         this.topoImages.set(topoID, topoImage);

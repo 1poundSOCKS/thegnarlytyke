@@ -9,7 +9,7 @@ let ImageStorage = function() {
 
 ImageStorage.prototype.Init = function(config) {
   this.imagesPath = `env/${config.environment}/images/`;
-  this.loadImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/save_image`;
+  this.loadImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/another`;
   this.saveImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/save_image`;
 }
 
@@ -24,15 +24,23 @@ ImageStorage.prototype.LoadImageFromFile = async function(filename) {
 }
 
 ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
-  const url = `${this.imagesPath}${filename}`;
+  const url = `${this.loadImageURL}?id=${ID}`;
   const response = await fetch(url, {
     method: 'GET',
-    mode: 'no-cors',
-    cache: 'no-cache',
-    credentials: 'include',
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    }
+    // mode: 'no-cors',
+    // cache: 'no-cache',
+    // credentials: 'include',
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*'
+    // }
+    mode: 'cors',
+    // cache: 'no-cache',
+    // credentials: 'same-origin',
+    // headers: {
+    //   'Content-Type': 'application/json'
+    // },
+    // redirect: 'follow',
+    // referrerPolicy: 'same-origin',
   });
   const data = await response.text();
   return new Promise( (resolve, reject) => {
