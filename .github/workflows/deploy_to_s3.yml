@@ -21,30 +21,24 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    # - name: Set up node 
-    #   uses: actions/setup-node@v1
+    - name: Set up node 
+      uses: actions/setup-node@v1
 
-    # - name: Clean cache
-    #   run: npm cache clean --force
-    #   working-directory: ./server
+    - name: Clean cache
+      run: npm cache clean --force
+      working-directory: ./server
 
-    # - name: Install dependencies
-    #   run: npm install
-    #   working-directory: ./server
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./server
 
-    # - name: Setup Python
-    - uses: actions/setup-python@v2
+    - name: Build
+      run: npm run build
+      working-directory: ./server
 
-    # -name: Setup SAM
-    - uses: aws-actions/setup-sam@v1
-
-    # - name: Build
-    #   run: npm run build
-    #   working-directory: ./server
-
-    # - name: Run tests
-    #   run: npm test
-    #   working-directory: ./server
+    - name: Run tests
+      run: npm test
+      working-directory: ./server
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -53,19 +47,19 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    # - name: Deploy static site to S3 bucket
-    #   run: aws s3 sync ./server/public/ s3://${{ env.BUCKET_NAME }} --exclude "config.json" --delete
+    - name: Deploy static site to S3 bucket
+      run: aws s3 sync ./server/public/ s3://${{ env.BUCKET_NAME }} --exclude "config.json" --delete
 
-    # - name: Update environment configuration to 'prod'
-    #   run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
-    # -name: SAM build
+    - name: Update environment configuration to 'prod'
+      run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
+    -name: SAM build
 
-    # - name: Deploy data files to S3 bucket
-    #   run: aws s3 sync ./data/ s3://${{ env.DATA_BUCKET_NAME }} --delete
+    # - uses: actions/setup-python@v2
 
-    - run: sam build --use-container
-      working-directory: ./api/github-actions-with-aws-sam
+    # - uses: aws-actions/setup-sam@v1
 
-    # -name: Deploy API
-    - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-hello-world --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
-      working-directory: ./api/github-actions-with-aws-sam
+    # - run: sam build --use-container
+    #   working-directory: ./api/github-actions-with-aws-sam
+
+    # - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name sam-hello-world --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
+    #   working-directory: ./api/github-actions-with-aws-sam

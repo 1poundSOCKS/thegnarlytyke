@@ -1,4 +1,5 @@
 const Config = require('./objects/config.cjs');
+const ImageStorage = require("./objects/image-storage.cjs");
 const CragLoader = require('./objects/crag-loader.cjs');
 const Crag = require('./objects/crag.cjs');
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
@@ -24,6 +25,8 @@ let OnConfigLoad = async () => {
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
 
+  ImageStorage.Init(Config);
+
   const cragStorage = new CragLoader('client');
   _crag = await cragStorage.Load(cragID);
   
@@ -32,7 +35,7 @@ let OnConfigLoad = async () => {
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
-  _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
+  _topoMediaScroller.LoadTopoImages(ImageStorage);
 
   if( Config.mode === "edit" ) {
     document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);

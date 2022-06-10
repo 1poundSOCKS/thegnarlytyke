@@ -1,4 +1,5 @@
 const Config = require('./objects/config.cjs');
+const ImageStorage = require('./objects/image-storage.cjs');
 const CragLoader = require('./objects/crag-loader.cjs');
 const Crag = require('./objects/crag.cjs');
 const Topo = require('./objects/topo.cjs');
@@ -7,7 +8,6 @@ const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
 const ImageUploadCache = require('./objects/image-upload-cache.cjs');
-const ImageStorage = require('./objects/image-storage.cjs');
 
 let _crag = null;
 let _topoMediaScroller = null;
@@ -30,6 +30,8 @@ let OnConfigLoad = async () => {
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
 
+  ImageStorage.Init(Config);
+
   const cragStorage = new CragLoader('client');
   _crag = new Crag(await cragStorage.Load(cragID));
   
@@ -38,7 +40,7 @@ let OnConfigLoad = async () => {
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), true);
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
-  _topoMediaScroller.LoadTopoImages(`env/${Config.environment}/images/`);
+  _topoMediaScroller.LoadTopoImages(ImageStorage);
 
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _crag);
 
@@ -124,8 +126,8 @@ module.exports = OnSave = () => {
     uploads.push(ImageStorage.SaveImageAndUpdateFilename(ID, imageData, topo));
   });
   Promise.all(uploads).then( (values) => {
-    const cragStorage = new CragLoader('client');
-    cragStorage.Save(_crag);
+    // const cragStorage = new CragLoader('client');
+    // cragStorage.Save(_crag);
   });
 }
 

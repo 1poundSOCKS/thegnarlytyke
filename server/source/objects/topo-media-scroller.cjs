@@ -9,7 +9,7 @@ let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
   this.OnTopoSelectedCallback = OnTopoSelectedCallback;
 }
 
-TopoMediaScroller.prototype.LoadTopoImages = async function(imagesPath) {
+TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage) {
   let cragTopoIDs = this.crag.topos.map( topo => topo.id );
   
   let topoImageContainers = cragTopoIDs.map( topoID => {
@@ -24,17 +24,22 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imagesPath) {
     return topoCanvas;
   });
 
-  const topoImageLoaders = [];
-  const crag = new Crag(this.crag);
-  topoImageCanvases.forEach( async canvas => {
+    const topoImageLoaders = [];
+    const crag = new Crag(this.crag);
+    topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
     let topo = crag.GetMatchingTopo(topoID);
     if( topo && topo.imageFile ) {
-      let topoImageLoader = this.LoadImage(`${imagesPath}${topo.imageFile}`);
-      topoImageLoaders.push(topoImageLoader);
-      let topoImage = await topoImageLoader;
-      this.topoImages.set(topoID, topoImage);
-      this.DisplayTopoImage(canvas, topoImage);
+      try {
+        let topoImageLoader = imageStorage.LoadImageFromFile(topo.imageFile);
+        topoImageLoaders.push(topoImageLoader);
+        let topoImage = await topoImageLoader;
+        this.topoImages.set(topoID, topoImage);
+        this.DisplayTopoImage(canvas, topoImage);
+      }
+      catch( e ) {
+        console.error(e);
+      }
     }
   });
 
@@ -86,15 +91,6 @@ TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
 
 TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
   this.topoImages.set(this.GetSelectedTopoID(), image);
-}
-
-TopoMediaScroller.prototype.LoadImage = function(url) {
-  return new Promise( (resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = (err) => reject(err);
-    img.src = url;
-  });
 }
 
 TopoMediaScroller.prototype.ShiftCurrentTopoLeft = function() {
