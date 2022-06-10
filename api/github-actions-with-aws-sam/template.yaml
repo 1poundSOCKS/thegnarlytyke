@@ -14,8 +14,8 @@ Resources:
   LoadImageFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: gnarly/
-      Handler: app.load_image
+      CodeUri: load_image/
+      Handler: app.lambda_handler
       Runtime: python3.8
       Architectures:
         - x86_64
@@ -28,8 +28,8 @@ Resources:
   SaveImageFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: gnarly/
-      Handler: app.save_image
+      CodeUri: save_image/
+      Handler: app.lambda_handler
       Runtime: python3.8
       Architectures:
         - x86_64
