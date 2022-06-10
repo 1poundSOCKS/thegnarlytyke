@@ -4,11 +4,12 @@ import boto3
 
 def lambda_handler(event, context):
 
-    s3 = boto3.client('s3')    
+    s3 = boto3.client('s3')
     request_data = event['queryStringParameters']
     crag_id = request_data['id']
-    data_key = "data/{}.crag.json".format(crag_id)
-    obj = s3.get_object(Bucket="data.thegnarlytyke.com", Key=data_key)    
+    # data_key = "data/{}.crag.json".format(crag_id)
+    data_key = "610cb7a8-6bd7-4165-ab49-04703a970f6d.txt"
+    obj = s3.get_object(Bucket="images.thegnarlytyke.com", Key=data_key)
     j = json.loads(obj['Body'].read().decode('utf-8'))
 
     return {
