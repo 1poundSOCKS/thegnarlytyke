@@ -46,7 +46,7 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage) {
     }
     else {
       try {
-        let topoImageLoader = imageStorage.LoadImageFromAPI(topo.imageFile);
+        let topoImageLoader = imageStorage.LoadImageFromAPI(topo.id);
         topoImageLoaders.push(topoImageLoader);
         let topoImage = await topoImageLoader;
         this.topoImages.set(topoID, topoImage);

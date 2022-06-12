@@ -1,8 +1,9 @@
 const Config = require('./config.cjs');
 const Crag = require('./crag.cjs');
 
-let CragLoader = function(type) {
+let CragLoader = function(type, config) {
   this.type = type;
+  this.dataURL = config.data_url;
 }
 
 CragLoader.prototype.Load = async function(id) {
@@ -20,8 +21,7 @@ CragLoader.prototype.Save = async function(id) {
 }
 
 CragLoader.prototype.LoadFromClient = async function(id) {
-  const env = Config.environment;
-  const cragURL = `env/${env}/data/${id}.crag.json`;
+  const cragURL = `${this.dataURL}${id}.crag.json`;
   let loadedString = await fetch(cragURL);
   let crag = await loadedString.json();
   this.UpdateCragAfterRestore(crag);

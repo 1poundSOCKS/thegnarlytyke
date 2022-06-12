@@ -1,4 +1,6 @@
 {
   "environment": "prod",
-  "mode" : "view"
+  "mode" : "view",
+  "data_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/data/",
+  "images_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/images/"
 }

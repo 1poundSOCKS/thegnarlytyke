@@ -27,7 +27,7 @@ let OnConfigLoad = async () => {
 
   ImageStorage.Init(Config);
 
-  const cragStorage = new CragLoader('client');
+  const cragStorage = new CragLoader('client', Config);
   _crag = await cragStorage.Load(cragID);
   
   document.getElementById('crag-view-header').innerText = _crag.name;

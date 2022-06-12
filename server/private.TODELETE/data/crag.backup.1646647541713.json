@@ -1,0 +1,51 @@
+{
+  "routes": [
+    {
+      "id": "997634ec-5d88-4f08-ac36-7fca12f39315",
+      "name": "Conch",
+      "grade": "VS 4b"
+    },
+    {
+      "id": "07984564-22a1-4e5e-aa3c-83b308405d2e",
+      "name": "Joanna",
+      "grade": "VS 5a"
+    }
+  ],
+  "topos": [
+    {
+      "id": "2a6c208d-4978-4b9b-a62a-50a10b23adf4",
+      "imageFile": "2a6c208d-4978-4b9b-a62a-50a10b23adf4.jpg",
+      "routes": [
+        {
+          "id": "07984564-22a1-4e5e-aa3c-83b308405d2e",
+          "points": []
+        }
+      ]
+    },
+    {
+      "id": "0f07455a-1625-4a7e-a84c-20eb37837887",
+      "imageFile": "0f07455a-1625-4a7e-a84c-20eb37837887.jpg",
+      "routes": []
+    },
+    {
+      "id": "632a7c8f-afbd-4ed5-ad7a-6fd3b8cdb9d2",
+      "imageFile": "632a7c8f-afbd-4ed5-ad7a-6fd3b8cdb9d2.jpg",
+      "routes": [
+        {
+          "id": "07984564-22a1-4e5e-aa3c-83b308405d2e",
+          "points": []
+        }
+      ]
+    },
+    {
+      "id": "65cb098a-8803-4364-8705-b19d7d1a5629",
+      "imageFile": "65cb098a-8803-4364-8705-b19d7d1a5629.jpg",
+      "routes": []
+    },
+    {
+      "id": "255f5d8f-1de2-4dff-801b-fb4dbb0f07cf",
+      "imageFile": "255f5d8f-1de2-4dff-801b-fb4dbb0f07cf.jpg",
+      "routes": []
+    }
+  ]
+}
