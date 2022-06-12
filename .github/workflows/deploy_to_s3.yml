@@ -8,8 +8,6 @@ on:
 env:
   AWS_REGION: eu-west-2
   BUCKET_NAME: thegnarlytyke.com
-  DATA_BUCKET_NAME: data.thegnarlytyke.com
-  API_BUCKET_NAME: api.thegnarlytyke.com
 
 jobs:
   deploy:
@@ -52,13 +50,3 @@ jobs:
 
     - name: Update environment configuration to 'prod'
       run: aws s3 sync ./server/config/prod s3://${{ env.BUCKET_NAME }}
-
-    # - uses: actions/setup-python@v2
-
-    # - uses: aws-actions/setup-sam@v1
-
-    # - run: sam build --use-container
-    #   working-directory: ./api/github-actions-with-aws-sam
-
-    # - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name gnarly --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
-    #   working-directory: ./api/github-actions-with-aws-sam
