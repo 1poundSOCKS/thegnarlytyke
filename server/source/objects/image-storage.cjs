@@ -4,13 +4,12 @@ let ImageStorage = function() {
   this.imagesPath = null;
   this.loadImageURL = null;
   this.saveImageURL = null;
-  this.imagesPath = null;
 }
 
 ImageStorage.prototype.Init = function(config) {
   this.imagesPath = `${config.images_url}`;
-  this.loadImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/load_image`;
-  this.saveImageURL = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/save_image`;
+  this.loadImageURL = `${config.save_image_url}`;
+  this.saveImageURL = `${config.save_image_url}`;
 }
 
 ImageStorage.prototype.LoadImageFromFile = async function(filename) {
@@ -40,10 +39,8 @@ ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
 
 ImageStorage.prototype.SaveImageAndUpdateFilename = async function(ID, imageData, filenameObject) {
   const filename = await this.SaveImageWithAPI(ID, imageData);
-  return new Promise( resolve => {
-    filenameObject.imageFile = filename;
-    resolve(filename);
-  });
+  console.log(`filename=${filename}`);
+  filenameObject.imageFile = filename;
 }
 
 ImageStorage.prototype.SaveImageToOriginServer = async function(ID, imageData) {
@@ -64,17 +61,10 @@ ImageStorage.prototype.SaveImageToOriginServer = async function(ID, imageData) {
 }
 
 ImageStorage.prototype.SaveImageWithAPI = async function(ID, imageData) {
-  const url = `https://o8w8iaawi0.execute-api.eu-west-2.amazonaws.com/Prod/save_image?id=${ID}`;
+  const url = `${this.saveImageURL}?id=${ID}`;
   const response = await fetch(url, {
     method: 'POST',
-    mode: 'no-cors',
-    cache: 'no-cache',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'same-origin',
+    mode: 'cors',
     body: JSON.stringify(imageData)
   });
 
