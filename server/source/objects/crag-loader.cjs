@@ -3,7 +3,7 @@ const Crag = require('./crag.cjs');
 
 let CragLoader = function(type, config) {
   this.type = type;
-  this.dataURL = config.data_url;
+  if( config ) this.dataURL = config.data_url;
 }
 
 CragLoader.prototype.Load = async function(id) {
