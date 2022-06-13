@@ -39,7 +39,6 @@ ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
 
 ImageStorage.prototype.SaveImageAndUpdateFilename = async function(ID, imageData, filenameObject) {
   const filename = await this.SaveImageWithAPI(ID, imageData);
-  console.log(`filename=${filename}`);
   filenameObject.imageFile = filename;
 }
 

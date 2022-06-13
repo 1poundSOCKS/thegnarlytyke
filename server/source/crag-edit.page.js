@@ -121,13 +121,14 @@ module.exports = OnSortTopoRoutes = () => {
 module.exports = OnSave = () => {
   const uploads = [];
   _imageUploadCache.imageDataMap.forEach( (imageData, ID) => {
-    console.log(`ID: ${ID}, image data length: ${imageData.length}`);
     const topo = _crag.GetMatchingTopo(ID);
     uploads.push(ImageStorage.SaveImageAndUpdateFilename(ID, imageData, topo));
   });
   Promise.all(uploads).then( (values) => {
-    // const cragStorage = new CragLoader('client');
-    // cragStorage.Save(_crag);
+    const cragStorage = new CragLoader('client',Config);
+    cragStorage.Save(_crag).then( response => {
+      console.log(`saved!!!`)
+    });
   });
 }
 

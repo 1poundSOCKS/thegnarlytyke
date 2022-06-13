@@ -3,7 +3,10 @@ const Crag = require('./crag.cjs');
 
 let CragLoader = function(type, config) {
   this.type = type;
-  if( config ) this.dataURL = config.data_url;
+  if( config ) {
+    this.dataURL = config.data_url;
+    this.saveCragURL = config.save_crag_url;
+  }
 }
 
 CragLoader.prototype.Load = async function(id) {
@@ -31,18 +34,13 @@ CragLoader.prototype.LoadFromClient = async function(id) {
 CragLoader.prototype.SaveFromClient = async function(crag) {
   const cragToStore = this.FormatCragForStorage(crag);
   const requestBody = JSON.stringify(cragToStore);
-  return fetch('./save_crag', {
+  const url = `${this.saveCragURL}?id=${crag.id}`;
+  const response = await fetch(url, {
     method: 'POST',
-    mode: 'same-origin',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'same-origin',
+    mode: 'cors',
     body: requestBody
   });
+  return response;
 }
 
 CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
