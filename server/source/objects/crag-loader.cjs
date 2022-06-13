@@ -25,7 +25,7 @@ CragLoader.prototype.Save = async function(id) {
 
 CragLoader.prototype.LoadFromClient = async function(id) {
   const cragURL = `${this.dataURL}${id}.crag.json`;
-  let loadedString = await fetch(cragURL);
+  let loadedString = await fetch(cragURL, {cache: "reload"});
   let crag = await loadedString.json();
   this.UpdateCragAfterRestore(crag);
   return crag;
