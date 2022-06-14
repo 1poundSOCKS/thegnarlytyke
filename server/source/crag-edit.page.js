@@ -17,7 +17,7 @@ let _cragRouteTable = null;
 let _imageUploadCache = null;
 
 window.onload = () => {
-  fetch('config.json')
+  fetch('config.json', {cache: "reload"})
   .then( response => response.json() )
   .then( parsedData => {
     Config.Load(parsedData);
