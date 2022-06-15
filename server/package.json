@@ -10,8 +10,7 @@
     "build-index": "browserify source/index.page.js -o public/scripts/index.page.js",
     "build-crag-view": "browserify source/crag-view.page.js -o public/scripts/crag-view.page.js",
     "build-crag-edit": "browserify source/crag-edit.page.js -o public/scripts/crag-edit.page.js",
-    "build-upload-topos": "browserify source/upload-topos.page.js -o public/scripts/upload-topos.page.js",
-    "build": "npm run build-index && npm run build-crag-view && npm run build-crag-edit && npm run build-upload-topos",
+    "build": "npm run build-index && npm run build-crag-view && npm run build-crag-edit",
     "watch": "watchify source/bundle.js -o public/bundle.js -v"
   },
   "keywords": [],
