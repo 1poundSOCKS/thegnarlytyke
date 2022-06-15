@@ -38,7 +38,7 @@ html {
   font-size: 2rem;
 }
 
-.crag-view-icon-bar {
+.tgt-icon-bar {
   font-size: 2rem;
   text-align: center;
   margin-right: 0.2rem;
@@ -50,18 +50,18 @@ html {
   text-decoration: none;
 }
 
-.crag-view-icon {
+.tgt-icon {
   cursor: pointer;
   color: var(--tgt-std-dark-color);
   font-family: var(--tgt-font);
 }
 
-.crag-view-icon:hover {
+.tgt-icon:hover {
   cursor: pointer;
   color: var(--tgt-std-light-color);
 }
 
-.crag-view-icon-text {
+.tgt-icon-text {
   font-family: var(--tgt-font);
 }
 
@@ -165,7 +165,7 @@ html {
   background-color: var(--tgt-std-background-color);
 }
 
-.icon-bar {
+/* .icon-bar {
   display: block;
   margin: auto;
   font-size: 2rem;
@@ -191,7 +191,7 @@ html {
 
 .icon-bar a:hover {
   background-color: grey;
-}
+} */
 
 .table-header {
   color: var(--tgt-std-light-color);

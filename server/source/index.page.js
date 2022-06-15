@@ -12,6 +12,11 @@ let OnConfigLoad = async () => {
   cragIndex.data.crags.forEach( crag => {
     AppendCrag(crag, parentElement);
   })
+
+  if( Config.mode === "edit" ) {
+    document.getElementById('edit-crag-index-address').setAttribute('href', `./crag-index-edit.html`);
+    document.getElementById('crag-index-icon-bar').classList.remove('do-not-display');
+  }
 }
 
 let AppendCrag = (crag, parentElement) => {

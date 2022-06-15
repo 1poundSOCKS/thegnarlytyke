@@ -10,18 +10,18 @@
 <body id="crag-view-body">
   <h1 class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1>
   <h2 id="crag-view-header" class="tgt-subheader"></h2>
-  <div id="crag-view-icon-bar" class="crag-view-icon-bar">
-    <i id="add-topo" class="crag-view-icon fa-solid fa-plus fa-border do-not-display" onclick="OnAddTopo()" title="Add topo"></i>
-    <i id="upload-topo" class="crag-view-icon fa-solid fa-file-arrow-up fa-border do-not-display" onclick="document.getElementById('topo-image-file').click()" title="Upload image"></i>
+  <div id="crag-view-icon-bar" class="tgt-icon-bar">
+    <i id="add-topo" class="tgt-icon fa-solid fa-plus fa-border do-not-display" onclick="OnAddTopo()" title="Add topo"></i>
+    <i id="upload-topo" class="tgt-icon fa-solid fa-file-arrow-up fa-border do-not-display" onclick="document.getElementById('topo-image-file').click()" title="Upload image"></i>
     <input type="file" id="topo-image-file" name="filename" style="display:none"></input>
     <span id="shift-topo-left-container" class="do-not-display">
-      <i id="shift-topo-left" class="crag-view-icon fa-solid fa-arrow-left fa-border do-not-display" onclick="OnShiftTopoLeft()" title="Shift topo left"></i>
+      <i id="shift-topo-left" class="tgt-icon fa-solid fa-arrow-left fa-border do-not-display" onclick="OnShiftTopoLeft()" title="Shift topo left"></i>
     </span>
     <span id="shift-topo-right-container" class="do-not-display">
-      <i id="shift-topo-right" class="crag-view-icon fa-solid fa-arrow-right fa-border do-not-display" onclick="OnShiftTopoRight()" title="Shift topo right"></i>
+      <i id="shift-topo-right" class="tgt-icon fa-solid fa-arrow-right fa-border do-not-display" onclick="OnShiftTopoRight()" title="Shift topo right"></i>
     </span>
     <i id="sort-topo-routes" class="crag-view-icon fa-solid fa-sort fa-border" onclick="OnSortTopoRoutes()" title="Sort topo routes"></i>
-    <i id="save-crag" class="crag-view-icon fa-solid fa-save fa-border" onclick="OnSave()" title="Save crag"></i>
+    <i id="save-crag" class="tgt-icon fa-solid fa-save fa-border" onclick="OnSave()" title="Save crag"></i>
   </div>
   <div id="topo-images-container" class="topo-images-container"></div>
   <div id="main-topo-container" class="main-topo-container-edit">
