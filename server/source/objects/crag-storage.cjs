@@ -1,7 +1,7 @@
 const Config = require('./config.cjs');
 const Crag = require('./crag.cjs');
 
-let CragLoader = function(type, config) {
+let CragStorage = function(type, config) {
   this.type = type;
   if( config ) {
     this.dataURL = config.data_url;
@@ -9,21 +9,21 @@ let CragLoader = function(type, config) {
   }
 }
 
-CragLoader.prototype.Load = async function(id) {
+CragStorage.prototype.Load = async function(id) {
   switch( this.type ) {
     case 'client':
       return this.LoadFromClient(id);
   }
 }
 
-CragLoader.prototype.Save = async function(id) {
+CragStorage.prototype.Save = async function(id) {
   switch( this.type ) {
     case 'client':
       return this.SaveFromClient(id);
   }
 }
 
-CragLoader.prototype.LoadFromClient = async function(id) {
+CragStorage.prototype.LoadFromClient = async function(id) {
   const cragURL = `${this.dataURL}${id}.crag.json`;
   let loadedString = await fetch(cragURL, {cache: "reload"});
   let crag = await loadedString.json();
@@ -31,7 +31,7 @@ CragLoader.prototype.LoadFromClient = async function(id) {
   return crag;
 }
 
-CragLoader.prototype.SaveFromClient = async function(crag) {
+CragStorage.prototype.SaveFromClient = async function(crag) {
   const cragToStore = this.FormatCragForStorage(crag);
   const requestBody = JSON.stringify(cragToStore);
   const url = `${this.saveCragURL}?id=${crag.id}`;
@@ -43,7 +43,7 @@ CragLoader.prototype.SaveFromClient = async function(crag) {
   return response;
 }
 
-CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
+CragStorage.prototype.UpdateCragAfterRestore = function(crag) {
   const routeInfoMap = new Map();
   if( crag.routes ) crag.routes.forEach( route => routeInfoMap.set(route.id, route) );
 
@@ -67,7 +67,7 @@ CragLoader.prototype.UpdateCragAfterRestore = function(crag) {
   });
 }
 
-CragLoader.prototype.FormatCragForStorage = function(crag) {
+CragStorage.prototype.FormatCragForStorage = function(crag) {
   const cragForStorage = {};
   if( crag.id ) cragForStorage.id = crag.id;
   if( crag.name ) cragForStorage.name = crag.name;
@@ -76,7 +76,7 @@ CragLoader.prototype.FormatCragForStorage = function(crag) {
   return cragForStorage;
 }
 
-CragLoader.prototype.FormatRoutesForStorage = function(routes) {
+CragStorage.prototype.FormatRoutesForStorage = function(routes) {
   return routes.map( route => {
     return {
       id: route.id,
@@ -86,7 +86,7 @@ CragLoader.prototype.FormatRoutesForStorage = function(routes) {
   });
 }
 
-CragLoader.prototype.FormatToposForStorage = function(topos) {
+CragStorage.prototype.FormatToposForStorage = function(topos) {
   return topos.map( topo => {
     const topoForStorage = {};
     if( topo.id ) topoForStorage.id = topo.id;
@@ -96,7 +96,7 @@ CragLoader.prototype.FormatToposForStorage = function(topos) {
   });
 }
 
-CragLoader.prototype.FormatTopoRoutesForStorage = function(routes) {
+CragStorage.prototype.FormatTopoRoutesForStorage = function(routes) {
   return routes.map( route => {
     return {
       id: route.id,
@@ -105,7 +105,7 @@ CragLoader.prototype.FormatTopoRoutesForStorage = function(routes) {
   });
 }
 
-CragLoader.prototype.FormatPointsForStorage = function(points) {
+CragStorage.prototype.FormatPointsForStorage = function(points) {
   if( !points ) return [];
   return points.map( point => {
     const pointToSave = {id: point.id};
@@ -120,4 +120,4 @@ CragLoader.prototype.FormatPointsForStorage = function(points) {
   });
 }
 
-module.exports = CragLoader;
+module.exports = CragStorage;

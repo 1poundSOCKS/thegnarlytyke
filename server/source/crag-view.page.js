@@ -1,6 +1,6 @@
 const Config = require('./objects/config.cjs');
 const ImageStorage = require("./objects/image-storage.cjs");
-const CragLoader = require('./objects/crag-loader.cjs');
+const CragStorage = require('./objects/crag-storage.cjs');
 const Crag = require('./objects/crag.cjs');
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
@@ -12,12 +12,7 @@ let _mainTopoImage = null;
 let _topoRouteTable = null;
 
 window.onload = () => {
-  fetch('config.json', {cache: "reload"})
-  .then( response => response.json() )
-  .then( parsedData => {
-    Config.Load(parsedData);
-    OnConfigLoad();
-  });
+  Config.Load().then( () => OnConfigLoad() );
 }
 
 let OnConfigLoad = async () => {
@@ -27,7 +22,7 @@ let OnConfigLoad = async () => {
 
   ImageStorage.Init(Config);
 
-  const cragStorage = new CragLoader('client', Config);
+  const cragStorage = new CragStorage('client', Config);
   _crag = await cragStorage.Load(cragID);
   
   document.getElementById('crag-view-header').innerText = _crag.name;
