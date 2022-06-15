@@ -10,8 +10,10 @@
 <body>
   <h1 class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1>
   <h2 class="tgt-subheader">The Crags (EDIT)</h2>
+  <input type="file" id="image-file" name="filename" style="display:none"></input>
   <div id="crag-index-edit-icon-bar" class="tgt-icon-bar">
-    <i id="add-crag" class="tgt-icon fa-solid fa-plus fa-border do-not-display" onclick="OnAddCrag()" title="Add crag"></i>
+    <i id="add-crag" class="tgt-icon fa-solid fa-plus fa-border" onclick="OnAddCrag()" title="Add crag"></i>
+    <i id="upload-image" class="tgt-icon fa-solid fa-file-arrow-up fa-border" onclick="document.getElementById('image-file').click()" title="Upload image"></i>
     <i id="save-crag-index" class="tgt-icon fa-solid fa-save fa-border" onclick="OnSaveCragIndex()" title="Save crag index"></i>
   </div>
   <div id="crag-covers-container" class="images-media-scroller">
