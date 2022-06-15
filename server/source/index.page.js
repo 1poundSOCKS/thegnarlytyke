@@ -21,7 +21,7 @@ let OnConfigLoad = async () => {
 
 let AppendCrag = (crag, parentElement) => {
   let cragElement = document.createElement('div');
-  cragElement.classList.add("crag_cover-container")
+  cragElement.classList.add("crag-cover-container")
   cragElement.setAttribute('data-id', crag.id);
   cragElement.setAttribute('onclick',`window.location.href='crag-view.html?id=${crag.id}'`);
   let cragHeader = document.createElement('h3');

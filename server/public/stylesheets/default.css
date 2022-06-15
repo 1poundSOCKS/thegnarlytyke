@@ -93,7 +93,7 @@ html {
   background-color: lightgrey;
 }
 
-.crag_cover-container:hover {
+.crag-cover-container:hover {
   cursor: pointer;
 }
 
@@ -121,6 +121,20 @@ html {
 }
 
 .topo-container-selected {
+  background-color: var(--tgt-highlight-background-color);
+}
+
+.images-media-scroller {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 10rem;
+  overflow-x: auto;
+  gap: 0.5rem;
+  justify-content: safe center;
+  background-color: var(--tgt-std-background-color);
+}
+
+.images-media-scroller-selected {
   background-color: var(--tgt-highlight-background-color);
 }
 
@@ -164,34 +178,6 @@ html {
 .topo-image-container {
   background-color: var(--tgt-std-background-color);
 }
-
-/* .icon-bar {
-  display: block;
-  margin: auto;
-  font-size: 2rem;
-  background-color: white;
-}
-
-.icon-bar a {
-  float: center;
-  text-align: center;
-  transition: all 0.3s ease;
-  color: black;
-  font-size: 3rem;
-}
-
-.icon-bar input {
-  display: block;
-  font-size: 2rem;
-}
-
-.icon-bar label {
-  font-size: 2rem;
-}
-
-.icon-bar a:hover {
-  background-color: grey;
-} */
 
 .table-header {
   color: var(--tgt-std-light-color);
