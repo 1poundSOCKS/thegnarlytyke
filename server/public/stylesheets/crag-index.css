@@ -1,0 +1,49 @@
+.crag-cover-header {
+  margin: auto;
+  margin-top: 1rem;
+  text-align: center;
+  background: var(--tgt-header-background-color);
+  background-size: 100%;
+  color: var(--tgt-std-light-color);
+  letter-spacing: .1em;
+  font-size: 2rem;
+}
+
+.crag-cover-image {
+  margin-bottom: 1rem;
+}
+
+.crag-covers-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  align-items: top;
+  margin: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: lightgrey;
+}
+
+.crag-cover-container:hover {
+  cursor: pointer;
+}
+
+.images-media-scroller {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 10rem;
+  overflow-x: auto;
+  gap: 0.5rem;
+  justify-content: safe center;
+  background-color: var(--tgt-std-background-color);
+}
+
+.images-media-scroller img {
+  max-width: 100%;
+}
+
+.images-media-scroller-selected {
+  background-color: var(--tgt-highlight-background-color);
+}

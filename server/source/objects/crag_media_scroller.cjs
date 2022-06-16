@@ -18,7 +18,6 @@ CragMediaScroller.prototype.AppendCrag = function(crag) {
   cragHeader.innerText = crag.name;
   cragElement.appendChild(cragHeader)
   const cragImage = document.createElement('img');
-  cragImage.classList.add('crag-cover-image');
   if( crag.imageFile ) {
     cragImage.setAttribute('src',`${this.imagesURL}${crag.imageFile}`)
   }
