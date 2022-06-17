@@ -1,6 +1,9 @@
 const Config = require('./objects/config.cjs');
+const DataStorage = require('./objects/data-storage.cjs');
+const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const CragMediaScroller = require('./objects/crag_media_scroller.cjs');
+const ImageFileCompressor = require('./objects/image-file-compressor.cjs')
 
 let _cragIndex = null;
 let _cragMediaScroller = null;
@@ -10,13 +13,16 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  DataStorage.Init(Config);
+  ImageStorage.Init(Config);
   _cragIndex = new CragIndex(Config);
-  const cragIndexData = await _cragIndex.Load();
+  const cragIndexData = await _cragIndex.Load(DataStorage, ImageStorage);
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
+  document.getElementById('image-file').onchange = OnUploadImageFile;
 }
 
-let OnCragSelected = (cragID) => {
-  console.log(`Crag clicked: ${cragID}`);
+let OnCragSelected = () => {
+  console.log(`Crag clicked: ${_cragMediaScroller.selectedCrag.id}`);
 }
 
 module.exports = OnAddCrag = () => {
@@ -24,6 +30,13 @@ module.exports = OnAddCrag = () => {
   _cragMediaScroller.AppendCrag(crag);
 }
 
+let OnUploadImageFile = async () => {
+  const imageFileElement = document.getElementById('image-file');
+  const ifc = new ImageFileCompressor(_cragMediaScroller.selectedCanvas);
+  const imageData = await ifc.LoadAndCompress(imageFileElement.files[0]);
+  _cragMediaScroller.selectedCrag.imageData = imageData;
+}
+
 module.exports = OnSaveCragIndex = () => {
-  console.log(`Save crag index`)
+  _cragIndex.Save(DataStorage, ImageStorage);
 }

@@ -6,24 +6,52 @@ let CragMediaScroller = function(element, imagesURL, crags, OnCragSelectedHandle
   this.crags.forEach( crag => {
     this.AppendCrag(crag);
   })
+  this.selectedCanvas = null;
+  this.selectedCrag = null;
 }
 
 CragMediaScroller.prototype.AppendCrag = function(crag) {
   let cragElement = document.createElement('div');
   cragElement.classList.add("crag-cover-container")
   cragElement.setAttribute('data-id', crag.id);
-  cragElement.onclick = () => this.OnCragSelectedHandler(crag.id);
+
   let cragHeader = document.createElement('h3');
   cragHeader.classList.add("crag-cover-header");
   cragHeader.innerText = crag.name;
   cragElement.appendChild(cragHeader)
-  const cragImage = document.createElement('img');
-  if( crag.imageFile ) {
-    cragImage.setAttribute('src',`${this.imagesURL}${crag.imageFile}`)
+
+  if( crag.imageLoader ) {
+    const cragCanvas = document.createElement('canvas');
+    cragElement.appendChild(cragCanvas);
+    crag.imageLoader.then( image => {
+      cragCanvas.width = image.width;
+      cragCanvas.height = image.height;
+      const ctx = cragCanvas.getContext("2d");
+      ctx.drawImage(image,0, 0);
+    })
+    cragElement.onclick = () => {
+      this.selectedCanvas = cragCanvas;
+      this.selectedCrag = crag;
+      this.OnCragSelectedHandler();
+    }
   }
-  cragImage.setAttribute('alt',crag.name);
-  cragElement.appendChild(cragImage);
-  this.element.appendChild(cragElement);
+  else if( crag.imageFile ) {
+    const cragImage = document.createElement('img');
+    cragImage.setAttribute('src',`${this.imagesURL}${crag.imageFile}`)
+    cragImage.setAttribute('alt',crag.name);
+    cragElement.appendChild(cragImage);
+  }
+  else {
+    const cragCanvas = document.createElement('canvas');
+    cragElement.appendChild(cragCanvas);
+    cragElement.onclick = () => {
+      this.selectedCanvas = cragCanvas;
+      this.selectedCrag = crag;
+      this.OnCragSelectedHandler();
+    }
+   }
+
+   this.element.appendChild(cragElement);
 }
 
 module.exports = CragMediaScroller;

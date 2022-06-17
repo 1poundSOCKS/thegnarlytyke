@@ -1,4 +1,5 @@
 const Config = require('./objects/config.cjs');
+const DataStorage = require('./objects/data-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 
 window.onload = () => {
@@ -6,8 +7,9 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
-  const cragIndex = new CragIndex(Config);
-  await cragIndex.Load();
+  DataStorage.Init(Config);
+  const cragIndex = new CragIndex();
+  await cragIndex.Load(DataStorage);
   const parentElement = document.getElementById('crag-covers-container');
   cragIndex.data.crags.forEach( crag => {
     AppendCrag(crag, parentElement);

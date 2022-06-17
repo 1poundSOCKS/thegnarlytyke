@@ -8,6 +8,11 @@
   --tgt-highlight-background-color: darkgray;
 }
 
+label, input {
+  font-family: var(--tgt-font);
+  font-size: 2rem;
+}
+
 html {
   font-family: var(--tgt-font);
   background-color: var(--tgt-std-background-color);

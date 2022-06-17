@@ -33,7 +33,7 @@
 .images-media-scroller {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 10rem;
+  grid-auto-columns: 20rem;
   overflow-x: auto;
   gap: 0.5rem;
   justify-content: safe center;
@@ -41,6 +41,10 @@
 }
 
 .images-media-scroller img {
+  max-width: 100%;
+}
+
+.images-media-scroller canvas {
   max-width: 100%;
 }
 

@@ -1,5 +1,3 @@
-const Config = require('./config.cjs');
-
 let ImageStorage = function() {
   this.imagesPath = null;
   this.loadImageURL = null;
@@ -59,8 +57,9 @@ ImageStorage.prototype.SaveImageToOriginServer = async function(ID, imageData) {
   return response;
 }
 
-ImageStorage.prototype.SaveImageWithAPI = async function(ID, imageData) {
-  const url = `${this.saveImageURL}?id=${ID}`;
+ImageStorage.prototype.SaveImageWithAPI = async function(ID, imageData, type) {
+  if( !type ) type = "topo";
+  const url = `${this.saveImageURL}?id=${ID}&type=${type}`;
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',
