@@ -14,7 +14,7 @@ DataStorage.prototype.Load = async function(object_id) {
 }
 
 DataStorage.prototype.Save = async function(object_id, data) {
-  const requestBody = JSON.stringify(data);
+  const requestBody = JSON.stringify(data, null, 2);
   const url = `${this.saveDataURL}?id=${object_id}`;
   const response = await fetch(url, {
     method: 'POST',

@@ -3,7 +3,7 @@ const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const CragMediaScroller = require('./objects/crag_media_scroller.cjs');
-const ImageFileCompressor = require('./objects/image-file-compressor.cjs')
+const ImageFileCompressor = require('./objects/image-file-compressor.cjs');
 
 let _cragIndex = null;
 let _cragMediaScroller = null;
