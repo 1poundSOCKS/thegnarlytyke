@@ -19,10 +19,16 @@ let OnConfigLoad = async () => {
   const cragIndexData = await _cragIndex.Load(DataStorage, ImageStorage);
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
   document.getElementById('image-file').onchange = OnUploadImageFile;
+  document.getElementById("crag-name").onchange = OnCragNameChanged;
 }
 
 let OnCragSelected = () => {
-  console.log(`Crag clicked: ${_cragMediaScroller.selectedCrag.id}`);
+  document.getElementById("crag-name").value = _cragMediaScroller.selectedCrag.name;
+}
+
+let OnCragNameChanged = () => {
+  if( _cragMediaScroller.selectedCrag ) _cragMediaScroller.selectedCrag.name = document.getElementById("crag-name").value;
+  _cragMediaScroller.RefreshSelectedContainer();
 }
 
 module.exports = OnAddCrag = () => {

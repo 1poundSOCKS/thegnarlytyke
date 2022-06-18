@@ -30,6 +30,7 @@ CragMediaScroller.prototype.AppendCrag = function(crag) {
       ctx.drawImage(image,0, 0);
     })
     cragElement.onclick = () => {
+      this.selectedHeader = cragHeader;
       this.selectedCanvas = cragCanvas;
       this.selectedCrag = crag;
       this.OnCragSelectedHandler();
@@ -45,6 +46,7 @@ CragMediaScroller.prototype.AppendCrag = function(crag) {
     const cragCanvas = document.createElement('canvas');
     cragElement.appendChild(cragCanvas);
     cragElement.onclick = () => {
+      this.selectedHeader = cragHeader;
       this.selectedCanvas = cragCanvas;
       this.selectedCrag = crag;
       this.OnCragSelectedHandler();
@@ -52,6 +54,12 @@ CragMediaScroller.prototype.AppendCrag = function(crag) {
    }
 
    this.element.appendChild(cragElement);
+}
+
+CragMediaScroller.prototype.RefreshSelectedContainer = function() {
+  if( !this.selectedHeader || !this.selectedCrag ) return;
+  console.log(this.selectedCrag.name);
+  this.selectedHeader.innerText = this.selectedCrag.name;
 }
 
 module.exports = CragMediaScroller;
