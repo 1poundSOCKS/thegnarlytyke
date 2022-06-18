@@ -19,6 +19,11 @@ Crag.prototype.Attach = function(cragObject) {
   this.topos = cragObject.topos ? cragObject.topos : [];
 }
 
+Crag.prototype.Save = async function(dataStorage) {
+  const cragData = this.FormatForStorage();
+  return dataStorage.Save(`${this.id}.crag`, cragData);
+}
+
 Crag.prototype.AppendTopo = function(topo) {
   return this.topos.push(topo);
 }
@@ -61,6 +66,61 @@ Crag.prototype.AppendRoute = function(name, grade) {
   route.grade = grade;
   this.routes.push(route);
   return route;
+}
+
+Crag.prototype.FormatForStorage = function() {
+  const cragForStorage = {};
+  if( this.id ) cragForStorage.id = this.id;
+  if( this.name ) cragForStorage.name = this.name;
+  if( this.routes ) cragForStorage.routes = this.FormatRoutesForStorage();
+  if( this.topos ) cragForStorage.topos = this.FormatToposForStorage();
+  return cragForStorage;
+}
+
+Crag.prototype.FormatRoutesForStorage = function() {
+  if( !this.routes ) return [];
+  return this.routes.map( route => {
+    return {
+      id: route.id,
+      name: route.name,
+      grade: route.grade
+    };
+  });
+}
+
+Crag.prototype.FormatToposForStorage = function() {
+  if( !this.topos ) return [];
+  return this.topos.map( topo => {
+    const topoForStorage = {};
+    if( topo.id ) topoForStorage.id = topo.id;
+    if( topo.imageFile ) topoForStorage.imageFile = topo.imageFile;
+    if( topo.routes ) topoForStorage.routes = this.FormatTopoRoutesForStorage(topo.routes);
+    return topoForStorage;
+  });
+}
+
+Crag.prototype.FormatTopoRoutesForStorage = function(routes) {
+  return routes.map( route => {
+    return {
+      id: route.id,
+      points: this.FormatPointsForStorage(route.points)
+    };
+  });
+}
+
+Crag.prototype.FormatPointsForStorage = function(points) {
+  if( !points ) return [];
+  return points.map( point => {
+    const pointToSave = {id: point.id};
+    if( point.attachedTo ) {
+      pointToSave.attachedTo = point.attachedTo.id;
+    }
+    else {
+      pointToSave.x = point.x;
+      pointToSave.y = point.y;
+    }
+    return pointToSave;
+  });
 }
 
 module.exports = Crag;

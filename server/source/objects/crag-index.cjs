@@ -27,9 +27,7 @@ CragIndex.prototype.Save = async function(dataStorage, imageStorage) {
   })
 
   await Promise.all(imageSaves);
-  await dataStorage.Save('crag-index', this.data);
-
-  // this.data.crags.forEach( crag => this.SaveCragDetails(dataStorage, crag) )
+  return dataStorage.Save('crag-index', this.data);
 }
 
 CragIndex.prototype.SaveCragImage = async function(imageStorage, crag) {

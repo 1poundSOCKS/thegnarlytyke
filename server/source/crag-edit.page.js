@@ -132,8 +132,7 @@ module.exports = OnSave = () => {
     uploads.push(ImageStorage.SaveImageAndUpdateFilename(ID, imageData, topo));
   });
   Promise.all(uploads).then( (values) => {
-    const cragStorage = new CragLoader('client',Config);
-    cragStorage.Save(_crag).then( response => {
+    _crag.Save(DataStorage).then( response => {
       console.log(`saved!!!`)
     });
   });
