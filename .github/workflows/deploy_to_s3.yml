@@ -47,3 +47,6 @@ jobs:
 
     - name: Deploy static site to S3 bucket
       run: aws s3 sync ./server/public/ s3://${{ env.BUCKET_NAME }} --exclude "config.json" --delete
+
+    - name: Deploy test config
+      run: aws s3 sync ./server/config/test/config.json s3://${{ env.BUCKET_NAME }}
