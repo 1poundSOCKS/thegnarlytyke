@@ -49,4 +49,4 @@ jobs:
       run: aws s3 sync ./server/public/ s3://${{ env.BUCKET_NAME }} --exclude "config.json" --delete
 
     - name: Deploy test config
-      run: aws s3 sync ./server/config/test/config.json s3://${{ env.BUCKET_NAME }}
+      run: aws s3 sync ./server/config/test s3://${{ env.BUCKET_NAME }}
