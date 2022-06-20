@@ -58,7 +58,6 @@ CragMediaScroller.prototype.AppendCrag = function(crag) {
 
 CragMediaScroller.prototype.RefreshSelectedContainer = function() {
   if( !this.selectedHeader || !this.selectedCrag ) return;
-  console.log(this.selectedCrag.name);
   this.selectedHeader.innerText = this.selectedCrag.name;
 }
 

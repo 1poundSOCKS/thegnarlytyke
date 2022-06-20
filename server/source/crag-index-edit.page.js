@@ -2,7 +2,7 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
-const CragMediaScroller = require('./objects/crag_media_scroller.cjs');
+const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const ImageFileCompressor = require('./objects/image-file-compressor.cjs');
 
 let _cragIndex = null;
@@ -44,5 +44,14 @@ let OnUploadImageFile = async () => {
 }
 
 module.exports = OnSaveCragIndex = () => {
-  _cragIndex.Save(DataStorage, ImageStorage);
+  document.getElementById("save-crag-index").disabled = true;
+  document.getElementById("status").value = "Saving..."
+  _cragIndex.Save(DataStorage, ImageStorage)
+  .then( () => {
+    document.getElementById("status").value = "Success!"
+  })
+  .catch( () => {
+    document.getElementById("status").value = "ERROR!"
+  })
+  document.getElementById("save-crag-index").disabled = false;
 }

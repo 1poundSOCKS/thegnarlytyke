@@ -44,7 +44,7 @@ html {
 }
 
 .tgt-icon-bar {
-  font-size: 2rem;
+  font-size: 3rem;
   text-align: center;
   margin-right: 0.2rem;
   margin-bottom: 1rem;
@@ -61,6 +61,11 @@ html {
   font-family: var(--tgt-font);
 }
 
+.tgt-icon:disabled {
+  color: var(--tgt-header-background-color);
+  background: var(--tgt-header-background-color);
+}
+
 .tgt-icon:hover {
   cursor: pointer;
   color: var(--tgt-std-light-color);
@@ -68,6 +73,11 @@ html {
 
 .tgt-icon-text {
   font-family: var(--tgt-font);
+}
+
+.tgt-icon-bar > input {
+  font-size: 3rem;
+  background: --tgt-std-background-color;
 }
 
 .topo-images-container-initial {
