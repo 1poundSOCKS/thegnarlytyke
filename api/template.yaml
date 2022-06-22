@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  github-actions-with-aws-sam
+
+  Sample SAM Template for github-actions-with-aws-sam
+
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  # LoadImageFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: load_image/
+  #     Handler: app.lambda_handler
+  #     Runtime: python3.8
+  #     Architectures:
+  #       - x86_64
+  #     Environment:
+  #       Variables:
+  #         BUCKET_NAME: test.data.thegnarlytyke.com
+  #     Events:
+  #       LoadImage:
+  #         Type: Api
+  #         Properties:
+  #           Path: /load_image
+  #           Method: get
+  SaveImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: save_image/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          BUCKET_NAME: test.data.thegnarlytyke.com
+      Events:
+        SaveImage:
+          Type: Api
+          Properties:
+            Path: /save_image
+            Method: post
+  # SaveCragFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: save_crag/
+  #     Handler: app.lambda_handler
+  #     Runtime: python3.8
+  #     Architectures:
+  #       - x86_64
+  #     Environment:
+  #       Variables:
+  #         BUCKET_NAME: test.data.thegnarlytyke.com
+  #     Events:
+  #       SaveImage:
+  #         Type: Api
+  #         Properties:
+  #           Path: /save_crag
+  #           Method: post
+  SaveDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: save_data/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          BUCKET_NAME: test.data.thegnarlytyke.com
+      Events:
+        SaveImage:
+          Type: Api
+          Properties:
+            Path: /save_data
+            Method: post
+
+Outputs:
+  GnarlyApi:
+    Description: "Gnarly API"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/gnarly/"
+  # LoadImageFunction:
+  #   Description: "Load Image Lambda Function ARN"
+  #   Value: !GetAtt LoadImageFunction.Arn
+  # LoadImageFunctionIamRole:
+  #   Description: "Implicit IAM Role created for LoadImage function"
+  #   Value: !GetAtt LoadImageFunctionRole.Arn
+  SaveImageFunction:
+    Description: "Save Image Lambda Function ARN"
+    Value: !GetAtt SaveImageFunction.Arn
+  SaveImageFunctionIamRole:
+    Description: "Implicit IAM Role created for SaveImage function"
+    Value: !GetAtt SaveImageFunctionRole.Arn
+  # SaveCragFunction:
+  #   Description: "Save Crag Lambda Function ARN"
+  #   Value: !GetAtt SaveCragFunction.Arn
+  # SaveCragFunctionIamRole:
+  #   Description: "Implicit IAM Role created for SaveCrag function"
+  #   Value: !GetAtt SaveCragFunctionRole.Arn
+  SaveDataFunction:
+    Description: "Save Data Lambda Function ARN"
+    Value: !GetAtt SaveDataFunction.Arn
+  SaveDataFunctionIamRole:
+    Description: "Implicit IAM Role created for SaveData function"
+    Value: !GetAtt SaveDataFunctionRole.Arn
