@@ -7,7 +7,8 @@ on:
 
 env:
   AWS_REGION: eu-west-2
-  BUCKET_NAME: test.thegnarlytyke.com
+  API_BUCKET_NAME: api.thegnarlytyke.com
+  WEB_BUCKET_NAME: test.thegnarlytyke.com
 
 jobs:
   deploy:
@@ -21,6 +22,10 @@ jobs:
       
     - name: Set up node 
       uses: actions/setup-node@v1
+
+    - uses: actions/setup-python@v2
+
+    - uses: aws-actions/setup-sam@v1
 
     - name: Clean cache
       run: npm cache clean --force
@@ -38,6 +43,9 @@ jobs:
       run: npm test
       working-directory: ./server
 
+    - run: sam build --use-container
+      working-directory: ./api/
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -45,8 +53,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
+    - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name gnarly --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
+      working-directory: ./api/
+
     - name: Deploy static site to S3 bucket
-      run: aws s3 sync ./server/public/ s3://${{ env.BUCKET_NAME }} --exclude "config.json" --delete
+      run: aws s3 sync ./server/public/ s3://${{ env.WEB_BUCKET_NAME }} --exclude "config.json" --delete
 
     - name: Deploy test config
-      run: aws s3 sync ./server/config/test s3://${{ env.BUCKET_NAME }}
+      run: aws s3 sync ./server/config/test s3://${{ env.WEB_BUCKET_NAME }}
