@@ -1,5 +1,4 @@
 let uuid = require('uuid');
-// let CragDetails = require('./crag-details.cjs')
 
 let CragIndex = function() {
   this.data = null;
@@ -7,6 +6,7 @@ let CragIndex = function() {
 
 CragIndex.prototype.Load = async function(dataStorage, imageStorage) {
   this.data = await dataStorage.Load('crag-index');
+  this.data.crags.forEach( crag => delete crag.imageLoader )
   if( imageStorage ) this.data.crags.forEach( crag => this.LoadCragImage(imageStorage, crag) )
   return this.data;
 }
@@ -37,19 +37,5 @@ CragIndex.prototype.SaveCragImage = async function(imageStorage, crag) {
     delete crag.imageData;
   }
 }
-
-// CragIndex.prototype.SaveCragDetails = async function(dataStorage, crag) {
-//   const objectID = `${crag.id}.crag`;
-//   try {
-    // const cragDetails = new CragDetails();
-    // const cragData = await cragDetails.Load(dataStorage, objectID);
-    // console.log(`crag details exist: ${objectID}`);
-//   }
-//   catch(err) {
-//     console.log(`crag details don't exist: ${objectID}`)
-//     console.log(err);
-    // dataStorage.Save(objectID, {id: crag.id, name: crag.name});
-//   }
-// }
 
 module.exports = CragIndex;

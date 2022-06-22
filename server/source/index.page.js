@@ -1,6 +1,8 @@
 const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
+const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
+const CragCoverContainer = require('./objects/crag-cover-container.cjs');
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
@@ -8,8 +10,9 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   DataStorage.Init(Config);
+  ImageStorage.Init(Config);
   const cragIndex = new CragIndex();
-  await cragIndex.Load(DataStorage);
+  await cragIndex.Load(DataStorage,ImageStorage);
   const parentElement = document.getElementById('crag-covers-container');
   cragIndex.data.crags.forEach( crag => {
     AppendCrag(crag, parentElement);
@@ -22,18 +25,7 @@ let OnConfigLoad = async () => {
 }
 
 let AppendCrag = (crag, parentElement) => {
-  let cragElement = document.createElement('div');
-  cragElement.classList.add("crag-cover-container")
-  cragElement.setAttribute('data-id', crag.id);
-  cragElement.setAttribute('onclick',`window.location.href='crag-view.html?id=${crag.id}'`);
-  let cragHeader = document.createElement('h3');
-  cragHeader.classList.add("crag-cover-header");
-  cragHeader.innerText = crag.name;
-  cragElement.appendChild(cragHeader)
-  const cragImage = document.createElement('img');
-  cragImage.classList.add('crag-cover-image');
-  cragImage.setAttribute('src',`${Config.images_url}${crag.imageFile}`)
-  cragImage.setAttribute('alt',crag.name);
-  cragElement.appendChild(cragImage);
-  parentElement.appendChild(cragElement);
+  const cragCover = new CragCoverContainer(crag, Config.images_url);
+  parentElement.appendChild(cragCover.element);
+  cragCover.element.setAttribute('onclick',`window.location.href='crag-view.html?id=${crag.id}'`);
 }

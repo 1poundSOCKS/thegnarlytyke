@@ -1,3 +1,5 @@
+const CragCoverContainer = require("./crag-cover-container.cjs");
+
 let CragMediaScroller = function(element, imagesURL, crags, OnCragSelectedHandler) {
   this.element = element;
   this.imagesURL = imagesURL;
@@ -11,49 +13,16 @@ let CragMediaScroller = function(element, imagesURL, crags, OnCragSelectedHandle
 }
 
 CragMediaScroller.prototype.AppendCrag = function(crag) {
-  let cragElement = document.createElement('div');
-  cragElement.classList.add("crag-cover-container")
-  cragElement.setAttribute('data-id', crag.id);
-
-  let cragHeader = document.createElement('h3');
-  cragHeader.classList.add("crag-cover-header");
-  cragHeader.innerText = crag.name;
-  cragElement.appendChild(cragHeader)
-
-  if( crag.imageLoader ) {
-    const cragCanvas = document.createElement('canvas');
-    cragElement.appendChild(cragCanvas);
-    crag.imageLoader.then( image => {
-      cragCanvas.width = image.width;
-      cragCanvas.height = image.height;
-      const ctx = cragCanvas.getContext("2d");
-      ctx.drawImage(image,0, 0);
-    })
-    cragElement.onclick = () => {
-      this.selectedHeader = cragHeader;
-      this.selectedCanvas = cragCanvas;
-      this.selectedCrag = crag;
-      this.OnCragSelectedHandler();
-    }
+  const cragCover = new CragCoverContainer(crag, this.imagesURL);
+  
+  cragCover.element.onclick = () => {
+    this.selectedHeader = cragCover.header;
+    this.selectedCanvas = cragCover.canvas;
+    this.selectedCrag = cragCover.crag;
+    this.OnCragSelectedHandler();
   }
-  else if( crag.imageFile ) {
-    const cragImage = document.createElement('img');
-    cragImage.setAttribute('src',`${this.imagesURL}${crag.imageFile}`)
-    cragImage.setAttribute('alt',crag.name);
-    cragElement.appendChild(cragImage);
-  }
-  else {
-    const cragCanvas = document.createElement('canvas');
-    cragElement.appendChild(cragCanvas);
-    cragElement.onclick = () => {
-      this.selectedHeader = cragHeader;
-      this.selectedCanvas = cragCanvas;
-      this.selectedCrag = crag;
-      this.OnCragSelectedHandler();
-    }
-   }
 
-   this.element.appendChild(cragElement);
+  this.element.appendChild(cragCover.element);
 }
 
 CragMediaScroller.prototype.RefreshSelectedContainer = function() {
