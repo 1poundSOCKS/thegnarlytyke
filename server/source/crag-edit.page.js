@@ -126,16 +126,26 @@ module.exports = OnSortTopoRoutes = () => {
 }
 
 module.exports = OnSave = () => {
+  document.getElementById("status").value = "Saving..."
+
   const uploads = [];
   _imageUploadCache.imageDataMap.forEach( (imageData, ID) => {
     const topo = _crag.GetMatchingTopo(ID);
     uploads.push(ImageStorage.SaveImageAndUpdateFilename(ID, imageData, topo));
   });
-  Promise.all(uploads).then( (values) => {
-    _crag.Save(DataStorage).then( response => {
-      console.log(`saved!!!`)
-    });
-  });
+  Promise.all(uploads)
+  .then( () => {
+    _crag.Save(DataStorage)
+    .then( () => {
+      document.getElementById("status").value = "Success!"
+    })
+    .catch( () => {
+      document.getElementById("status").value = "ERROR!"
+    })
+  })
+  .catch( () => {
+    document.getElementById("status").value = "ERROR!"
+  })
 }
 
 module.exports = GetSelectedTopoID = () => {
