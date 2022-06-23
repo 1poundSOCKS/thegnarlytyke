@@ -4,6 +4,7 @@ const ImageStorage = require("./objects/image-storage.cjs");
 const CragIndex = require('./objects/crag-index.cjs');
 const CragStorage = require('./objects/crag-storage.cjs');
 const Crag = require('./objects/crag.cjs');
+const PageHeader = require('./objects/page-header.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
@@ -22,6 +23,8 @@ let OnConfigLoad = async () => {
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
 
+  _pageHeader = new PageHeader(document.getElementById("page-header"));
+
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
@@ -37,17 +40,23 @@ let OnConfigLoad = async () => {
     _crag = new Crag({id:cragID});
   }
 
-  document.getElementById('crag-view-header').innerText = cragIndexEntry.name;
-  
+  // document.getElementById('crag-view-header').innerText = cragIndexEntry.name;
+  document.getElementById('crag-name').innerText = cragIndexEntry.name;
+    
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
   _topoMediaScroller.LoadTopoImages(ImageStorage);  
 
   if( Config.mode === "edit" ) {
-    document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);
-    document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
+    const icon = _pageHeader.AddIcon("fa-edit","Edit");
+    icon.onclick = () => {
+      window.location.href = `crag-edit.html?id=${cragID}`;
+    }
+    // document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);
+    // document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
   }
+  const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {

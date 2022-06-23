@@ -2,13 +2,18 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
+const PageHeader = require('./objects/page-header.cjs')
 const CragCoverContainer = require('./objects/crag-cover-container.cjs');
+
+_pageHeader = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
 }
 
 let OnConfigLoad = async () => {
+  _pageHeader = new PageHeader(document.getElementById("page-header"));
+
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
   const cragIndex = new CragIndex();
@@ -19,9 +24,12 @@ let OnConfigLoad = async () => {
   })
 
   if( Config.mode === "edit" ) {
-    document.getElementById('edit-crag-index-address').setAttribute('href', `./crag-index-edit.html`);
-    document.getElementById('crag-index-icon-bar').classList.remove('do-not-display');
+    const icon = _pageHeader.AddIcon("fa-edit","Edit");
+    icon.onclick = () => {
+      window.location.href = "crag-index-edit.html";
+    }
   }
+  const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
 }
 
 let AppendCrag = (crag, parentElement) => {

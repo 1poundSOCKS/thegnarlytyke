@@ -8,13 +8,12 @@
   <link rel="stylesheet" href="fontawesome-free/css/solid.css">
 </head>
 <body id="crag-view-body" class="crag-view-body">
-  <h1 class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1>
-  <h2 id="crag-view-header" class="tgt-subheader"></h2>
-  <div id="crag-view-icon-bar" class="tgt-icon-bar do-not-display">
-    <a class="tgt-icon-address" id="edit-topos-address">
-      <i class="tgt-icon fa-solid fa-edit fa-border" title="Edit crag"></i>
-    </a>
+  <div class="tgt-top-bar"></div>
+  <div id="page-header" class="tgt-header">
+    <i  class="tgt-header-icon fa-solid fa-home fa-border" title="Home" onclick="window.location.href='index.html'"></i>
+    <span id="crag-name" class="tgt-page-header-text"></span>
   </div>
+  <div class="tgt-bottom-bar"></div>
   <div id="topo-images-container" class="topo-images-container"></div>
   <div id="main-topo-container" class="main-topo-container do-not-display">
     <div class="main-topo-image-container"><canvas id="main-topo-image" class="main-topo-image"></canvas></div>
