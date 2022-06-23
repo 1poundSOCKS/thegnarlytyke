@@ -15,17 +15,14 @@
 }
 
 .crag-cover-image {
-  margin-bottom: 1rem;
-  width: 100%;
+  margin-left: 5%;
+  margin-bottom: 5%;
+  width: 90%;
 }
 
 .crag-covers-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  align-items: top;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -33,7 +30,8 @@
 }
 
 .crag-cover-container {
-  width: 45%;
+  margin: auto;
+  width: 100%;
 }
 
 .crag-cover-container:hover {
@@ -51,11 +49,11 @@
 }
 
 .images-media-scroller img {
-  max-width: 100%;
+  width: 100%;
 }
 
 .images-media-scroller canvas {
-  max-width: 100%;
+  width: 100%;
 }
 
 .images-media-scroller-selected {
