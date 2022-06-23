@@ -13,6 +13,7 @@ let CragCoverContainer = function(crag, imageURL) {
 
   if( crag.imageLoader ) {
     this.canvas = document.createElement('canvas');
+    this.canvas.classList.add("crag-cover-image");
     this.element.appendChild(this.canvas);
     crag.imageLoader.then( image => {
       this.canvas.width = image.width;
@@ -23,12 +24,14 @@ let CragCoverContainer = function(crag, imageURL) {
   }
   else if( crag.imageFile ) {
     this.image = document.createElement('img');
+    this.image.classList.add("crag-cover-image");
     this.image.setAttribute('src',`${this.imageURL}${crag.imageFile}`)
     this.image.setAttribute('alt',crag.name);
     this.element.appendChild(this.image);
   }
   else {
     this.canvas = document.createElement('canvas');
+    this.canvas.classList.add("crag-cover-image");
     this.element.appendChild(this.canvas);
    }
 }

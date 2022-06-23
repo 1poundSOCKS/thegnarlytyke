@@ -16,6 +16,7 @@
 
 .crag-cover-image {
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .crag-covers-container {
@@ -29,6 +30,10 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
   background-color: lightgrey;
+}
+
+.crag-cover-container {
+  width: 45%;
 }
 
 .crag-cover-container:hover {
