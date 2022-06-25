@@ -40,23 +40,20 @@ let OnConfigLoad = async () => {
     _crag = new Crag({id:cragID});
   }
 
-  // document.getElementById('crag-view-header').innerText = cragIndexEntry.name;
-  document.getElementById('crag-name').innerText = cragIndexEntry.name;
-    
-  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
-
-  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
-  _topoMediaScroller.LoadTopoImages(ImageStorage);  
-
   if( Config.mode === "edit" ) {
     const icon = _pageHeader.AddIcon("fa-edit","Edit");
     icon.onclick = () => {
       window.location.href = `crag-edit.html?id=${cragID}`;
     }
-    // document.getElementById('edit-topos-address').setAttribute('href', `./crag-edit.html?id=${cragID}`);
-    // document.getElementById('crag-view-icon-bar').classList.remove('do-not-display');
   }
   const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
+
+  document.getElementById('crag-name').innerText = cragIndexEntry.name;
+    
+  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
+
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);
+  _topoMediaScroller.LoadTopoImages(ImageStorage);
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {

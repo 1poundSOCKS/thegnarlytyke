@@ -30,6 +30,8 @@ let OnConfigLoad = async () => {
     }
   }
   const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
+
+  document.getElementById('crag-name').innerText = "crag index";
 }
 
 let AppendCrag = (crag, parentElement) => {

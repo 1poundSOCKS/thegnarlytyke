@@ -18,6 +18,11 @@ html {
   background-color: var(--tgt-std-background-color);
 }
 
+i {
+  margin: auto;
+  padding: 0.5rem;
+}
+
 .tgt-top-bar {
   background: var(--tgt-header-background-color);
   height: 1rem;
@@ -28,17 +33,17 @@ html {
   height: 1rem;
 }
 
-.tgt-header {
+.page-header-controls {
+  background: var(--tgt-subheader-background-color);
   display: flex;
-  /* grid-template-columns: 1fr 3fr; */
   margin: auto;
   width: 100%;
   height: 5rem;
+  margin-bottom: 0.5rem;
 }
 
 .tgt-site-header-text {
-  background: var(--tgt-std-dark-color);
-  /* color: var(--tgt-header-background-color); */
+  background: var(--tgt-header-background-color);
   font-family: var(--tgt-font);
   font-size: 4rem;
   font-weight: bold;
@@ -51,35 +56,45 @@ html {
   cursor: pointer;
 }
 
-.tgt-page-header-text {
-  background: var(--tgt-std-dark-color);
-  /* color: var(--tgt-subheader-background-color); */
+.page-header-text {
+  background: var(--tgt-header-background-color);
+  height: 3rem;
+  color: var(--tgt-std-light-color);
   letter-spacing: .1em;
   font-family: var(--tgt-font);
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: bold;
+  text-align: center;
   flex: 1;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-  padding-left: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.tgt-header-icon {
-  background: var(--tgt-std-dark-color);
+.page-subheader-text {
+  background: var(--tgt-header-background-color);
+  height: 3rem;
+  color: var(--tgt-std-light-color);
+  letter-spacing: .1em;
+  font-family: var(--tgt-font);
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
+
+.header-icon {
+  background: var(--tgt-subheader-background-color);
   cursor: pointer;
   color: var(--tgt-std-background-color);
   font-family: var(--tgt-font);
   font-size: 3rem;
+  text-align: center;
 }
 
-.tgt-header-icon:hover {
+.header-icon:hover {
   cursor: pointer;
   color: var(--tgt-std-light-color);
 }
-
-/* .tgt-header:hover {
-  cursor: pointer;
-} */
 
 .tgt-subheader {
   display: block;

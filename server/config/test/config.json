@@ -3,6 +3,6 @@
   "mode" : "edit",
   "data_url" : "https://s3.eu-west-2.amazonaws.com/test.data.thegnarlytyke.com/data/",
   "images_url" : "https://s3.eu-west-2.amazonaws.com/test.data.thegnarlytyke.com/images/",
-  "save_data_url" : "https://5gvjhpp6p6.execute-api.eu-west-2.amazonaws.com/Prod/save_data",
-  "save_image_url" : "https://5gvjhpp6p6.execute-api.eu-west-2.amazonaws.com/Prod/save_image"
+  "save_data_url" : "https://kw2tqibp48.execute-api.eu-west-2.amazonaws.com/Prod/save_data",
+  "save_image_url" : "https://kw2tqibp48.execute-api.eu-west-2.amazonaws.com/Prod/save_image"
 }
