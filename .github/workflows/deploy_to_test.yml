@@ -1,4 +1,4 @@
-name: Deploy to Amazon S3
+name: Deploy to test
 
 on:
   push:
@@ -23,9 +23,9 @@ jobs:
     - name: Set up node 
       uses: actions/setup-node@v1
 
-    - uses: actions/setup-python@v2
+    # - uses: actions/setup-python@v2
 
-    - uses: aws-actions/setup-sam@v1
+    # - uses: aws-actions/setup-sam@v1
 
     - name: Clean cache
       run: npm cache clean --force

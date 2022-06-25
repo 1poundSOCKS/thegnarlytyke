@@ -12,7 +12,12 @@
     "build-crag-view": "browserify source/crag-view.page.js -o public/scripts/crag-view.page.js",
     "build-crag-edit": "browserify source/crag-edit.page.js -o public/scripts/crag-edit.page.js",
     "build": "npm run build-index && npm run build-crag-index-edit && npm run build-crag-view && npm run build-crag-edit",
-    "watch": "watchify source/bundle.js -o public/bundle.js -v"
+    "watch": "watchify source/bundle.js -o public/bundle.js -v",
+    "web-test-to-live": "aws s3 sync s3://test.thegnarlytyke.com s3://thegnarlytyke.com --exclude 'config.json' --delete",
+    "data-dev-to-test": "aws s3 sync s3://dev.data.thegnarlytyke.com s3://test.data.thegnarlytyke.com --delete",
+    "data-test-to-live-step1": "aws s3 sync s3://data.thegnarlytyke.com s3://backup.data.thegnarlytyke.com --delete",
+    "data-test-to-live-step2": "aws s3 sync s3://test.data.thegnarlytyke.com s3://data.thegnarlytyke.com --delete",
+    "data-test-to-live": "npm run data-test-to-live-step1 && npm run data-test-to-live-step2"
   },
   "keywords": [],
   "author": "",
