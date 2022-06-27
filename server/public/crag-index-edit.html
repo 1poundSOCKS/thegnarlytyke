@@ -3,8 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <title>the gnarly tyke</title>
-  <link rel="stylesheet" href="stylesheets/default.css">
-  <link rel="stylesheet" href="stylesheets/crag-index.css">
   <link rel="stylesheet" href="stylesheets/crag-index-edit.css">
   <link rel="stylesheet" href="fontawesome-free/css/fontawesome.min.css">
   <link rel="stylesheet" href="fontawesome-free/css/solid.css">
@@ -15,10 +13,10 @@
     <i  class="header-icon fa-solid fa-home" title="Home" onclick="window.location.href='index.html'"></i>
   </div>
   <div id="page-subheader-text" class="page-subheader-text"></div>
-  <input type="file" id="image-file" name="filename" style="display:none"></input>
-  <div id="crag-index-edit-icon-bar" class="tgt-icon-bar">
-    <input type="text" id="status" name="name" minlength="4" maxlength="8" size="10" readonly class="status-bar">
+  <div class="status-bar-container">
+    <input type="text" id="status" name="name" size="20" readonly class="status-bar">
   </div>
+  <input type="file" id="image-file" name="filename" style="display:none"></input>
   <div id="crag-covers-container" class="images-media-scroller"></div>
   <div class="crag-details">
     <label for="crag-name">Crag name:</label>

@@ -10,7 +10,9 @@ const TopoImage = require('./objects/topo-image.cjs');
 const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
 const ImageUploadCache = require('./objects/image-upload-cache.cjs');
+const PageHeader = require('./objects/page-header.cjs')
 
+let _pageHeader = null;
 let _crag = null;
 let _topoMediaScroller = null;
 let _mainTopoImage = null;
@@ -27,6 +29,14 @@ let OnConfigLoad = async () => {
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
 
+  _pageHeader = new PageHeader(document.getElementById("page-header"));
+  _pageHeader.AddIcon("fa-plus","Add topo").onclick = () => OnAddTopo();
+  document.getElementById('topo-image-file').onchange = () => OnUploadImageFile();
+  _pageHeader.AddIcon("fa-file-arrow-up","Upload topo image").onclick = () => document.getElementById('topo-image-file').click();
+  _pageHeader.AddIcon("fa-arrow-left","Upload topo image").onclick = () => OnShiftTopoLeft();
+  _pageHeader.AddIcon("fa-arrow-right","Upload topo image").onclick = () => OnShiftTopoRight();
+  _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSave();
+
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
@@ -42,7 +52,7 @@ let OnConfigLoad = async () => {
     _crag = new Crag({id:cragID});
   }
 
-  document.getElementById('crag-view-header').innerText = cragIndexEntry.name;
+  document.getElementById('page-subheader-text').innerText = cragIndexEntry.name;
 
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), true);
 
@@ -52,7 +62,6 @@ let OnConfigLoad = async () => {
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _crag);
 
   _imageUploadCache = new ImageUploadCache();
-  document.getElementById('topo-image-file').onchange = OnUploadImageFile;
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {

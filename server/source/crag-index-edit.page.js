@@ -4,7 +4,6 @@ const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const PageHeader = require('./objects/page-header.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
-const ImageFileCompressor = require('./objects/image-file-compressor.cjs');
 
 let _pageHeader = null;
 let _cragIndex = null;
@@ -16,17 +15,9 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _pageHeader = new PageHeader(document.getElementById("page-header"));
-
-  const plusIcon = _pageHeader.AddIcon("fa-plus","Add crag");
-  plusIcon.onclick = () => OnAddCrag();
-
-  const uploadIcon = _pageHeader.AddIcon("fa-file-arrow-up","Upload image");
-  uploadIcon.onclick = () => document.getElementById('image-file').click();
-
-  const saveIcon = _pageHeader.AddIcon("fa-save","Save");
-  saveIcon.onclick = () => OnSaveCragIndex();
-
-  const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
+  _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
+  _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
+  _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
 
   document.getElementById('page-subheader-text').innerText = "crag index editor";
 
@@ -55,9 +46,7 @@ module.exports = OnAddCrag = () => {
 
 let OnUploadImageFile = async () => {
   const imageFileElement = document.getElementById('image-file');
-  const ifc = new ImageFileCompressor(_cragMediaScroller.selectedCanvas);
-  const imageData = await ifc.LoadAndCompress(imageFileElement.files[0]);
-  _cragMediaScroller.selectedCrag.imageData = imageData;
+  _cragMediaScroller.selectedContainer.LoadImageFromFile(imageFileElement.files[0]);
 }
 
 module.exports = OnSaveCragIndex = () => {

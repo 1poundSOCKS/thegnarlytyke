@@ -8,19 +8,15 @@ let CragMediaScroller = function(element, imagesURL, crags, OnCragSelectedHandle
   this.crags.forEach( crag => {
     this.AppendCrag(crag);
   })
-  this.selectedCanvas = null;
-  this.selectedCrag = null;
 }
 
 CragMediaScroller.prototype.AppendCrag = function(crag) {
   const cragCoverContainer = new CragCoverContainer(crag, this.imagesURL);
-  
+  this.element.appendChild(cragCoverContainer.element);
   cragCoverContainer.element.onclick = () => {
     this.selectedContainer = cragCoverContainer;
     this.OnCragSelectedHandler();
   }
-
-  this.element.appendChild(cragCoverContainer.element);
 }
 
 CragMediaScroller.prototype.RefreshSelectedContainer = function() {

@@ -1,3 +1,5 @@
+const ImageFileCompressor = require('./image-file-compressor.cjs');
+
 let CragCoverContainer = function(crag, imageURL) {
   this.crag = crag;
   this.imageURL = imageURL;
@@ -17,16 +19,40 @@ let CragCoverContainer = function(crag, imageURL) {
   }
   else {
     this.canvas = document.createElement('canvas');
+    this.canvas.width = 666;
+    this.canvas.height = 500;
     this.canvas.classList.add("crag-cover-image");
     this.element.appendChild(this.canvas);
    }
 }
 
+CragCoverContainer.prototype.LoadImageFromFile = async function(file) {
+  const ifc = new ImageFileCompressor(this.canvas);
+  this.crag.imageData = await ifc.LoadAndCompress(file);
+  this.crag.imageLoader = this.LoadImage(this.crag.imageData);
+  this.image = await this.crag.imageLoader;
+  this.Refresh();
+}
+
+CragCoverContainer.prototype.LoadImage = (url) => new Promise( (resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = (err) => reject(err);
+  img.src = url;
+});
+
 CragCoverContainer.prototype.Refresh = function() {
-  this.canvas.width = this.image.width;
-  this.canvas.height = this.image.height;
   const ctx = this.canvas.getContext("2d");
-  ctx.drawImage(this.image,0, 0);
+
+  if( this.image ) {
+    this.canvas.width = this.image.width;
+    this.canvas.height = this.image.height;
+    ctx.drawImage(this.image,0, 0);  
+  }
+  else {
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
   const fontSize = 3;
   ctx.font = `bold ${fontSize}rem six caps`;
   const metrics = ctx.measureText(this.crag.name);
