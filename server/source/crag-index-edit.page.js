@@ -2,9 +2,11 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
+const PageHeader = require('./objects/page-header.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const ImageFileCompressor = require('./objects/image-file-compressor.cjs');
 
+let _pageHeader = null;
 let _cragIndex = null;
 let _cragMediaScroller = null;
 
@@ -13,6 +15,21 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  _pageHeader = new PageHeader(document.getElementById("page-header"));
+
+  const plusIcon = _pageHeader.AddIcon("fa-plus","Add crag");
+  plusIcon.onclick = () => OnAddCrag();
+
+  const uploadIcon = _pageHeader.AddIcon("fa-file-arrow-up","Upload image");
+  uploadIcon.onclick = () => document.getElementById('image-file').click();
+
+  const saveIcon = _pageHeader.AddIcon("fa-save","Save");
+  saveIcon.onclick = () => OnSaveCragIndex();
+
+  const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
+
+  document.getElementById('page-subheader-text').innerText = "crag index editor";
+
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
   _cragIndex = new CragIndex(Config);
@@ -23,11 +40,11 @@ let OnConfigLoad = async () => {
 }
 
 let OnCragSelected = () => {
-  document.getElementById("crag-name").value = _cragMediaScroller.selectedCrag.name;
+  document.getElementById("crag-name").value = _cragMediaScroller.selectedContainer.crag.name;
 }
 
 let OnCragNameChanged = () => {
-  if( _cragMediaScroller.selectedCrag ) _cragMediaScroller.selectedCrag.name = document.getElementById("crag-name").value;
+  if( _cragMediaScroller.selectedContainer ) _cragMediaScroller.selectedContainer.crag.name = document.getElementById("crag-name").value;
   _cragMediaScroller.RefreshSelectedContainer();
 }
 
@@ -44,7 +61,6 @@ let OnUploadImageFile = async () => {
 }
 
 module.exports = OnSaveCragIndex = () => {
-  document.getElementById("save-crag-index").disabled = true;
   document.getElementById("status").value = "Saving..."
   _cragIndex.Save(DataStorage, ImageStorage)
   .then( () => {
@@ -53,5 +69,4 @@ module.exports = OnSaveCragIndex = () => {
   .catch( () => {
     document.getElementById("status").value = "ERROR!"
   })
-  document.getElementById("save-crag-index").disabled = false;
 }

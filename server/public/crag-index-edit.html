@@ -5,23 +5,24 @@
   <title>the gnarly tyke</title>
   <link rel="stylesheet" href="stylesheets/default.css">
   <link rel="stylesheet" href="stylesheets/crag-index.css">
+  <link rel="stylesheet" href="stylesheets/crag-index-edit.css">
   <link rel="stylesheet" href="fontawesome-free/css/fontawesome.min.css">
   <link rel="stylesheet" href="fontawesome-free/css/solid.css">
 </head>
 <body>
-  <h1 class="tgt-header" onclick="window.location.href='index.html'">the gnarly tyke</h1>
-  <h2 class="tgt-subheader">The Crags (EDIT)</h2>
+  <div class="page-header-text">the gnarly tyke</div>
+  <div id="page-header" class="page-header-controls">
+    <i  class="header-icon fa-solid fa-home" title="Home" onclick="window.location.href='index.html'"></i>
+  </div>
+  <div id="page-subheader-text" class="page-subheader-text"></div>
   <input type="file" id="image-file" name="filename" style="display:none"></input>
   <div id="crag-index-edit-icon-bar" class="tgt-icon-bar">
-    <i id="add-crag" class="tgt-icon fa-solid fa-plus fa-border" onclick="OnAddCrag()" title="Add crag"></i>
-    <i id="upload-image" class="tgt-icon fa-solid fa-file-arrow-up fa-border" onclick="document.getElementById('image-file').click()" title="Upload image"></i>
-    <i id="save-crag-index" class="tgt-icon fa-solid fa-save fa-border" onclick="OnSaveCragIndex()" title="Save crag index"></i>
-    <input type="text" id="status" name="name" minlength="4" maxlength="8" size="10" readonly>
+    <input type="text" id="status" name="name" minlength="4" maxlength="8" size="10" readonly class="status-bar">
   </div>
   <div id="crag-covers-container" class="images-media-scroller"></div>
   <div class="crag-details">
     <label for="crag-name">Crag name:</label>
-    <input type="text" id="crag-name" name="crag-name"><br><br>
+    <input type="text" id="crag-name" name="crag-name">
   </div>
   <script src="./scripts/crag-index-edit.page.js"></script>
 </body>
