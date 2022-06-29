@@ -24,6 +24,8 @@ let OnConfigLoad = async () => {
   const cragID = urlParams.get('id');
 
   _pageHeader = new PageHeader(document.getElementById("page-header"));
+  if( Config.mode === "edit" ) _pageHeader.AddIcon("fa-edit","Edit").onclick = () => window.location.href = `crag-edit.html?id=${cragID}`;
+  _pageHeader.AddLogonIcon();
 
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
@@ -40,16 +42,8 @@ let OnConfigLoad = async () => {
     _crag = new Crag({id:cragID});
   }
 
-  if( Config.mode === "edit" ) {
-    const icon = _pageHeader.AddIcon("fa-edit","Edit");
-    icon.onclick = () => {
-      window.location.href = `crag-edit.html?id=${cragID}`;
-    }
-  }
-  const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
+  document.getElementById('crag-name').innerText = cragIndexEntry.name;    
 
-  document.getElementById('crag-name').innerText = cragIndexEntry.name;
-    
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _crag, false, OnTopoSelected);

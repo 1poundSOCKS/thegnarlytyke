@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>the gnarly tyke</title>
+  <link rel="stylesheet" href="stylesheets/logon.css">
+  <link rel="stylesheet" href="fontawesome-free/css/fontawesome.min.css">
+  <link rel="stylesheet" href="fontawesome-free/css/solid.css">
+</head>
+<body>
+  <div class="page-header-text">the gnarly tyke</div>
+  <div id="page-header" class="page-header-controls">
+    <i  class="header-icon fa-solid fa-home" title="Home" onclick="window.location.href='index.html'"></i>
+  </div>
+  <div id="page-subheader-text" class="page-subheader-text">logon</div>
+  <form class="centered" method="post">
+    <div class="logon-detail">
+      <div><label for="email">email:</label></div>
+      <div><input id="email" type="text"></div>
+    </div>
+    <div class="logon-detail">
+      <div><label for="password" class="logon-detail">password:</label></div>
+      <div><input id="password" type="text" class="logon-detail"></div>
+    </div>
+    <input id="submit-logon" type="button" value="Submit">
+  </form>
+  <script src="./scripts/logon.page.js"></script>
+</body>
+</html>
