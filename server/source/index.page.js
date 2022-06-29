@@ -20,7 +20,8 @@ let OnConfigLoad = async () => {
       window.location.href = "crag-index-edit.html";
     }
   }
-  const icon = _pageHeader.AddIcon("fa-sign-in","Logon");
+
+  _pageHeader.AddLogonIcon();
 
   document.getElementById('crag-name').innerText = "crag index";
 
