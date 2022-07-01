@@ -4,6 +4,7 @@ const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const PageHeader = require('./objects/page-header.cjs')
 const CragCoverContainer = require('./objects/crag-cover-container.cjs');
+const Cookie = require('./objects/cookie.cjs')
 
 let _pageHeader = null;
 
@@ -12,16 +13,19 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  const cookie = new Cookie();
+  const loggedOn = cookie.IsUserLoggedOn();
+  
   _pageHeader = new PageHeader(document.getElementById("page-header"));
 
-  if( Config.mode === "edit" ) {
+  if( Config.mode === "edit" && loggedOn ) {
     const icon = _pageHeader.AddIcon("fa-edit","Edit");
     icon.onclick = () => {
       window.location.href = "crag-index-edit.html";
     }
   }
 
-  _pageHeader.AddLogonIcon();
+  if( !loggedOn ) _pageHeader.AddLogonIcon();
 
   document.getElementById('crag-name').innerText = "crag index";
 

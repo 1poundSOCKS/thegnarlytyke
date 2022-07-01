@@ -4,5 +4,6 @@
   "data_url" : "https://s3.eu-west-2.amazonaws.com/dev.data.thegnarlytyke.com/data/",
   "images_url" : "https://s3.eu-west-2.amazonaws.com/dev.data.thegnarlytyke.com/images/",
   "save_image_url" : "http://127.0.0.1:3000/save_image",
-  "save_data_url" : "http://127.0.0.1:3000/save_data"
+  "save_data_url" : "http://127.0.0.1:3000/save_data",
+  "logon_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/test/logon"
 }

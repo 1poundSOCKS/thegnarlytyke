@@ -8,6 +8,7 @@ const PageHeader = require('./objects/page-header.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
+const Cookie = require('./objects/cookie.cjs')
 
 let _crag = null;
 let _topoMediaScroller = null;
@@ -19,13 +20,15 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  const cookie = new Cookie();
+  const loggedOn = cookie.IsUserLoggedOn();
+
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
 
   _pageHeader = new PageHeader(document.getElementById("page-header"));
-  if( Config.mode === "edit" ) _pageHeader.AddIcon("fa-edit","Edit").onclick = () => window.location.href = `crag-edit.html?id=${cragID}`;
-  _pageHeader.AddLogonIcon();
+  if( Config.mode === "edit" && loggedOn ) _pageHeader.AddIcon("fa-edit","Edit").onclick = () => window.location.href = `crag-edit.html?id=${cragID}`;
 
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
