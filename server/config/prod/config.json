@@ -2,5 +2,6 @@
   "environment": "prod",
   "mode" : "view",
   "data_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/data/",
-  "images_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/images/"
+  "images_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/images/",
+  "logon_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/test/logon"
 }
