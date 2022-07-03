@@ -11,6 +11,7 @@ const CragRouteTable = require('./objects/crag-route-table.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
 const ImageUploadCache = require('./objects/image-upload-cache.cjs');
 const PageHeader = require('./objects/page-header.cjs')
+const Cookie = require('./objects/cookie.cjs')
 
 let _pageHeader = null;
 let _crag = null;
@@ -25,6 +26,8 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  const cookie = new Cookie();
+
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const cragID = urlParams.get('id');
@@ -37,7 +40,7 @@ let OnConfigLoad = async () => {
   _pageHeader.AddIcon("fa-arrow-right","Upload topo image").onclick = () => OnShiftTopoRight();
   _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSave();
 
-  DataStorage.Init(Config);
+  DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
   ImageStorage.Init(Config);
 
   const cragIndex = new CragIndex();
@@ -145,8 +148,11 @@ module.exports = OnSave = () => {
   Promise.all(uploads)
   .then( () => {
     _crag.Save(DataStorage)
-    .then( () => {
-      document.getElementById("status").value = "Success!"
+    .then( (response) => {
+      if( response.error )
+        document.getElementById("status").value = "ERROR!"
+      else
+        document.getElementById("status").value = "Success!"
     })
     .catch( () => {
       document.getElementById("status").value = "ERROR!"

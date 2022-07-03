@@ -4,7 +4,7 @@ let Cookie = function() {
 
 Cookie.prototype.RefreshCache = function() {
   this.value = document.cookie;
-  this.values = this.value.split(';');
+  this.values = this.value.split('; ');
   this.valuesMap = new Map(
     this.values.map(value => {
       const keyAndValue = value.split('=')
@@ -23,8 +23,9 @@ Cookie.prototype.GetValue = function(name) {
 }
 
 Cookie.prototype.IsUserLoggedOn = function() {
+  const userID = this.GetValue("user-id")
   const userToken = this.GetValue("user-token")
-  return userToken?.length > 0 ? true : false;
+  return userID?.length > 0 && userToken?.length > 0 ? true : false;
 }
 
 module.exports = Cookie;

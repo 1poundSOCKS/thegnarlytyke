@@ -4,6 +4,7 @@ const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const PageHeader = require('./objects/page-header.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
+const Cookie = require('./objects/cookie.cjs')
 
 let _pageHeader = null;
 let _cragIndex = null;
@@ -14,6 +15,8 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  const cookie = new Cookie();
+
   _pageHeader = new PageHeader(document.getElementById("page-header"));
   _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
   _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
@@ -21,8 +24,9 @@ let OnConfigLoad = async () => {
 
   document.getElementById('page-subheader-text').innerText = "crag index editor";
 
-  DataStorage.Init(Config);
+  DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
   ImageStorage.Init(Config);
+
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.Load(DataStorage, ImageStorage);
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
@@ -52,7 +56,8 @@ let OnUploadImageFile = async () => {
 module.exports = OnSaveCragIndex = () => {
   document.getElementById("status").value = "Saving..."
   _cragIndex.Save(DataStorage, ImageStorage)
-  .then( () => {
+  .then( (response) => {
+    console.log(response)
     document.getElementById("status").value = "Success!"
   })
   .catch( () => {

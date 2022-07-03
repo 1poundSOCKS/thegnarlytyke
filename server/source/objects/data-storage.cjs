@@ -3,9 +3,11 @@ let DataStorage = function() {
   this.saveDataURL = null;
 }
 
-DataStorage.prototype.Init = function(config) {
+DataStorage.prototype.Init = function(config, userID, userToken) {
   this.dataURL = config.data_url;
   this.saveDataURL = config.save_data_url;
+  this.userID = userID ? userID : "";
+  this.userToken = userToken ? userToken : "";
 }
 
 DataStorage.prototype.Load = async function(object_id) {
@@ -15,7 +17,7 @@ DataStorage.prototype.Load = async function(object_id) {
 
 DataStorage.prototype.Save = async function(object_id, data) {
   const requestBody = JSON.stringify(data, null, 2);
-  const url = `${this.saveDataURL}?id=${object_id}`;
+  const url = `${this.saveDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}`;
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',
