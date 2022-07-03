@@ -18,8 +18,9 @@ let OnConfigLoad = async () => {
     const logonRequest = new LogonRequest(Config.logon_url, email, password);
     logonRequest.Send()
     .then( logonResponse => {
-      if( logonResponse.user_token?.length > 0 ) {
+      if( logonResponse.user_id?.length > 0 && logonResponse.user_token?.length > 0 ) {
         const cookie = new Cookie();
+        cookie.SetValue("user-id",logonResponse.user_id)
         cookie.SetValue("user-token",logonResponse.user_token)
         window.location.href = "index.html";
       }
