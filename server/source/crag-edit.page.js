@@ -41,7 +41,7 @@ let OnConfigLoad = async () => {
   _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSave();
 
   DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
-  ImageStorage.Init(Config);
+  ImageStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
 
   const cragIndex = new CragIndex();
   const cragIndexData = await cragIndex.Load(DataStorage);
@@ -146,20 +146,32 @@ module.exports = OnSave = () => {
     uploads.push(ImageStorage.SaveImageAndUpdateFilename(ID, imageData, topo));
   });
   Promise.all(uploads)
-  .then( () => {
+  .then( (responses) => {
+    const errorResponses = responses.filter(response => response.error)
+    if( errorResponses.length > 0 ) {
+      console.log(errorResponses[0].error)
+      document.getElementById("status").value = "ERROR saving image!"
+      return;
+    }
     _crag.Save(DataStorage)
     .then( (response) => {
-      if( response.error )
-        document.getElementById("status").value = "ERROR!"
-      else
-        document.getElementById("status").value = "Success!"
+      if( response.error ) {
+        console.log(response.error)
+        document.getElementById("status").value = "ERROR saving crag!"
+        return
+      }
+      document.getElementById("status").value = "Success!"
     })
-    .catch( () => {
-      document.getElementById("status").value = "ERROR!"
+    .catch( (e) => {
+      console.log(e)
+      document.getElementById("status").value = "ERROR saving crag!"
+      return
     })
   })
-  .catch( () => {
-    document.getElementById("status").value = "ERROR!"
+  .catch( (e) => {
+    console.log(e)
+    document.getElementById("status").value = "ERROR saving image!"
+    return
   })
 }
 

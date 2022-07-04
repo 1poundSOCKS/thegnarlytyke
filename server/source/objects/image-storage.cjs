@@ -4,10 +4,12 @@ let ImageStorage = function() {
   this.saveImageURL = null;
 }
 
-ImageStorage.prototype.Init = function(config) {
+ImageStorage.prototype.Init = function(config, userID, userToken) {
   this.imagesPath = `${config.images_url}`;
   this.loadImageURL = `${config.save_image_url}`;
   this.saveImageURL = `${config.save_image_url}`;
+  this.userID = userID ? userID : "";
+  this.userToken = userToken ? userToken : "";
 }
 
 ImageStorage.prototype.LoadImageFromFile = async function(filename) {
@@ -36,39 +38,21 @@ ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
 }
 
 ImageStorage.prototype.SaveImageAndUpdateFilename = async function(ID, imageData, filenameObject) {
-  const filename = await this.SaveImageWithAPI(ID, imageData);
-  filenameObject.imageFile = filename;
-}
-
-ImageStorage.prototype.SaveImageToOriginServer = async function(ID, imageData) {
-  const req = { ID: ID, imageData: imageData };
-  const response = await fetch('/save-image', {
-    method: 'POST',
-    mode: 'same-origin',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'same-origin',
-    body: JSON.stringify(req)
-  });
+  const response = await this.SaveImage(ID, imageData);
+  if( response.filename ) filenameObject.imageFile = response.filename;
   return response;
 }
 
-ImageStorage.prototype.SaveImageWithAPI = async function(ID, imageData, type) {
+ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
   if( !type ) type = "topo";
-  const url = `${this.saveImageURL}?id=${ID}&type=${type}`;
+  const url = `${this.saveImageURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${ID}&type=${type}`;
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',
     body: JSON.stringify(imageData)
   });
 
-  const parsedResponse = await response.json();
-  console.log(parsedResponse)
-  return parsedResponse.filename;
+  return response.json();
 }
 
 module.exports = new ImageStorage;

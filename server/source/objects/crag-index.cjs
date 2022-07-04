@@ -12,6 +12,7 @@ CragIndex.prototype.Load = async function(dataStorage, imageStorage) {
 }
 
 CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {
+  if( !crag.imageFile ) return
   crag.imageLoader = imageStorage.LoadImageFromFile(crag.imageFile);
 }
 
