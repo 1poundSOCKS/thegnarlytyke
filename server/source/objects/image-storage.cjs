@@ -2,6 +2,8 @@ let ImageStorage = function() {
   this.imagesPath = null;
   this.loadImageURL = null;
   this.saveImageURL = null;
+  this.userID = ""
+  this.userToken = ""
 }
 
 ImageStorage.prototype.Init = function(config, userID, userToken) {
@@ -46,6 +48,7 @@ ImageStorage.prototype.SaveImageAndUpdateFilename = async function(ID, imageData
 ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
   if( !type ) type = "topo";
   const url = `${this.saveImageURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${ID}&type=${type}`;
+  console.log(url)
   const response = await fetch(url, {
     method: 'POST',
     mode: 'cors',

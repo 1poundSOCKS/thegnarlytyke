@@ -106,3 +106,5 @@ dist
 # my project
 /server/private/data/crag.backup.*
 /server/public/scripts/*.page.js
+/api/aws-tests/payloads/*
+/api/aws-tests/output/*

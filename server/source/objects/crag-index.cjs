@@ -33,8 +33,8 @@ CragIndex.prototype.Save = async function(dataStorage, imageStorage) {
 
 CragIndex.prototype.SaveCragImage = async function(imageStorage, crag) {
   if( crag.imageData ) {
-    const filename = await imageStorage.SaveImageWithAPI(crag.id, crag.imageData, "crag")
-    crag.imageFile = filename;
+    const response = await imageStorage.SaveImage(crag.id, crag.imageData, "crag")
+    crag.imageFile = response.filename;
     delete crag.imageData;
   }
 }

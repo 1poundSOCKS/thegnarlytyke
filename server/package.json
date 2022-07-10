@@ -18,7 +18,9 @@
     "data-dev-to-test": "aws s3 sync s3://dev.data.thegnarlytyke.com s3://test.data.thegnarlytyke.com --delete",
     "data-test-to-live-step1": "aws s3 sync s3://data.thegnarlytyke.com s3://backup.data.thegnarlytyke.com --delete",
     "data-test-to-live-step2": "aws s3 sync s3://test.data.thegnarlytyke.com s3://data.thegnarlytyke.com --delete",
-    "data-test-to-live": "npm run data-test-to-live-step1 && npm run data-test-to-live-step2"
+    "data-test-to-live": "npm run data-test-to-live-step1 && npm run data-test-to-live-step2",
+    "data-live-to-test": "aws s3 sync s3://data.thegnarlytyke.com s3://test.data.thegnarlytyke.com --delete",
+    "data-test-to-dev": "aws s3 sync s3://test.data.thegnarlytyke.com s3://dev.data.thegnarlytyke.com --delete"
   },
   "keywords": [],
   "author": "",

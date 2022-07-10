@@ -25,7 +25,7 @@ let OnConfigLoad = async () => {
   document.getElementById('page-subheader-text').innerText = "crag index editor";
 
   DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
-  ImageStorage.Init(Config);
+  ImageStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
 
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.Load(DataStorage, ImageStorage);
@@ -58,9 +58,10 @@ module.exports = OnSaveCragIndex = () => {
   _cragIndex.Save(DataStorage, ImageStorage)
   .then( (response) => {
     console.log(response)
-    document.getElementById("status").value = "Success!"
+    document.getElementById("status").value = response.error ? "ERROR!" : "Success!"
   })
-  .catch( () => {
+  .catch( (e) => {
+    console.log(e)
     document.getElementById("status").value = "ERROR!"
   })
 }
