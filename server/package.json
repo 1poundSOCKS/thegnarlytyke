@@ -29,7 +29,8 @@
     "@fortawesome/fontawesome-free": "^6.1.1",
     "express": "^4.17.3",
     "nodemon": "^2.0.15",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zip-lib": "^0.7.3"
   },
   "devDependencies": {
     "browserify": "^17.0.0",

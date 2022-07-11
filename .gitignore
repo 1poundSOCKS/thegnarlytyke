@@ -103,8 +103,13 @@ dist
 # TernJS port file
 .tern-port
 
-# my project
+# my web
 /server/private/data/crag.backup.*
 /server/public/scripts/*.page.js
+
+# my api
 /api/aws-tests/payloads/*
 /api/aws-tests/output/*
+/api/aws-tests/temp/*
+/api/lambda/test/payloads/*
+/api/lambda/test/output/*
