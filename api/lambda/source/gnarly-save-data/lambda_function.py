@@ -4,35 +4,37 @@ import datetime
 import boto3
 from botocore.errorfactory import ClientError
 
-_USERDATA_BUCKET_NAME = "{}.userdata.thegnarlytyke.com"
-_DATA_BUCKET_NAME = "{}.data.thegnarlytyke.com"
-
 def lambda_handler(event, context):
 
-    stage = GetStage(event)
-    print("stage: {}".format(stage))
-    USERDATA_BUCKET_NAME = _USERDATA_BUCKET_NAME.format(stage)
-    print("userdata bucket: {}".format(USERDATA_BUCKET_NAME))
-    DATA_BUCKET_NAME = _DATA_BUCKET_NAME.format(stage)
+    stage_vars = event['stageVariables']
+    DATA_BUCKET_NAME = stage_vars["dataBucket"]
+    USERDATA_BUCKET_NAME = stage_vars["userdataBucket"]
+
     print("data bucket: {}".format(DATA_BUCKET_NAME))
+    print("userdata bucket: {}".format(USERDATA_BUCKET_NAME))
 
     parameters = event['queryStringParameters']
     
     user_id = parameters.get('user_id')
     user_token = parameters.get('user_token')
 
-    # check authentication 
+    # check authentication
     lambda_client = boto3.client('lambda')
-    inputParams = {"user_id": user_id,"user_token":user_token,"stage":stage}
+    inputParams = {"user_id": user_id,"user_token":user_token,"bucket":USERDATA_BUCKET_NAME}
     response = lambda_client.invoke(
-        FunctionName = 'arn:aws:lambda:eu-west-2:081277733545:function:AuthenticateUser',
+        FunctionName = 'gnarly-authenticate-user',
         InvocationType = 'RequestResponse',
         Payload = json.dumps(inputParams)
     )
     response = json.load(response['Payload'])
     print(response)
 
-    if response.get("error"):
+    if response["statusCode"] == 200:
+        body = response["body"]
+        bodyObj = json.loads(body)
+        authError = bodyObj.get("error")
+
+    if response["statusCode"] != 200 or authError:
         return {
             "statusCode": 200,
             'headers': {
@@ -81,6 +83,6 @@ def lambda_handler(event, context):
         )
     }
     
-def GetStage(event):
-    request_context = event["requestContext"]
-    return request_context["stage"]
+# def GetStage(event):
+#     request_context = event["requestContext"]
+#     return request_context["stage"]

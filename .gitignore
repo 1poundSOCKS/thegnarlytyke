@@ -112,5 +112,4 @@ dist
 /api/aws-tests/output/*
 /api/aws-tests/temp/*
 /api/lambda/output/*
-/api/lambda/test/payloads/*
 /api/lambda/test/output/*

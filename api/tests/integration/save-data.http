@@ -1,0 +1,5 @@
+POST https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/save-data?id=dev-test&user_id=dev-user&user_token=dev-token
+
+{
+  "test": "123"
+}
