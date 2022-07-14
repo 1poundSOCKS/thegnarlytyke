@@ -7,9 +7,11 @@ from botocore.errorfactory import ClientError
 def lambda_handler(event, context):
 
     stage_vars = event['stageVariables']
+    LAMBDA_ALIAS = stage_vars["lambdaAlias"]
     DATA_BUCKET_NAME = stage_vars["dataBucket"]
     USERDATA_BUCKET_NAME = stage_vars["userdataBucket"]
 
+    print("lambda alias: {}".format(LAMBDA_ALIAS))
     print("data bucket: {}".format(DATA_BUCKET_NAME))
     print("userdata bucket: {}".format(USERDATA_BUCKET_NAME))
 
@@ -19,10 +21,12 @@ def lambda_handler(event, context):
     user_token = parameters.get('user_token')
 
     # check authentication
+    function_name = "gnarly-authenticate-user:{}".format(LAMBDA_ALIAS)
+    print("authenticating with function: {}".format(function_name))
     lambda_client = boto3.client('lambda')
     inputParams = {"user_id": user_id,"user_token":user_token,"bucket":USERDATA_BUCKET_NAME}
     response = lambda_client.invoke(
-        FunctionName = 'gnarly-authenticate-user',
+        FunctionName = function_name,
         InvocationType = 'RequestResponse',
         Payload = json.dumps(inputParams)
     )

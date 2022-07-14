@@ -111,5 +111,5 @@ dist
 /api/aws-tests/payloads/*
 /api/aws-tests/output/*
 /api/aws-tests/temp/*
-/api/lambda/output/*
-/api/lambda/test/output/*
+/api/lambda/output
+/api/lambda/test/output

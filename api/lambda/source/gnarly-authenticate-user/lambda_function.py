@@ -2,13 +2,8 @@ import json
 import boto3
 from botocore.errorfactory import ClientError
 
-# _USERDATA_BUCKET_NAME = "{}.userdata.thegnarlytyke.com"
-
 def lambda_handler(event, context):
 
-    # stage = event["stage"]
-    # print("stage: {}".format(stage))
-    # USERDATA_BUCKET_NAME = _USERDATA_BUCKET_NAME.format(stage)
     USERDATA_BUCKET_NAME = event["bucket"]
     print("userdata bucket: {}".format(USERDATA_BUCKET_NAME))
     
@@ -36,3 +31,4 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps({})
     }
+    
