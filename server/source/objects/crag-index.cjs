@@ -11,6 +11,13 @@ CragIndex.prototype.Load = async function(dataStorage, imageStorage) {
   return this.data;
 }
 
+CragIndex.prototype.LoadForUserEdit = async function(dataStorage, imageStorage) {
+  this.data = await dataStorage.LoadForUserEdit('crag-index');
+  this.data.crags.forEach( crag => delete crag.imageLoader )
+  if( imageStorage ) this.data.crags.forEach( crag => this.LoadCragImage(imageStorage, crag) )
+  return this.data;
+}
+
 CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {
   if( !crag.imageFile ) return
   crag.imageLoader = imageStorage.LoadImageFromFile(crag.imageFile);

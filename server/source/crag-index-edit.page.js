@@ -28,7 +28,7 @@ let OnConfigLoad = async () => {
   ImageStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
 
   _cragIndex = new CragIndex(Config);
-  const cragIndexData = await _cragIndex.Load(DataStorage, ImageStorage);
+  const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
   document.getElementById('image-file').onchange = OnUploadImageFile;
   document.getElementById("crag-name").onchange = OnCragNameChanged;

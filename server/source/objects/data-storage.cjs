@@ -6,12 +6,18 @@ let DataStorage = function() {
 DataStorage.prototype.Init = function(config, userID, userToken) {
   this.dataURL = config.data_url;
   this.saveDataURL = config.save_data_url;
+  this.loadDataURL = config.load_data_url;
   this.userID = userID ? userID : "";
   this.userToken = userToken ? userToken : "";
 }
 
 DataStorage.prototype.Load = async function(object_id) {
   const response = await fetch(`${this.dataURL}${object_id}.json`, {cache: "reload"});
+  return response.json();
+}
+
+DataStorage.prototype.LoadForUserEdit = async function(object_id) {
+  const response = await fetch(`${this.loadDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}`);
   return response.json();
 }
 

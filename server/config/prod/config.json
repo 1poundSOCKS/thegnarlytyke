@@ -3,5 +3,8 @@
   "mode" : "view",
   "data_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/data/",
   "images_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/images/",
+  "save_image_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/prod/save-image",
+  "save_data_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/prod/save-data",
+  "load_data_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/prod/load-data",
   "logon_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/prod/logon"
 }
