@@ -108,8 +108,6 @@ dist
 /server/public/scripts/*.page.js
 
 # my api
-/api/aws-tests/payloads/*
-/api/aws-tests/output/*
-/api/aws-tests/temp/*
+/api/lambda/build
 /api/lambda/output
 /api/lambda/test/output

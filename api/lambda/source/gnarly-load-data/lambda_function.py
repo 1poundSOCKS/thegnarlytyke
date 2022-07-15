@@ -52,25 +52,13 @@ def lambda_handler(event, context):
             )
         }
     
-    string = event['body']
-    encoded_string = string.encode("utf-8")
-
     s3 = boto3.client('s3')
     object_id = parameters['id']
 
     filename = "{}.json".format(object_id)
     data_key = "data/users/{}/{}".format(user_id,filename)
     
-    datetime_stamp = datetime.datetime.now().strftime("%G%m%d.%H%M%S.%f")
-    backup_data_key = "backup/data/{}.{}.json".format(object_id,datetime_stamp)
-    
-    copy_source={'Bucket':DATA_BUCKET_NAME,'Key':data_key}
-    try:
-        s3.copy_object(CopySource=copy_source,Bucket=DATA_BUCKET_NAME,Key=backup_data_key)
-    except ClientError:
-        print("backup failed")
-
-    s3.put_object(Bucket=DATA_BUCKET_NAME, Key=data_key, Body=encoded_string)
+    s3.get_object(Bucket=DATA_BUCKET_NAME, Key=data_key)
     
     return {
         "statusCode": 200,
@@ -80,9 +68,6 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Methods': 'POST'
         },
         "body": json.dumps(
-            {
-                "filename": filename
-            }
+            {}
         )
     }
-    

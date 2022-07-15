@@ -1,8 +1,0 @@
-{
-  "SaveDataFunction": {
-    "BUCKET_NAME":"dev.data.thegnarlytyke.com"
-  },
-  "SaveImageFunction": {
-    "BUCKET_NAME":"dev.data.thegnarlytyke.com"
-  }
-}
