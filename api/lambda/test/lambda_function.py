@@ -30,7 +30,7 @@ def lambda_handler(event, context):
         Payload = json.dumps(inputParams)
     )
     response = json.load(response['Payload'])
-    print(response)
+    print("authentication response: {}".format(response))
 
     if response["statusCode"] == 200:
         body = response["body"]
