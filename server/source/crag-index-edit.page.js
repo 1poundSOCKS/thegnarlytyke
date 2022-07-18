@@ -57,11 +57,9 @@ module.exports = OnSaveCragIndex = () => {
   document.getElementById("status").value = "Saving..."
   _cragIndex.Save(DataStorage, ImageStorage)
   .then( (response) => {
-    console.log(response)
     document.getElementById("status").value = response.error ? "ERROR!" : "Success!"
   })
   .catch( (e) => {
-    console.log(e)
     document.getElementById("status").value = "ERROR!"
   })
 }

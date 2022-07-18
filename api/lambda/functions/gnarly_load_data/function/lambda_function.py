@@ -57,8 +57,31 @@ def lambda_handler(event, context):
     filename = "{}.json".format(object_id)
     data_key = "data/users/{}/{}".format(user_id,filename)
     
-    # s3.get_object(Bucket=DATA_BUCKET_NAME, Key=data_key)
-    
+    object = None
+    try:
+        object = s3.get_object(Bucket=DATA_BUCKET_NAME, Key=data_key)
+    except ClientError:
+        data_key = "data/{}".format(filename)
+        try:
+            object = s3.get_object(Bucket=DATA_BUCKET_NAME, Key=data_key)
+        except ClientError:
+            return {
+                "statusCode": 200,
+                'headers': {
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST'
+                },
+                "body": json.dumps(
+                    {
+                        "error": "data with key '{}' does not exist".format(filename)
+                    }
+                )
+            }
+
+    object_data = object['Body'].read()
+    return_data = object_data.decode()
+
     return {
         "statusCode": 200,
         'headers': {
@@ -66,7 +89,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST'
         },
-        "body": json.dumps(
-            {}
-        )
+        "body": return_data
     }
