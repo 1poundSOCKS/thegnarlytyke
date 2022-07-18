@@ -23,7 +23,11 @@ jobs:
     - name: Set up node 
       uses: actions/setup-node@v1
 
-    # - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v2
+
+    - name: Run Lambda tests
+      run: pytest
+      working-directory: ./api/lambda
 
     # - uses: aws-actions/setup-sam@v1
 
@@ -39,7 +43,7 @@ jobs:
       run: npm run build
       working-directory: ./server
 
-    - name: Run tests
+    - name: Run web script unit tests
       run: npm test
       working-directory: ./server
 
