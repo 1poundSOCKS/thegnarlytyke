@@ -1,6 +1,13 @@
+import os
 import requests
 
 def test_gateway(alias,email,password):
+  if email == None:
+    email = os.environ["GNARLY_TEST_EMAIL"]
+  
+  if password == None:
+    password = os.environ["GNARLY_TEST_PASSWORD"]
+
   logon_url = f"https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/{alias}/logon"
   load_url = f"https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/{alias}/load-data"
   save_url = f"https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/{alias}/save-data"

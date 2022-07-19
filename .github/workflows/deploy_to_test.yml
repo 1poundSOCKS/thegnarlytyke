@@ -46,7 +46,10 @@ jobs:
       working-directory: ./api/lambda/scripts
 
     - name: Run Gateway tests
-      run: pytest --alias test --email {{ secrets.GNARLY_TEST_EMAIL}} --password {{ secrets.GNARLY_TEST_PASSWORD }}
+      env:
+        GNARLY_TEST_EMAIL: ${{ secrets.GNARLY_TEST_EMAIL}}
+        GNARLY_TEST_PASSWORD: ${{ secrets.GNARLY_TEST_PASSWORD }}
+      run: pytest --alias test
       working-directory: ./api/gateway/test
 
     - name: Clean cache
