@@ -45,6 +45,10 @@ jobs:
       run: python deploy_to_test.py
       working-directory: ./api/lambda/scripts
 
+    - name: Run Gateway tests
+      run: pytest --alias test --email {{ secrets.GNARLY_TEST_EMAIL}} --password {{ secrets.GNARLY_TEST_PASSWORD }}
+      working-directory: ./api/gateway/test
+
     - name: Clean cache
       run: npm cache clean --force
       working-directory: ./server
