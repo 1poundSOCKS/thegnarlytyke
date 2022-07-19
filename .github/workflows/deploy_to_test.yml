@@ -30,9 +30,6 @@ jobs:
     - name: Install Python AWS client lib
       run: pip install boto3
 
-    - name: Install Python requests lib
-      run: pip install requests
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -47,13 +44,6 @@ jobs:
     - name: Deploy Lambda code updates
       run: python deploy_to_test.py
       working-directory: ./api/lambda/scripts
-
-    - name: Run Gateway tests
-      env:
-        GNARLY_TEST_EMAIL: ${{ secrets.GNARLY_TEST_EMAIL}}
-        GNARLY_TEST_PASSWORD: ${{ secrets.GNARLY_TEST_PASSWORD }}
-      run: pytest --alias test
-      working-directory: ./api/gateway/test
 
     - name: Clean cache
       run: npm cache clean --force
