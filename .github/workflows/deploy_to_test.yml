@@ -7,7 +7,6 @@ on:
 
 env:
   AWS_REGION: eu-west-2
-  API_BUCKET_NAME: api.thegnarlytyke.com
   WEB_BUCKET_NAME: test.thegnarlytyke.com
 
 jobs:
@@ -42,7 +41,9 @@ jobs:
       run: pytest
       working-directory: ./api/lambda
 
-    # - uses: aws-actions/setup-sam@v1
+    - name: Deploy Lambda code updates
+      run: python deploy_to_test.py
+      working-directory: ./api/lambda/scripts
 
     - name: Clean cache
       run: npm cache clean --force
@@ -59,12 +60,6 @@ jobs:
     - name: Run web script unit tests
       run: npm test
       working-directory: ./server
-
-    # - run: sam build --use-container
-    #   working-directory: ./api/
-
-    # - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name gnarly --s3-bucket ${{ env.API_BUCKET_NAME }} --capabilities CAPABILITY_IAM --region ${{ env.AWS_REGION }}
-    #   working-directory: ./api/
 
     - name: Deploy static site to S3 bucket
       run: aws s3 sync ./server/public/ s3://${{ env.WEB_BUCKET_NAME }} --exclude "config.json" --delete
