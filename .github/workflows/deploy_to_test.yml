@@ -39,7 +39,7 @@ jobs:
 
     - name: Run Lambda tests
       run: pytest
-      working-directory: ./api/lambda
+      working-directory: ./api/lambda/functions
 
     - name: Deploy Lambda code updates
       run: python deploy_to_test.py

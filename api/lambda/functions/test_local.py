@@ -1,7 +1,7 @@
 import json
-from functions.gnarly_authenticate_user.source.lambda_function import lambda_handler as authenticate_user
-from functions.gnarly_save_data.source.lambda_function import lambda_handler as save_data
-from functions.gnarly_load_data.source.lambda_function import lambda_handler as load_data
+from gnarly_authenticate_user.source.lambda_function import lambda_handler as authenticate_user
+from gnarly_save_data.source.lambda_function import lambda_handler as save_data
+from gnarly_load_data.source.lambda_function import lambda_handler as load_data
 
 function_event_authenticate = {
   "bucket" : "dev.userdata.thegnarlytyke.com",
@@ -57,3 +57,4 @@ def test_lambda():
     error = body.get("error")
     assert status_code == 200 and error == None
     assert body == {"msg":"hello"}
+    
