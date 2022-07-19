@@ -1,7 +1,7 @@
 import json
-from functions.gnarly_authenticate_user.function.lambda_function import lambda_handler as authenticate_user
-from functions.gnarly_save_data.function.lambda_function import lambda_handler as save_data
-from functions.gnarly_load_data.function.lambda_function import lambda_handler as load_data
+from functions.gnarly_authenticate_user.source.lambda_function import lambda_handler as authenticate_user
+from functions.gnarly_save_data.source.lambda_function import lambda_handler as save_data
+from functions.gnarly_load_data.source.lambda_function import lambda_handler as load_data
 
 function_event_authenticate = {
   "bucket" : "dev.userdata.thegnarlytyke.com",
