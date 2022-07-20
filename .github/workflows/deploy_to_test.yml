@@ -38,7 +38,10 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Run Lambda tests
-      run: pytest
+      env:
+        GNARLY_TEST_EMAIL: ${{ secrets.GNARLY_TEST_EMAIL }}
+        GNARLY_TEST_PASSWORD: ${{ secrets.GNARLY_TEST_PASSWORD }}
+      run: pytest --alias test --email $GNARLY_TEST_EMAIL --password $GNARLY_TEST_PASSWORD
       working-directory: ./api/lambda/functions
 
     - name: Deploy Lambda code updates
