@@ -2,6 +2,10 @@ from pytest import fixture
 
 def pytest_addoption(parser):
     parser.addoption(
+        "--alias",
+        action="store"
+    )
+    parser.addoption(
         "--email",
         action="store"
     )
@@ -9,6 +13,10 @@ def pytest_addoption(parser):
         "--password",
         action="store"
     )
+
+@fixture()
+def alias(request):
+    return request.config.getoption("--alias")
 
 @fixture()
 def email(request):
