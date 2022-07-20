@@ -1,12 +1,14 @@
 import json
-from gnarly_authenticate_user.source.lambda_function import lambda_handler as authenticate_user
+from gnarly_logon.source.lambda_function import lambda_handler as logon
 from gnarly_save_data.source.lambda_function import lambda_handler as save_data
 from gnarly_load_data.source.lambda_function import lambda_handler as load_data
 
-function_event_authenticate = {
-  "bucket" : "dev.userdata.thegnarlytyke.com",
-  "user_id": "dev-user",
-  "user_token": "dev-token"
+function_event_logon = {
+  "stageVariables": {
+    "lambdaAlias": "dev",
+    "dataBucket": "dev.data.thegnarlytyke.com",
+    "userdataBucket": "dev.userdata.thegnarlytyke.com"
+  }
 }
 
 function_event_save_data = {
@@ -16,8 +18,6 @@ function_event_save_data = {
     "userdataBucket": "dev.userdata.thegnarlytyke.com"
   },
   "queryStringParameters": {
-    "user_id": "dev-user",
-    "user_token": "dev-token",
     "id": "test-id",
     "type": "test-type"
   },
@@ -31,26 +31,32 @@ function_event_load_data = {
     "userdataBucket": "dev.userdata.thegnarlytyke.com"
   },
   "queryStringParameters": {
-    "user_id": "dev-user",
-    "user_token": "dev-token",
     "id": "test-id",
     "type": "test-type"
   }
 }
 
-def test_lambda():
-    response = authenticate_user(function_event_authenticate, None)
+def test_lambda(email,password):
+    function_event_logon["body"] = f'{{"email": "{email}","password": "{password}"}}'
+    response = logon(function_event_logon, None)
     status_code = response.get('statusCode')
     body = json.loads(response.get('body'))
     error = body.get("error")
     assert status_code == 200 and error == None
 
+    user_id = body.get("user_id")
+    user_token = body.get("user_token")
+
+    function_event_save_data["queryStringParameters"]["user_id"] = user_id
+    function_event_save_data["queryStringParameters"]["user_token"] = user_token
     response = save_data(function_event_save_data, None)
     status_code = response.get('statusCode')
     body = json.loads(response.get('body'))
     error = body.get("error")
     assert status_code == 200 and error == None
 
+    function_event_load_data["queryStringParameters"]["user_id"] = user_id
+    function_event_load_data["queryStringParameters"]["user_token"] = user_token
     response = load_data(function_event_load_data, None)
     status_code = response.get('statusCode')
     body = json.loads(response.get('body'))
