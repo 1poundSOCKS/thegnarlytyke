@@ -67,7 +67,7 @@ jobs:
       working-directory: ${{ env.FRONT_END_DIR }}
 
     - name: Deploy static site to S3 bucket
-      run: aws s3 sync ./server/public/ s3://${{ env.WEB_BUCKET_NAME }} --exclude "config.json" --delete
+      run: aws s3 sync ${{ env.FRONT_END_DIR }}/public/ s3://${{ env.WEB_BUCKET_NAME }} --exclude "config.json" --delete
 
     - name: Deploy test config
-      run: aws s3 sync ./server/config/test s3://${{ env.WEB_BUCKET_NAME }}
+      run: aws s3 sync ${{ env.FRONT_END_DIR }}/config/test s3://${{ env.WEB_BUCKET_NAME }}
