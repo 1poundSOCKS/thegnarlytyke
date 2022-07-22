@@ -28,4 +28,9 @@ Cookie.prototype.IsUserLoggedOn = function() {
   return userID?.length > 0 && userToken?.length > 0 ? true : false;
 }
 
+Cookie.prototype.Logoff = function() {
+  this.SetValue("user-id","")
+  this.SetValue("user-token","")
+}
+
 module.exports = Cookie;

@@ -1,17 +1,18 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const Config = require('./objects/config.cjs');
-const PageHeader = require('./objects/page-header.cjs')
+const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const LogonRequest = require('./objects/logon-request.cjs');
 const Cookie = require('./objects/cookie.cjs');
 
-let _pageHeader = null;
+let _pageHeaderNav = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
 }
 
 let OnConfigLoad = async () => {
-  _pageHeader = new PageHeader(document.getElementById("page-header"));
+  _pageHeaderNav = new PageHeaderNav(document.getElementById("page-header-nav"),'logon')
+  _pageHeaderNav.AddItem('logon', 'logon.html')
   
   document.getElementById("submit-logon").onclick = () => {
     const email = document.getElementById("email").value;
@@ -29,7 +30,7 @@ let OnConfigLoad = async () => {
   }
 }
 
-},{"./objects/config.cjs":2,"./objects/cookie.cjs":3,"./objects/logon-request.cjs":4,"./objects/page-header.cjs":5}],2:[function(require,module,exports){
+},{"./objects/config.cjs":2,"./objects/cookie.cjs":3,"./objects/logon-request.cjs":4,"./objects/page-header-nav.cjs":5}],2:[function(require,module,exports){
 let Config = function() {
 }
 
@@ -72,6 +73,11 @@ Cookie.prototype.IsUserLoggedOn = function() {
   return userID?.length > 0 && userToken?.length > 0 ? true : false;
 }
 
+Cookie.prototype.Logoff = function() {
+  this.SetValue("user-id","")
+  this.SetValue("user-token","")
+}
+
 module.exports = Cookie;
 
 },{}],4:[function(require,module,exports){
@@ -94,23 +100,24 @@ LogonRequest.prototype.Send = async function() {
 module.exports = LogonRequest;
 
 },{}],5:[function(require,module,exports){
-let PageHeader = function(element) {
-  this.element = element;
+let PageHeaderNav = function(element, activeItem) {
+  this.element = element
+  this.activeItem = activeItem
+  this.AddItem('home','index.html')
 }
 
-PageHeader.prototype.AddIcon = function(fontAwesomeClass, title) {
-  const icon = document.createElement("i");
-  icon.classList.add("header-icon");
-  icon.classList.add("fa-solid");
-  icon.classList.add(fontAwesomeClass);
-  icon.setAttribute("title",title)
-  return this.element.appendChild(icon);
+PageHeaderNav.prototype.AddItem = function(text, link, callback) {
+  const newListItem = document.createElement('li')
+  newListItem.classList.add('page-header-nav-item')
+  if( text == this.activeItem ) newListItem.classList.add('page-header-nav-item-active')
+  const itemAddress = document.createElement('a')
+  itemAddress.innerText = text
+  if( link ) itemAddress.setAttribute('href', link)
+  else itemAddress.onclick = callback
+  newListItem.appendChild(itemAddress)
+  this.element.appendChild(newListItem)
 }
 
-PageHeader.prototype.AddLogonIcon = function() {
-  return this.AddIcon("fa-sign-in","Logon").onclick = () => window.location.href = "logon.html";
-}
-
-module.exports = PageHeader;
+module.exports = PageHeaderNav;
 
 },{}]},{},[1]);

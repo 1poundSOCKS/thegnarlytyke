@@ -1,16 +1,17 @@
 const Config = require('./objects/config.cjs');
-const PageHeader = require('./objects/page-header.cjs')
+const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const LogonRequest = require('./objects/logon-request.cjs');
 const Cookie = require('./objects/cookie.cjs');
 
-let _pageHeader = null;
+let _pageHeaderNav = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
 }
 
 let OnConfigLoad = async () => {
-  _pageHeader = new PageHeader(document.getElementById("page-header"));
+  _pageHeaderNav = new PageHeaderNav(document.getElementById("page-header-nav"),'logon')
+  _pageHeaderNav.AddItem('logon', 'logon.html')
   
   document.getElementById("submit-logon").onclick = () => {
     const email = document.getElementById("email").value;

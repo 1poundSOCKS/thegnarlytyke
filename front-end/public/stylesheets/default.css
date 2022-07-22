@@ -6,6 +6,10 @@
   --tgt-std-dark-color: darkgray;
   --tgt-std-background-color: lightgray;
   --tgt-highlight-background-color: darkgray;
+  --page-header-menu-text-not-selected: darkgray;
+  --page-header-menu-text-selected: white;
+  --page-header-menu-text-active: white;
+  --crag-name: black;
 }
 
 label, input {
@@ -38,7 +42,7 @@ i {
   display: flex;
   margin: auto;
   width: 100%;
-  height: 5rem;
+  height: 4rem;
   margin-bottom: 0.5rem;
 }
 
@@ -307,6 +311,72 @@ i {
 .main-topo-image {
   width: 100%;
 }
+
+/* page header nav */
+
+.page-header {
+  background: var(--tgt-subheader-background-color);
+  display: grid;
+  margin: auto;
+  width: 100%;
+  height: 4rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.page-header-nav {
+  font-size: 3rem;
+  color: var(--tgt-std-light-color);
+  background: var(--tgt-subheader-background-color);
+  list-style-type: none;
+  padding: 0;
+  margin: auto;
+}
+
+.page-header-nav-item {
+  display: inline;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.page-header-nav-item > a {
+  font-size: 3rem;
+  color: var(--page-header-menu-text-not-selected);
+  background: var(--tgt-subheader-background-color);
+  text-decoration: none;
+}
+
+.page-header-nav-item > a:hover {
+  text-decoration: underline;
+  color: var(--page-header-menu-text-selected);
+  cursor: pointer;
+}
+
+.page-header-nav-item-active {
+  text-decoration: underline;
+  color: var(--page-header-menu-text-active);
+}
+
+/* crag view */
+.crag-view-header {
+  text-align:center;
+}
+.crag-name {
+  margin: auto;
+  font-size: 3rem;
+  color: var(--crag-name);
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.close-crag-view-icon {
+  font-size: 3rem;
+}
+.close-crag-view-icon:hover {
+  cursor: pointer;
+}
+
+/* keep at the bottom */
 
 .do-not-display {
   display: none;
