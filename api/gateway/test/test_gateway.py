@@ -11,7 +11,7 @@ def test_gateway(alias,email,password):
   logon_url = f"https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/{alias}/logon"
   load_url = f"https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/{alias}/load-data"
   save_url = f"https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/{alias}/save-data"
-  object_id = "crag-index"
+  object_id = "dummy-test-file"
 
   logon_data = {"email":email,"password":password}
   logon_response = requests.post(logon_url, json = logon_data)

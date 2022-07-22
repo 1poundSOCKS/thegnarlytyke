@@ -1,6 +1,6 @@
 {
   "environment": "prod",
-  "mode" : "view",
+  "mode" : "edit",
   "data_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/data/",
   "images_url" : "https://s3.eu-west-2.amazonaws.com/data.thegnarlytyke.com/images/",
   "save_image_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/prod/save-image",

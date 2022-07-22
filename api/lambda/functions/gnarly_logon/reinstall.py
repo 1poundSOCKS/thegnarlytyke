@@ -84,17 +84,21 @@ def install_function(client,function_name,source_folder,role_arn):
 
   version = published_version["Version"]
 
-  client.create_alias(
-      FunctionName=function_name,
-      Name='test',
-      FunctionVersion=version
-  )
+  for alias in ['test','prod']:
+    client.create_alias(
+        FunctionName=function_name,
+        Name=alias,
+        FunctionVersion=version
+    )
 
-  client.create_alias(
-      FunctionName=function_name,
-      Name='prod',
-      FunctionVersion=version
-  )
+  for alias in ['dev','test','prod']:
+    client.add_permission(
+      FunctionName=f'{function_name}:{alias}',
+      Principal='apigateway.amazonaws.com',
+      SourceArn='arn:aws:execute-api:eu-west-2:081277733545:z4oiwf4tli/*/POST/logon',
+      StatementId='allow-api-gateway',
+      Action='lambda:InvokeFunction'
+    )
 
 def reinstall(function_name,additional_role_policies):
   lambda_client = boto3.client('lambda')
@@ -109,4 +113,4 @@ def reinstall(function_name,additional_role_policies):
   role_arn = role["Role"]["Arn"]
   install_function(lambda_client,function_name,"source",role_arn)
 
-reinstall("gnarly-logon",['lambda-read-userdata'])
+reinstall("gnarly-logon",['lambda-read-userdata','lambda-write-userdata'])
