@@ -360,7 +360,9 @@ i {
 /* crag view */
 .crag-view-header {
   text-align:center;
+  margin-bottom: 1rem;
 }
+
 .crag-name {
   margin: auto;
   font-size: 3rem;
@@ -369,9 +371,12 @@ i {
   text-align: center;
   margin-bottom: 1rem;
 }
+
 .close-crag-view-icon {
   font-size: 3rem;
+  margin-left: 1rem;
 }
+
 .close-crag-view-icon:hover {
   cursor: pointer;
 }
