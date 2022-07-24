@@ -20,13 +20,6 @@ window.onload = () => {
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
 
-  // _pageHeader = new PageHeader(document.getElementById("page-header"));
-  // _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
-  // _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
-  // _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
-
-  // document.getElementById('page-subheader-text').innerText = "crag index editor";
-
   _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'edit',_cookie,Config.mode == "edit");
 
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));

@@ -24,7 +24,6 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
-  // const loggedOn = _cookie.IsUserLoggedOn();
   
   _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
   
