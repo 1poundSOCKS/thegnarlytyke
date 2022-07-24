@@ -72,6 +72,7 @@ let DisplayIndexView = () => {
 let DisplayCragView = async cragID => {
   document.getElementById('crag-covers-container').style = 'display:none'
   window.scrollTo( 0, 0 );
+  
   try {
     const cragStorage = new CragStorage('client', Config);
     _crag = await cragStorage.Load(cragID);

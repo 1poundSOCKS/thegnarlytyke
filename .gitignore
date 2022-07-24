@@ -104,8 +104,7 @@ dist
 .tern-port
 
 # my web
-/server/private/data/crag.backup.*
-/server/public/scripts/*.page.js
+/front-end/public/scripts/*.page.js
 
 # my api
 /api/lambda/build

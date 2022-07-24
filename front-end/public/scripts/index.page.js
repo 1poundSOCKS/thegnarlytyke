@@ -912,6 +912,7 @@ let DisplayIndexView = () => {
 let DisplayCragView = async cragID => {
   document.getElementById('crag-covers-container').style = 'display:none'
   window.scrollTo( 0, 0 );
+  
   try {
     const cragStorage = new CragStorage('client', Config);
     _crag = await cragStorage.Load(cragID);
@@ -1651,12 +1652,17 @@ let TopoImage = function(canvas, editable) {
   this.dragStartPos = null;
   this.dragPointInfo = null;
   this.mouseDown = false;
+  this.Clear();
+}
+
+TopoImage.prototype.Clear = function() {
+  const ctx = this.canvas.getContext('2d');
+  ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }
 
 TopoImage.prototype.Refresh = function() {
   if( !this.image ) {
-    const ctx = this.canvas.getContext('2d');
-    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.Clear();
     return;
   }
 
