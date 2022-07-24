@@ -843,15 +843,20 @@ const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
-// const PageHeader = require('./objects/page-header.cjs')
+const IconBar = require('./objects/icon-bar.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const Cookie = require('./objects/cookie.cjs')
+const CragCache = require('./objects/crag-cache.cjs')
+const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 
 let _cookie = null;
-// let _pageHeader = null;
 let _pageHeaderNav = null;
+let _iconBar = null;
 let _cragIndex = null;
 let _cragMediaScroller = null;
+let _cragCache = null
+let _currentCrag = null
+let _topoMediaScroller = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
@@ -860,27 +865,31 @@ window.onload = () => {
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
 
-  // _pageHeader = new PageHeader(document.getElementById("page-header"));
-  // _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
-  // _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
-  // _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
-
-  // document.getElementById('page-subheader-text').innerText = "crag index editor";
-
   _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'edit',_cookie,Config.mode == "edit");
 
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
+  
+  _cragCache = new CragCache(Config)
+
+  _iconBar = new IconBar(document.getElementById('icon-bar-container'))
+  _iconBar.AddIcon('fa-plus','add crag', OnAddCrag)
+  _iconBar.AddIcon('fa-save','save changes', OnSaveChanges)
 
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);
+
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
   document.getElementById('image-file').onchange = OnUploadImageFile;
   document.getElementById("crag-name").onchange = OnCragNameChanged;
 }
 
-let OnCragSelected = () => {
+let OnCragSelected = async () => {
   document.getElementById("crag-name").value = _cragMediaScroller.selectedContainer.crag.name;
+  _currentCrag = await _cragCache.Load(_cragMediaScroller.selectedContainer.crag.id)
+  console.log(_currentCrag.name)
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _currentCrag, false, OnTopoSelected)
+  _topoMediaScroller.LoadTopoImages(ImageStorage)
 }
 
 let OnCragNameChanged = () => {
@@ -898,7 +907,7 @@ let OnUploadImageFile = async () => {
   _cragMediaScroller.selectedContainer.LoadImageFromFile(imageFileElement.files[0]);
 }
 
-module.exports = OnSaveCragIndex = () => {
+module.exports = OnSaveChanges = () => {
   document.getElementById("status").value = "Saving..."
   _cragIndex.Save(DataStorage, ImageStorage)
   .then( (response) => {
@@ -909,7 +918,11 @@ module.exports = OnSaveCragIndex = () => {
   })
 }
 
-},{"./objects/config.cjs":17,"./objects/cookie.cjs":18,"./objects/crag-index.cjs":20,"./objects/crag-media-scroller.cjs":21,"./objects/data-storage.cjs":22,"./objects/image-storage.cjs":24,"./objects/page-header-nav.cjs":25}],17:[function(require,module,exports){
+let OnTopoSelected = (topoID, topoContainer) => {
+  console.log(`topo ID: ${topoID}`)
+}
+
+},{"./objects/config.cjs":17,"./objects/cookie.cjs":18,"./objects/crag-cache.cjs":19,"./objects/crag-index.cjs":21,"./objects/crag-media-scroller.cjs":22,"./objects/data-storage.cjs":25,"./objects/icon-bar.cjs":26,"./objects/image-storage.cjs":28,"./objects/page-header-nav.cjs":29,"./objects/topo-media-scroller.cjs":31}],17:[function(require,module,exports){
 let Config = function() {
 }
 
@@ -960,6 +973,26 @@ Cookie.prototype.Logoff = function() {
 module.exports = Cookie;
 
 },{}],19:[function(require,module,exports){
+const CragStorage = require('./crag-storage.cjs')
+const Crag = require('./crag.cjs')
+
+let CragCache = function(config) {
+  this.config = config;
+  this.map = new Map();
+}
+
+CragCache.prototype.Load = async function(id) {
+  let crag = this.map.get(id)
+  if( crag ) return crag
+  const cragStorage = new CragStorage('client', this.config)
+  crag = new Crag(await cragStorage.Load(id))
+  this.map.set(id, crag)
+  return crag
+}
+
+module.exports = CragCache;
+
+},{"./crag-storage.cjs":23,"./crag.cjs":24}],20:[function(require,module,exports){
 const ImageFileCompressor = require('./image-file-compressor.cjs');
 
 let CragCoverContainer = function(crag, imageURL) {
@@ -1027,7 +1060,7 @@ CragCoverContainer.prototype.Refresh = function() {
 }
 
 module.exports = CragCoverContainer;
-},{"./image-file-compressor.cjs":23}],20:[function(require,module,exports){
+},{"./image-file-compressor.cjs":27}],21:[function(require,module,exports){
 let uuid = require('uuid');
 
 let CragIndex = function() {
@@ -1078,7 +1111,7 @@ CragIndex.prototype.SaveCragImage = async function(imageStorage, crag) {
 
 module.exports = CragIndex;
 
-},{"uuid":1}],21:[function(require,module,exports){
+},{"uuid":1}],22:[function(require,module,exports){
 const CragCoverContainer = require("./crag-cover-container.cjs");
 
 let CragMediaScroller = function(element, imagesURL, crags, OnCragSelectedHandler) {
@@ -1106,7 +1139,260 @@ CragMediaScroller.prototype.RefreshSelectedContainer = function() {
 
 module.exports = CragMediaScroller;
 
-},{"./crag-cover-container.cjs":19}],22:[function(require,module,exports){
+},{"./crag-cover-container.cjs":20}],23:[function(require,module,exports){
+// const Config = require('./config.cjs');
+// const Crag = require('./crag.cjs');
+
+let CragStorage = function(type, config) {
+  this.type = type;
+  if( config ) {
+    this.dataURL = config.data_url;
+    this.saveCragURL = config.save_crag_url;
+  }
+}
+
+CragStorage.prototype.Load = async function(id) {
+  switch( this.type ) {
+    case 'client':
+      return this.LoadFromClient(id);
+  }
+}
+
+CragStorage.prototype.Save = async function(id) {
+  switch( this.type ) {
+    case 'client':
+      return this.SaveFromClient(id);
+  }
+}
+
+CragStorage.prototype.LoadFromClient = async function(id) {
+  const cragURL = `${this.dataURL}${id}.crag.json`;
+  let loadedString = await fetch(cragURL, {cache: "reload"});
+  let crag = await loadedString.json();
+  this.UpdateCragAfterRestore(crag);
+  return crag;
+}
+
+CragStorage.prototype.SaveFromClient = async function(crag) {
+  const cragToStore = this.FormatCragForStorage(crag);
+  const requestBody = JSON.stringify(cragToStore);
+  const url = `${this.saveCragURL}?id=${crag.id}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    mode: 'cors',
+    body: requestBody
+  });
+  return response;
+}
+
+CragStorage.prototype.UpdateCragAfterRestore = function(crag) {
+  const routeInfoMap = new Map();
+  if( crag.routes ) crag.routes.forEach( route => routeInfoMap.set(route.id, route) );
+
+  const pointArray = [];
+  const pointMap = new Map();
+
+  const toposWithRoutes = crag.topos.filter( topo => topo.routes && topo.routes.length > 0 );
+
+  toposWithRoutes.forEach( topo => {
+    topo.routes.forEach( route => {
+      route.info = routeInfoMap.get(route.id);
+      route.points.forEach( point => {
+        pointArray.push(point);
+        pointMap.set(point.id, point);
+      });
+    });
+  });
+
+  pointArray.forEach( point => {
+    if( point.attachedTo ) point.attachedTo = pointMap.get(point.attachedTo);
+  });
+}
+
+CragStorage.prototype.FormatCragForStorage = function(crag) {
+  const cragForStorage = {};
+  if( crag.id ) cragForStorage.id = crag.id;
+  if( crag.name ) cragForStorage.name = crag.name;
+  if( crag.routes ) cragForStorage.routes = this.FormatRoutesForStorage(crag.routes);
+  if( crag.topos ) cragForStorage.topos = this.FormatToposForStorage(crag.topos);
+  return cragForStorage;
+}
+
+CragStorage.prototype.FormatRoutesForStorage = function(routes) {
+  return routes.map( route => {
+    return {
+      id: route.id,
+      name: route.name,
+      grade: route.grade
+    };
+  });
+}
+
+CragStorage.prototype.FormatToposForStorage = function(topos) {
+  return topos.map( topo => {
+    const topoForStorage = {};
+    if( topo.id ) topoForStorage.id = topo.id;
+    if( topo.imageFile ) topoForStorage.imageFile = topo.imageFile;
+    if( topo.routes ) topoForStorage.routes = this.FormatTopoRoutesForStorage(topo.routes);
+    return topoForStorage;
+  });
+}
+
+CragStorage.prototype.FormatTopoRoutesForStorage = function(routes) {
+  return routes.map( route => {
+    return {
+      id: route.id,
+      points: this.FormatPointsForStorage(route.points)
+    };
+  });
+}
+
+CragStorage.prototype.FormatPointsForStorage = function(points) {
+  if( !points ) return [];
+  return points.map( point => {
+    const pointToSave = {id: point.id};
+    if( point.attachedTo ) {
+      pointToSave.attachedTo = point.attachedTo.id;
+    }
+    else {
+      pointToSave.x = point.x;
+      pointToSave.y = point.y;
+    }
+    return pointToSave;
+  });
+}
+
+module.exports = CragStorage;
+
+},{}],24:[function(require,module,exports){
+let uuid = require('uuid');
+const Route = require('./route.cjs');
+
+let Crag = function(cragObject) {
+  if( cragObject ) {
+    this.Attach(cragObject);
+  }
+  else {
+    this.id = uuid.v4();
+    this.routes = [];
+    this.topos = [];
+  }
+}
+
+Crag.prototype.Attach = function(cragObject) {
+  this.id = cragObject.id;
+  this.name = cragObject.name;
+  this.routes = cragObject.routes ? cragObject.routes : [];
+  this.topos = cragObject.topos ? cragObject.topos : [];
+}
+
+Crag.prototype.Save = async function(dataStorage) {
+  const cragData = this.FormatForStorage();
+  return dataStorage.Save(`${this.id}.crag`, cragData);
+}
+
+Crag.prototype.AppendTopo = function(topo) {
+  return this.topos.push(topo);
+}
+
+Crag.prototype.GetTopoIndex = function(topoID) {
+  const indexedTopos = this.topos.map( (topo, index) => {
+    return {topo: topo, index: index}
+  });
+  const matchingTopos = indexedTopos.filter(indexedTopo => indexedTopo.topo.id === topoID);
+  if( matchingTopos.length != 1 ) return -1;
+  return matchingTopos[0].index;
+}
+
+Crag.prototype.GetLastTopoIndex = function () {
+  return this.topos.length - 1;
+}
+
+Crag.prototype.SwapTopos = function(index1, index2) {
+  const firstTopo = this.topos[index1];
+  this.topos[index1] = this.topos[index2];
+  this.topos[index2] = firstTopo;
+}
+
+Crag.prototype.GetMatchingTopo = function(id) {
+  let matchingTopos = this.topos.filter( topo => topo.id === id );
+  if( matchingTopos.length != 1 ) return null;
+  return matchingTopos[0];
+}
+
+Crag.prototype.GetMatchingRoute = function(id) {
+  if( !this.routes ) return null;
+  let matchingRoutes =  this.routes.filter( route => route.id === id);
+  if( matchingRoutes.length != 1 ) return null;
+  return matchingRoutes[0];
+}
+
+Crag.prototype.AppendRoute = function(name, grade) {
+  const route = new Route().route;
+  route.name = name;
+  route.grade = grade;
+  this.routes.push(route);
+  return route;
+}
+
+Crag.prototype.FormatForStorage = function() {
+  const cragForStorage = {};
+  if( this.id ) cragForStorage.id = this.id;
+  if( this.name ) cragForStorage.name = this.name;
+  if( this.routes ) cragForStorage.routes = this.FormatRoutesForStorage();
+  if( this.topos ) cragForStorage.topos = this.FormatToposForStorage();
+  return cragForStorage;
+}
+
+Crag.prototype.FormatRoutesForStorage = function() {
+  if( !this.routes ) return [];
+  return this.routes.map( route => {
+    return {
+      id: route.id,
+      name: route.name,
+      grade: route.grade
+    };
+  });
+}
+
+Crag.prototype.FormatToposForStorage = function() {
+  if( !this.topos ) return [];
+  return this.topos.map( topo => {
+    const topoForStorage = {};
+    if( topo.id ) topoForStorage.id = topo.id;
+    if( topo.imageFile ) topoForStorage.imageFile = topo.imageFile;
+    if( topo.routes ) topoForStorage.routes = this.FormatTopoRoutesForStorage(topo.routes);
+    return topoForStorage;
+  });
+}
+
+Crag.prototype.FormatTopoRoutesForStorage = function(routes) {
+  return routes.map( route => {
+    return {
+      id: route.id,
+      points: this.FormatPointsForStorage(route.points)
+    };
+  });
+}
+
+Crag.prototype.FormatPointsForStorage = function(points) {
+  if( !points ) return [];
+  return points.map( point => {
+    const pointToSave = {id: point.id};
+    if( point.attachedTo ) {
+      pointToSave.attachedTo = point.attachedTo.id;
+    }
+    else {
+      pointToSave.x = point.x;
+      pointToSave.y = point.y;
+    }
+    return pointToSave;
+  });
+}
+
+module.exports = Crag;
+
+},{"./route.cjs":30,"uuid":1}],25:[function(require,module,exports){
 let DataStorage = function() {
   this.dataURL = null;
   this.saveDataURL = null;
@@ -1143,7 +1429,23 @@ DataStorage.prototype.Save = async function(object_id, data) {
 
 module.exports = new DataStorage;
 
-},{}],23:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
+let IconBar = function(element) {
+  this.element = element;
+}
+
+IconBar.prototype.AddIcon = function(fontAwesomeClass, title, OnClickHandler) {
+  const icon = document.createElement("i");
+  icon.classList.add("fa-solid");
+  icon.classList.add(fontAwesomeClass);
+  icon.setAttribute("title",title)
+  icon.onclick = OnClickHandler
+  return this.element.appendChild(icon);
+}
+
+module.exports = IconBar;
+
+},{}],27:[function(require,module,exports){
 let ImageFileCompressor = function(canvas) {
   this.canvas = canvas;
 }
@@ -1177,7 +1479,7 @@ ImageFileCompressor.prototype.LoadImage = (url) => new Promise( (resolve, reject
 
 module.exports = ImageFileCompressor;
 
-},{}],24:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 let ImageStorage = function() {
   this.imagesPath = null;
   this.loadImageURL = null;
@@ -1240,7 +1542,7 @@ ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
 
 module.exports = new ImageStorage;
 
-},{}],25:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.element = element
   this.activeItem = activeItem
@@ -1273,4 +1575,335 @@ PageHeaderNav.prototype.AddItem = function(text, link, callback) {
 
 module.exports = PageHeaderNav;
 
-},{}]},{},[16]);
+},{}],30:[function(require,module,exports){
+let uuid = require('uuid');
+const Topo = require('./topo.cjs');
+
+let Route = function(route) {
+  if( !route ) this.route = {id:uuid.v4()};
+  else this.route = route;
+}
+
+Route.prototype.AppendPoint = function(x, y) {
+  if( !this.route.points ) this.route.points = [];
+  const pointCount = this.route.points.push({id: uuid.v4(), x: x, y: y});
+  return this.route.points[pointCount-1];
+}
+
+Route.prototype.GetResolvedPoints = function() {
+  if( !this.route.points ) this.route.points = [];
+  return this.route.points.map(point => {
+      if( point.attachedTo ) {
+        return point.attachedTo;
+      }  
+      return point;
+    });
+}
+
+Route.prototype.GetJoinPoints = function() {
+  if( !this.route.points || this.route.points.length < 3 ) return [];
+  return this.route.points.filter( (point, index) => !point.attachedTo && index > 0 && index < this.route.points.length-1 );
+}
+
+module.exports = Route;
+
+},{"./topo.cjs":32,"uuid":1}],31:[function(require,module,exports){
+const Crag = require("./crag.cjs");
+const { SaveImageAndUpdateFilename } = require("./image-storage.cjs");
+
+let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
+  this.element = element;
+  this.crag = crag;
+  this.currentTopoContainer = null;
+  this.edit = edit;
+  this.topoImages = new Map();
+  this.OnTopoSelectedCallback = OnTopoSelectedCallback;
+  this.element.innerHTML = ''
+}
+
+TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage) {
+  let cragTopoIDs = this.crag.topos.map( topo => topo.id );
+  
+  let topoImageContainers = cragTopoIDs.map( topoID => {
+    return this.element.appendChild(this.CreateTopoImageContainer(topoID));
+  });
+
+  let topoImageCanvases = topoImageContainers.map( container => {
+    let topoCanvas = document.createElement('canvas')
+    topoCanvas.classList.add('topo-image');
+    topoCanvas = container.appendChild(topoCanvas);
+    topoCanvas.onclick = () => this.OnTopoSelected(container);
+    return topoCanvas;
+  });
+
+  const topoImageLoaders = [];
+  const crag = new Crag(this.crag);
+  topoImageCanvases.forEach( async canvas => {
+    let topoID = canvas.parentElement.dataset.id;
+    let topo = crag.GetMatchingTopo(topoID);
+    if( !topo ) return;
+
+    if( topo.imageFile ) {
+      try {
+        let topoImageLoader = imageStorage.LoadImageFromFile(topo.imageFile);
+        topoImageLoaders.push(topoImageLoader);
+        let topoImage = await topoImageLoader;
+        this.topoImages.set(topoID, topoImage);
+        this.DisplayTopoImage(canvas, topoImage);
+      }
+      catch( e ) {
+        console.error(e);
+      }
+    }
+    else {
+      try {
+        let topoImageLoader = imageStorage.LoadImageFromAPI(topo.id);
+        topoImageLoaders.push(topoImageLoader);
+        let topoImage = await topoImageLoader;
+        this.topoImages.set(topoID, topoImage);
+        this.DisplayTopoImage(canvas, topoImage);
+      }
+      catch( e ) {
+        console.error(e);
+      }
+    }
+  });
+
+  if( topoImageLoaders.length > 0 ) {
+    await topoImageLoaders[0];
+    this.OnTopoSelected(topoImageContainers[0]);
+  }
+}
+
+TopoMediaScroller.prototype.AddTopo = function(topo) {
+  const container = this.element.appendChild(this.CreateTopoImageContainer(topo.id));
+  let canvas = document.createElement('canvas');
+  canvas.classList.add('topo-image');
+  canvas = container.appendChild(canvas);
+  canvas.onclick = event => this.OnTopoSelected(event.target.parentElement);
+  return canvas;
+}
+
+TopoMediaScroller.prototype.CreateTopoImageContainer = function(topoID) {
+  let container = document.createElement('div');
+  container.classList.add('topo-container');
+  container.setAttribute('data-id', topoID);
+  return container;
+}
+
+TopoMediaScroller.prototype.OnTopoSelected = function(topoContainer) {
+  if( this.currentTopoContainer ) this.currentTopoContainer.classList.remove('topo-container-selected');
+  this.currentTopoContainer = topoContainer;
+  this.currentTopoContainer.classList.add('topo-container-selected');
+  this.OnTopoSelectedCallback(this.currentTopoContainer.dataset.id, this.currentTopoContainer);
+}
+
+TopoMediaScroller.prototype.GetSelectedTopoID = function() {
+  if( !this.currentTopoContainer ) return null;
+  return this.currentTopoContainer.dataset.id;
+}
+
+TopoMediaScroller.prototype.GetSelectedTopoCanvas = function() {
+  return this.currentTopoContainer.children[0]
+};
+
+TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
+  topoCanvas.setAttribute('width', topoImage.width);
+  topoCanvas.setAttribute('height', topoImage.height);
+  let ctx = topoCanvas.getContext('2d');
+  ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
+  return topoCanvas;
+}
+
+TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
+  this.topoImages.set(this.GetSelectedTopoID(), image);
+}
+
+TopoMediaScroller.prototype.ShiftCurrentTopoLeft = function() {
+  if( !this.currentTopoContainer ) return;
+  const parentNode = this.currentTopoContainer.parentNode;
+  const previousContainer = this.currentTopoContainer.previousSibling;
+  this.currentTopoContainer.remove();
+  parentNode.insertBefore(this.currentTopoContainer, previousContainer);
+}
+
+TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
+  if( !this.currentTopoContainer ) return;
+  const parentNode = this.currentTopoContainer.parentNode;
+  const nextContainer = this.currentTopoContainer.nextSibling;
+  nextContainer.remove();
+  parentNode.insertBefore(nextContainer, this.currentTopoContainer);
+}
+
+module.exports = TopoMediaScroller;
+
+},{"./crag.cjs":24,"./image-storage.cjs":28}],32:[function(require,module,exports){
+let uuid = require('uuid');
+
+let Topo = function(topo) {
+  if( !topo ) this.topo = {id:uuid.v4()};
+  else this.topo = topo;
+}
+
+Topo.prototype.GetMatchingRoute = function(id) {
+  if( !this.topo.routes ) return null;
+  let matchingRoutes = this.topo.routes.filter(route => route.id === id);
+  if( matchingRoutes.length != 1 ) return null;
+  return matchingRoutes[0];
+}
+
+Topo.prototype.GetNearestPointWithin = function(x, y, within) {
+  if( !this.topo.routes || this.topo.routes.length == 0 ) return null;
+  let nearestPointsForTopo = this.topo.routes.map( route => GetNearestPointForRoute(x, y, route) )
+  .filter( point => point );
+  const nearestPoint = GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
+  if( !nearestPoint ) return null;
+  let distance = GetDistanceBetweenPoints(x, y, nearestPoint.x, nearestPoint.y);
+  return (distance <= within) ? nearestPoint : null;
+}
+
+Topo.prototype.GetNextNearestPointWithin = function(x, y, within, exludedPointID) {
+  if( !this.topo.routes || this.topo.routes.length == 0 ) return null;
+  let nearestPointsForTopo = this.topo.routes.map( route => GetNextNearestPointForRoute(x, y, route, exludedPointID) )
+  .filter( point => point );
+  const nearestPoint = GetNearestPointForArrayOfPoints(x, y, nearestPointsForTopo);
+  if( !nearestPoint ) return null;
+  let distance = GetDistanceBetweenPoints(x, y, nearestPoint.x, nearestPoint.y);
+  return (distance <= within) ? nearestPoint : null;
+}
+
+Topo.prototype.GetSortedRoutes = function() {
+  if( !this.topo.routes ) return [];
+  const routes = this.topo.routes.map(route=>route);
+  return routes.sort( (route1, route2) => this.CalculateSortOrder(route1, route2) );
+}
+
+Topo.prototype.CalculateSortOrder = function(route1, route2) {
+  const route1Start = this.GetRouteStartPoint(route1);
+  const route2Start = this.GetRouteStartPoint(route2);
+
+  if( !route1Start && !route2Start ) return 0;
+  if( !route2Start ) return -1;
+  if( !route1Start ) return 1;
+
+  const route1End = this.GetRouteEndPoint(route1);
+  const route2End = this.GetRouteEndPoint(route2);
+
+  if( route1Start.x < route2Start.x ) return -1;
+  if( route2Start.x < route1Start.x ) return 1;
+
+  if( !route1End && !route2End ) return 0;
+  if( !route2End ) return -1;
+  if( !route1End ) return 1;
+
+  if( route1End.x < route2End.x ) return -1;
+  if( route2End.x < route1End.x ) return 1;
+
+  return 0;
+}
+
+Topo.prototype.GetRouteStartPoint = function(route) {
+  if( !route.points || route.points.length == 0 ) return null;
+  if( route.points[0].attachedTo ) {
+    const attachedToRoute = this.GetRouteContainingPoint(route.points[0].attachedTo);
+    return this.GetRouteStartPoint(attachedToRoute);
+  }
+  return route.points[0];
+}
+
+Topo.prototype.GetRouteEndPoint = function(route) {
+  if( !route.points || route.points.length < 2 ) return null;
+  const lastPointIndex = route.points.length - 1;
+  if( route.points[lastPointIndex].attachedTo ) {
+    const attachedToRoute = this.GetRouteContainingPoint(route.points[lastPointIndex].attachedTo);
+    return this.GetRouteEndPoint(attachedToRoute);
+  }
+  return route.points[lastPointIndex];
+}
+
+Topo.prototype.GetRouteContainingPoint = function(pointToFind) {
+  const matchingRoutes = this.topo.routes.filter( route => {
+    if( !route.points ) return false;
+    const matchingPoints = route.points.filter( point => point == pointToFind );
+    return matchingPoints.length > 0;
+  });
+  if( matchingRoutes.length == 0 ) return null;
+  return matchingRoutes[0];
+}
+
+Topo.prototype.GetSortedRouteInfo = function() {
+  const routeInfo = [];
+  const routes = this.GetSortedRoutes();
+  routes.forEach(route => {
+    routeInfo.push({id:route.info.id,name:route.info.name,grade:route.info.grade});
+  });
+  return routeInfo;
+}
+
+Topo.prototype.AppendRoute = function(route) {
+  if( !this.topo.routes ) this.topo.routes = [];
+  this.topo.routes.push({id:route.id,info:route})
+}
+
+Topo.prototype.RemoveMatchingRoute = function(id) {
+  const remainingRoutes = this.topo.routes.filter( route => route.id != id );
+  this.topo.routes = remainingRoutes;
+}
+
+Topo.prototype.GetRouteLines = function() {
+  if( !this.topo.routes ) return [];
+  const lines = [];
+  this.topo.routes.forEach( route => {
+    if( route.points ) {
+      const points = route.points.map( point => point.attachedTo ? point.attachedTo : point );
+      points.forEach( (point, index, points) => {
+        const nextPoint = points[index + 1];
+        if( nextPoint ) lines.push({startPoint:point, endPoint:nextPoint});
+      });
+    }
+  });
+  return lines;
+}
+
+Topo.prototype.GetSortedRouteStartPoints = function() {
+  const sortedRoutes = this.GetSortedRoutes();
+  return sortedRoutes.map( route => this.GetRouteStartPoint(route) )
+  .filter( point => point );
+}
+
+Topo.prototype.GetSortedRouteEndPoints = function() {
+  const sortedRoutes = this.GetSortedRoutes();
+  return sortedRoutes.map( route => this.GetRouteEndPoint(route) )
+  .filter( point => point );
+}
+
+module.exports = Topo;
+
+let GetNearestPointForRoute = (x, y, route) => GetNextNearestPointForRoute(x, y, route, null);
+
+let GetNextNearestPointForRoute = (x, y, route, excludedPointID) => {
+  if( !route.points ) return null;
+  const includedPoints = route.points.filter( point => point.id !== excludedPointID );
+  const nearestPoint = GetNearestPointForArrayOfPoints(x, y, includedPoints);
+  if( nearestPoint ) nearestPoint.parent = route;
+  return nearestPoint;
+}
+
+let GetNearestPointForArrayOfPoints = (x, y, points) => {
+  const unattachedPoints = points.filter( point => !point.attachedTo );
+  let nearestPoint = unattachedPoints.reduce( (previousResult, currentPoint) => {
+    if( !previousResult.point ) return {point: currentPoint, distance: GetDistanceBetweenPoints(currentPoint.x, currentPoint.y, x, y)};
+    const currentResult = {point: currentPoint, distance: GetDistanceBetweenPoints(currentPoint.x, currentPoint.y, x, y)};
+    return previousResult.distance < currentResult.distance ? previousResult : currentResult;
+  }, {});
+
+  return nearestPoint.point;
+}
+
+let GetDistanceBetweenPoints = (x1, y1, x2, y2) => {
+  let dx = x1 - x2;
+  let dy = y1 - y2;
+  return Math.sqrt( dx*dx + dy*dy );
+}
+
+},{"uuid":1}]},{},[16]);

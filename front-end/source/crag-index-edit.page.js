@@ -3,15 +3,22 @@ const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
-// const PageHeader = require('./objects/page-header.cjs')
+const IconBar = require('./objects/icon-bar.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const Cookie = require('./objects/cookie.cjs')
+const CragCache = require('./objects/crag-cache.cjs')
+const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
+const CragRouteTable = require('./objects/crag-route-table.cjs')
 
 let _cookie = null;
-// let _pageHeader = null;
 let _pageHeaderNav = null;
+let _iconBar = null;
 let _cragIndex = null;
 let _cragMediaScroller = null;
+let _cragCache = null
+let _currentCrag = null
+let _topoMediaScroller = null;
+let _cragRouteTable = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
@@ -24,16 +31,28 @@ let OnConfigLoad = async () => {
 
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
+  
+  _cragCache = new CragCache(Config)
+
+  _iconBar = new IconBar(document.getElementById('icon-bar-container'))
+  _iconBar.AddIcon('fa-plus','add crag', OnAddCrag)
+  _iconBar.AddIcon('fa-save','save changes', OnSaveChanges)
 
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);
+
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
   document.getElementById('image-file').onchange = OnUploadImageFile;
   document.getElementById("crag-name").onchange = OnCragNameChanged;
 }
 
-let OnCragSelected = () => {
+let OnCragSelected = async () => {
   document.getElementById("crag-name").value = _cragMediaScroller.selectedContainer.crag.name;
+  _currentCrag = await _cragCache.Load(_cragMediaScroller.selectedContainer.crag.id)
+  console.log(_currentCrag.name)
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _currentCrag, false, OnTopoSelected)
+  _topoMediaScroller.LoadTopoImages(ImageStorage)
+  _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag);
 }
 
 let OnCragNameChanged = () => {
@@ -51,7 +70,7 @@ let OnUploadImageFile = async () => {
   _cragMediaScroller.selectedContainer.LoadImageFromFile(imageFileElement.files[0]);
 }
 
-module.exports = OnSaveCragIndex = () => {
+module.exports = OnSaveChanges = () => {
   document.getElementById("status").value = "Saving..."
   _cragIndex.Save(DataStorage, ImageStorage)
   .then( (response) => {
@@ -60,4 +79,8 @@ module.exports = OnSaveCragIndex = () => {
   .catch( (e) => {
     document.getElementById("status").value = "ERROR!"
   })
+}
+
+let OnTopoSelected = (topoID, topoContainer) => {
+  console.log(`topo ID: ${topoID}`)
 }

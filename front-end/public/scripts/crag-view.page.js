@@ -1004,8 +1004,8 @@ CragIndex.prototype.SaveCragImage = async function(imageStorage, crag) {
 module.exports = CragIndex;
 
 },{"uuid":1}],20:[function(require,module,exports){
-const Config = require('./config.cjs');
-const Crag = require('./crag.cjs');
+// const Config = require('./config.cjs');
+// const Crag = require('./crag.cjs');
 
 let CragStorage = function(type, config) {
   this.type = type;
@@ -1128,7 +1128,7 @@ CragStorage.prototype.FormatPointsForStorage = function(points) {
 
 module.exports = CragStorage;
 
-},{"./config.cjs":17,"./crag.cjs":21}],21:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 let uuid = require('uuid');
 const Route = require('./route.cjs');
 

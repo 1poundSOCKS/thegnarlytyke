@@ -864,7 +864,6 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
-  // const loggedOn = _cookie.IsUserLoggedOn();
   
   _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
   
@@ -1094,8 +1093,8 @@ CragIndex.prototype.SaveCragImage = async function(imageStorage, crag) {
 module.exports = CragIndex;
 
 },{"uuid":1}],21:[function(require,module,exports){
-const Config = require('./config.cjs');
-const Crag = require('./crag.cjs');
+// const Config = require('./config.cjs');
+// const Crag = require('./crag.cjs');
 
 let CragStorage = function(type, config) {
   this.type = type;
@@ -1218,7 +1217,7 @@ CragStorage.prototype.FormatPointsForStorage = function(points) {
 
 module.exports = CragStorage;
 
-},{"./config.cjs":17,"./crag.cjs":22}],22:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 let uuid = require('uuid');
 const Route = require('./route.cjs');
 

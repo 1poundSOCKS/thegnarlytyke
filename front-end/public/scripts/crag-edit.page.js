@@ -1216,8 +1216,8 @@ CragRouteTable.prototype.OnRouteGradeChanged = function(row, id, grade) {
 module.exports = CragRouteTable;
 
 },{"./crag.cjs":22,"./route-table.cjs":28,"./topo.cjs":34}],21:[function(require,module,exports){
-const Config = require('./config.cjs');
-const Crag = require('./crag.cjs');
+// const Config = require('./config.cjs');
+// const Crag = require('./crag.cjs');
 
 let CragStorage = function(type, config) {
   this.type = type;
@@ -1340,7 +1340,7 @@ CragStorage.prototype.FormatPointsForStorage = function(points) {
 
 module.exports = CragStorage;
 
-},{"./config.cjs":17,"./crag.cjs":22}],22:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 let uuid = require('uuid');
 const Route = require('./route.cjs');
 
