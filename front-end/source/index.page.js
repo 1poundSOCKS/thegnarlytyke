@@ -24,20 +24,10 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
-  const loggedOn = _cookie.IsUserLoggedOn();
+  // const loggedOn = _cookie.IsUserLoggedOn();
   
-  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home');
+  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
   
-  if( loggedOn && Config.mode == "edit" ) {
-    _pageHeaderNav.AddItem('edit', 'crag-index-edit.html')
-  }
-  if( loggedOn ) {
-    _pageHeaderNav.AddItem('logoff', null, OnLogoffClicked)
-  }
-  else {
-    _pageHeaderNav.AddItem('logon', 'logon.html')
-  }
-
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
   const cragIndex = new CragIndex();
@@ -56,11 +46,6 @@ let AppendCrag = (crag, parentElement) => {
   cragCover.element.onclick = () => {
     DisplayCragView(crag.id);
   }
-}
-
-let OnLogoffClicked = () => {
-  _cookie.Logoff()
-  location.reload()
 }
 
 let DisplayIndexView = () => {

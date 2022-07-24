@@ -12,7 +12,7 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _pageHeaderNav = new PageHeaderNav(document.getElementById("page-header-nav"),'logon')
-  _pageHeaderNav.AddItem('logon', 'logon.html')
+  // _pageHeaderNav.AddItem('logon', 'logon.html')
   
   document.getElementById("submit-logon").onclick = () => {
     const email = document.getElementById("email").value;
@@ -100,10 +100,22 @@ LogonRequest.prototype.Send = async function() {
 module.exports = LogonRequest;
 
 },{}],5:[function(require,module,exports){
-let PageHeaderNav = function(element, activeItem) {
+let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.element = element
   this.activeItem = activeItem
+  this.cookie = cookie
   this.AddItem('home','index.html')
+
+  if( this.cookie?.IsUserLoggedOn() ) {
+    if( allowEdit ) this.AddItem('edit', 'crag-index-edit.html')
+    this.AddItem('logoff', null, () => {
+      this.cookie.Logoff()
+      window.location.href = 'index.html'
+    })
+  }
+  else {
+    this.AddItem('logon', 'logon.html')
+  }
 }
 
 PageHeaderNav.prototype.AddItem = function(text, link, callback) {

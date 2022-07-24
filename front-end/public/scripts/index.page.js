@@ -864,20 +864,10 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
-  const loggedOn = _cookie.IsUserLoggedOn();
+  // const loggedOn = _cookie.IsUserLoggedOn();
   
-  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home');
+  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
   
-  if( loggedOn && Config.mode == "edit" ) {
-    _pageHeaderNav.AddItem('edit', 'crag-index-edit.html')
-  }
-  if( loggedOn ) {
-    _pageHeaderNav.AddItem('logoff', null, OnLogoffClicked)
-  }
-  else {
-    _pageHeaderNav.AddItem('logon', 'logon.html')
-  }
-
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
   const cragIndex = new CragIndex();
@@ -896,11 +886,6 @@ let AppendCrag = (crag, parentElement) => {
   cragCover.element.onclick = () => {
     DisplayCragView(crag.id);
   }
-}
-
-let OnLogoffClicked = () => {
-  _cookie.Logoff()
-  location.reload()
 }
 
 let DisplayIndexView = () => {
@@ -1496,10 +1481,22 @@ ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
 module.exports = new ImageStorage;
 
 },{}],26:[function(require,module,exports){
-let PageHeaderNav = function(element, activeItem) {
+let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.element = element
   this.activeItem = activeItem
+  this.cookie = cookie
   this.AddItem('home','index.html')
+
+  if( this.cookie?.IsUserLoggedOn() ) {
+    if( allowEdit ) this.AddItem('edit', 'crag-index-edit.html')
+    this.AddItem('logoff', null, () => {
+      this.cookie.Logoff()
+      window.location.href = 'index.html'
+    })
+  }
+  else {
+    this.AddItem('logon', 'logon.html')
+  }
 }
 
 PageHeaderNav.prototype.AddItem = function(text, link, callback) {

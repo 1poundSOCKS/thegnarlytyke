@@ -2,11 +2,14 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
-const PageHeader = require('./objects/page-header.cjs')
+const PageHeaderNav = require('./objects/page-header-nav.cjs')
+// const PageHeader = require('./objects/page-header.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const Cookie = require('./objects/cookie.cjs')
 
-let _pageHeader = null;
+let _cookie = null;
+// let _pageHeader = null;
+let _pageHeaderNav = null;
 let _cragIndex = null;
 let _cragMediaScroller = null;
 
@@ -15,17 +18,19 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
-  const cookie = new Cookie();
+  _cookie = new Cookie();
 
-  _pageHeader = new PageHeader(document.getElementById("page-header"));
-  _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
-  _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
-  _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
+  // _pageHeader = new PageHeader(document.getElementById("page-header"));
+  // _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
+  // _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
+  // _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
 
-  document.getElementById('page-subheader-text').innerText = "crag index editor";
+  // document.getElementById('page-subheader-text').innerText = "crag index editor";
 
-  DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
-  ImageStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
+  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'edit',_cookie,Config.mode == "edit");
+
+  DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
+  ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
 
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);

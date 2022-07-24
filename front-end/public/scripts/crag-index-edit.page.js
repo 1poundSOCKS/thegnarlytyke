@@ -842,11 +842,14 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CragIndex = require('./objects/crag-index.cjs');
-const PageHeader = require('./objects/page-header.cjs')
+const PageHeaderNav = require('./objects/page-header-nav.cjs')
+// const PageHeader = require('./objects/page-header.cjs')
 const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const Cookie = require('./objects/cookie.cjs')
 
-let _pageHeader = null;
+let _cookie = null;
+// let _pageHeader = null;
+let _pageHeaderNav = null;
 let _cragIndex = null;
 let _cragMediaScroller = null;
 
@@ -855,17 +858,19 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
-  const cookie = new Cookie();
+  _cookie = new Cookie();
 
-  _pageHeader = new PageHeader(document.getElementById("page-header"));
-  _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
-  _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
-  _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
+  // _pageHeader = new PageHeader(document.getElementById("page-header"));
+  // _pageHeader.AddIcon("fa-plus","Add crag").onclick = () => OnAddCrag();
+  // _pageHeader.AddIcon("fa-file-arrow-up","Upload image").onclick = () => document.getElementById('image-file').click();
+  // _pageHeader.AddIcon("fa-save","Save").onclick = () => OnSaveCragIndex();
 
-  document.getElementById('page-subheader-text').innerText = "crag index editor";
+  // document.getElementById('page-subheader-text').innerText = "crag index editor";
 
-  DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
-  ImageStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
+  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'edit',_cookie,Config.mode == "edit");
+
+  DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
+  ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
 
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);
@@ -904,7 +909,7 @@ module.exports = OnSaveCragIndex = () => {
   })
 }
 
-},{"./objects/config.cjs":17,"./objects/cookie.cjs":18,"./objects/crag-index.cjs":20,"./objects/crag-media-scroller.cjs":21,"./objects/data-storage.cjs":22,"./objects/image-storage.cjs":24,"./objects/page-header.cjs":25}],17:[function(require,module,exports){
+},{"./objects/config.cjs":17,"./objects/cookie.cjs":18,"./objects/crag-index.cjs":20,"./objects/crag-media-scroller.cjs":21,"./objects/data-storage.cjs":22,"./objects/image-storage.cjs":24,"./objects/page-header-nav.cjs":25}],17:[function(require,module,exports){
 let Config = function() {
 }
 
@@ -1236,23 +1241,36 @@ ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
 module.exports = new ImageStorage;
 
 },{}],25:[function(require,module,exports){
-let PageHeader = function(element) {
-  this.element = element;
+let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
+  this.element = element
+  this.activeItem = activeItem
+  this.cookie = cookie
+  this.AddItem('home','index.html')
+
+  if( this.cookie?.IsUserLoggedOn() ) {
+    if( allowEdit ) this.AddItem('edit', 'crag-index-edit.html')
+    this.AddItem('logoff', null, () => {
+      this.cookie.Logoff()
+      window.location.href = 'index.html'
+    })
+  }
+  else {
+    this.AddItem('logon', 'logon.html')
+  }
 }
 
-PageHeader.prototype.AddIcon = function(fontAwesomeClass, title) {
-  const icon = document.createElement("i");
-  icon.classList.add("header-icon");
-  icon.classList.add("fa-solid");
-  icon.classList.add(fontAwesomeClass);
-  icon.setAttribute("title",title)
-  return this.element.appendChild(icon);
+PageHeaderNav.prototype.AddItem = function(text, link, callback) {
+  const newListItem = document.createElement('li')
+  newListItem.classList.add('page-header-nav-item')
+  if( text == this.activeItem ) newListItem.classList.add('page-header-nav-item-active')
+  const itemAddress = document.createElement('a')
+  itemAddress.innerText = text
+  if( link ) itemAddress.setAttribute('href', link)
+  else itemAddress.onclick = callback
+  newListItem.appendChild(itemAddress)
+  this.element.appendChild(newListItem)
 }
 
-PageHeader.prototype.AddLogonIcon = function() {
-  return this.AddIcon("fa-sign-in","Logon").onclick = () => window.location.href = "logon.html";
-}
-
-module.exports = PageHeader;
+module.exports = PageHeaderNav;
 
 },{}]},{},[16]);

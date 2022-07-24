@@ -11,7 +11,7 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   _pageHeaderNav = new PageHeaderNav(document.getElementById("page-header-nav"),'logon')
-  _pageHeaderNav.AddItem('logon', 'logon.html')
+  // _pageHeaderNav.AddItem('logon', 'logon.html')
   
   document.getElementById("submit-logon").onclick = () => {
     const email = document.getElementById("email").value;
