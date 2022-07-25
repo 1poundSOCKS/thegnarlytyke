@@ -9,6 +9,7 @@ const Cookie = require('./objects/cookie.cjs')
 const CragCache = require('./objects/crag-cache.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 const CragRouteTable = require('./objects/crag-route-table.cjs')
+const TopoRouteTable = require('./objects/topo-route-table.cjs')
 
 let _cookie = null;
 let _pageHeaderNav = null;
@@ -19,6 +20,7 @@ let _cragCache = null
 let _currentCrag = null
 let _topoMediaScroller = null;
 let _cragRouteTable = null;
+let _topoRouteTable = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
@@ -49,10 +51,9 @@ let OnConfigLoad = async () => {
 let OnCragSelected = async () => {
   document.getElementById("crag-name").value = _cragMediaScroller.selectedContainer.crag.name;
   _currentCrag = await _cragCache.Load(_cragMediaScroller.selectedContainer.crag.id)
-  console.log(_currentCrag.name)
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _currentCrag, false, OnTopoSelected)
   _topoMediaScroller.LoadTopoImages(ImageStorage)
-  _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag);
+  _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag, null, OnCragRouteToggled);
 }
 
 let OnCragNameChanged = () => {
@@ -82,5 +83,16 @@ module.exports = OnSaveChanges = () => {
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {
-  console.log(`topo ID: ${topoID}`)
+  _cragRouteTable.SetTopoID(topoID)
+  const selectedTopo = _currentCrag.GetMatchingTopo(topoID)
+  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo, OnTopoRouteSelected)
+}
+
+let OnCragRouteToggled = (route) => {
+  console.log(`crag route: ${route.id}`)
+  // const selectedTopo = _currentCrag.GetMatchingTopo(topoID)
+  _topoRouteTable.Refresh()
+}
+
+let OnTopoRouteSelected = (route) => {
 }

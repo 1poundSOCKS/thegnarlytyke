@@ -1,4 +1,3 @@
-const Crag = require("./crag.cjs");
 const RouteTable = require("./route-table.cjs");
 const Topo = require("./topo.cjs");
 
@@ -10,6 +9,11 @@ let CragRouteTable = function(element, crag, topoData, OnRouteToggled) {
   this.crag = crag;
   this.topo = topoData ? new Topo(topoData) : null;
   this.OnRouteToggled = OnRouteToggled;
+  this.Refresh();
+}
+
+CragRouteTable.prototype.SetTopoID = function(topoID) {
+  this.topo = new Topo(this.crag.GetMatchingTopo(topoID));
   this.Refresh();
 }
 

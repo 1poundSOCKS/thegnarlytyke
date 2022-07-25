@@ -6,6 +6,36 @@
   <link rel="stylesheet" href="stylesheets/crag-index-edit.css">
   <link rel="stylesheet" href="fontawesome-free/css/fontawesome.min.css">
   <link rel="stylesheet" href="fontawesome-free/css/solid.css">
+  <style>
+    .route-tables-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-content: center;
+    }
+    .route-tables-container table {
+      align-items: center;
+      border-collapse: collapse;
+      font-size: 1.5rem;
+      width: 90%;
+    }
+    .route-tables-container tr {
+      border-top: 0.1rem solid black;
+      border-bottom: 0.1rem solid black;
+      background-color: darkgray;
+      height: 2rem;
+    }
+    .route-tables-container td {
+      text-align: left;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+    .route-tables-container td:nth-child(1) {
+      display: none;
+    }
+    .route-tables-container td:nth-child(5):hover {
+      color: white;
+    }
+  </style>
 </head>
   <body>
     <div class="page-header-text">the gnarly tyke</div>
@@ -24,7 +54,10 @@
       <input type="text" id="crag-name" name="crag-name">
     </div>
     <div id="topo-images-container" class="topo-images-container"></div>
-    <div class="crag-route-table-container"><h2 class="table-header">Crag routes</h2><table id="crag-route-table" class="crag-route-table"></table></div>
+    <div class="route-tables-container">
+      <table id="crag-route-table"></table>
+      <table id="topo-route-table"></table>
+    </div>
     <script src="./scripts/crag-index-edit.page.js"></script>
   </body>
 
