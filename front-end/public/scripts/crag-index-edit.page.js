@@ -848,6 +848,7 @@ const CragMediaScroller = require('./objects/crag-media-scroller.cjs');
 const Cookie = require('./objects/cookie.cjs')
 const CragCache = require('./objects/crag-cache.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
+const CragRouteTable = require('./objects/crag-route-table.cjs')
 
 let _cookie = null;
 let _pageHeaderNav = null;
@@ -857,6 +858,7 @@ let _cragMediaScroller = null;
 let _cragCache = null
 let _currentCrag = null
 let _topoMediaScroller = null;
+let _cragRouteTable = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
@@ -890,6 +892,7 @@ let OnCragSelected = async () => {
   console.log(_currentCrag.name)
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _currentCrag, false, OnTopoSelected)
   _topoMediaScroller.LoadTopoImages(ImageStorage)
+  _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag);
 }
 
 let OnCragNameChanged = () => {
@@ -922,7 +925,7 @@ let OnTopoSelected = (topoID, topoContainer) => {
   console.log(`topo ID: ${topoID}`)
 }
 
-},{"./objects/config.cjs":17,"./objects/cookie.cjs":18,"./objects/crag-cache.cjs":19,"./objects/crag-index.cjs":21,"./objects/crag-media-scroller.cjs":22,"./objects/data-storage.cjs":25,"./objects/icon-bar.cjs":26,"./objects/image-storage.cjs":28,"./objects/page-header-nav.cjs":29,"./objects/topo-media-scroller.cjs":31}],17:[function(require,module,exports){
+},{"./objects/config.cjs":17,"./objects/cookie.cjs":18,"./objects/crag-cache.cjs":19,"./objects/crag-index.cjs":21,"./objects/crag-media-scroller.cjs":22,"./objects/crag-route-table.cjs":23,"./objects/data-storage.cjs":26,"./objects/icon-bar.cjs":27,"./objects/image-storage.cjs":29,"./objects/page-header-nav.cjs":30,"./objects/topo-media-scroller.cjs":33}],17:[function(require,module,exports){
 let Config = function() {
 }
 
@@ -992,7 +995,7 @@ CragCache.prototype.Load = async function(id) {
 
 module.exports = CragCache;
 
-},{"./crag-storage.cjs":23,"./crag.cjs":24}],20:[function(require,module,exports){
+},{"./crag-storage.cjs":24,"./crag.cjs":25}],20:[function(require,module,exports){
 const ImageFileCompressor = require('./image-file-compressor.cjs');
 
 let CragCoverContainer = function(crag, imageURL) {
@@ -1060,7 +1063,7 @@ CragCoverContainer.prototype.Refresh = function() {
 }
 
 module.exports = CragCoverContainer;
-},{"./image-file-compressor.cjs":27}],21:[function(require,module,exports){
+},{"./image-file-compressor.cjs":28}],21:[function(require,module,exports){
 let uuid = require('uuid');
 
 let CragIndex = function() {
@@ -1140,6 +1143,93 @@ CragMediaScroller.prototype.RefreshSelectedContainer = function() {
 module.exports = CragMediaScroller;
 
 },{"./crag-cover-container.cjs":20}],23:[function(require,module,exports){
+const Crag = require("./crag.cjs");
+const RouteTable = require("./route-table.cjs");
+const Topo = require("./topo.cjs");
+
+const columnIndex_AddRouteToTopoSwitch = 4;
+
+let CragRouteTable = function(element, crag, topoData, OnRouteToggled) {
+  this.element = element;
+  this.table = new RouteTable(element, crag.routes, true, this);
+  this.crag = crag;
+  this.topo = topoData ? new Topo(topoData) : null;
+  this.OnRouteToggled = OnRouteToggled;
+  this.Refresh();
+}
+
+CragRouteTable.prototype.Refresh = function() {
+  if( !this.crag ) {
+    this.table.Refresh([]);
+    return;
+  }
+  this.table.Refresh();
+  Array.from(this.element.rows).forEach( row => {
+    if( this.topo ) {
+      const routeID = this.table.GetRowID(row);
+      const cragRoute = this.crag.GetMatchingRoute(routeID);
+      const topoRoute = this.topo.GetMatchingRoute(routeID);
+      this.AddButtonsToRow(row, cragRoute, topoRoute ? true : false);
+     }
+  });
+  this.AddRowForAppend();
+}
+
+CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, routeOnTopo) {
+  let buttonCell = row.cells[columnIndex_AddRouteToTopoSwitch];
+  if( !buttonCell ) buttonCell = row.insertCell(columnIndex_AddRouteToTopoSwitch);
+  buttonCell.classList.add('fa');
+  buttonCell.classList.add(routeOnTopo ? 'fa-toggle-on' : 'fa-toggle-off');
+  buttonCell.onclick = event => {
+    let row = event.target.parentElement;
+    let routeID = cragRoute.id;
+    if( buttonCell.classList.contains('fa-toggle-off') ) {
+      const route = this.crag.GetMatchingRoute(routeID);
+      this.topo.AppendRoute(route);
+      buttonCell.classList.remove('fa-toggle-off');
+      buttonCell.classList.add('fa-toggle-on');
+      if( this.OnRouteToggled ) this.OnRouteToggled(cragRoute);
+    }
+    else {
+      this.topo.RemoveMatchingRoute(routeID);
+      buttonCell.classList.remove('fa-toggle-on');
+      buttonCell.classList.add('fa-toggle-off');
+      if( this.OnRouteToggled ) this.OnRouteToggled(cragRoute);
+    }
+  }
+}
+
+CragRouteTable.prototype.AddRowForAppend = function() {
+  let row = this.table.AppendRow();
+  row.cells[columnIndex_AddRouteToTopoSwitch];
+  return row;
+}
+
+CragRouteTable.prototype.OnRouteNameChanged = function(row, id, name) {
+  if( !id ) {
+    this.crag.AppendRoute(name, '');
+    this.Refresh();
+    return;
+  }
+  const route = this.crag.GetMatchingRoute(id);
+  if( !route ) return;
+  route.name = name;
+}
+
+CragRouteTable.prototype.OnRouteGradeChanged = function(row, id, grade) {
+  if( !id ) {
+    this.crag.AppendRoute('', grade);
+    this.Refresh();
+    return;
+  }
+  const route = this.crag.GetMatchingRoute(id);
+  if( !route ) return;
+  route.grade = grade;
+}
+
+module.exports = CragRouteTable;
+
+},{"./crag.cjs":25,"./route-table.cjs":31,"./topo.cjs":34}],24:[function(require,module,exports){
 // const Config = require('./config.cjs');
 // const Crag = require('./crag.cjs');
 
@@ -1264,7 +1354,7 @@ CragStorage.prototype.FormatPointsForStorage = function(points) {
 
 module.exports = CragStorage;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 let uuid = require('uuid');
 const Route = require('./route.cjs');
 
@@ -1392,7 +1482,7 @@ Crag.prototype.FormatPointsForStorage = function(points) {
 
 module.exports = Crag;
 
-},{"./route.cjs":30,"uuid":1}],25:[function(require,module,exports){
+},{"./route.cjs":32,"uuid":1}],26:[function(require,module,exports){
 let DataStorage = function() {
   this.dataURL = null;
   this.saveDataURL = null;
@@ -1429,7 +1519,7 @@ DataStorage.prototype.Save = async function(object_id, data) {
 
 module.exports = new DataStorage;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 let IconBar = function(element) {
   this.element = element;
 }
@@ -1445,7 +1535,7 @@ IconBar.prototype.AddIcon = function(fontAwesomeClass, title, OnClickHandler) {
 
 module.exports = IconBar;
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 let ImageFileCompressor = function(canvas) {
   this.canvas = canvas;
 }
@@ -1479,7 +1569,7 @@ ImageFileCompressor.prototype.LoadImage = (url) => new Promise( (resolve, reject
 
 module.exports = ImageFileCompressor;
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 let ImageStorage = function() {
   this.imagesPath = null;
   this.loadImageURL = null;
@@ -1542,7 +1632,7 @@ ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
 
 module.exports = new ImageStorage;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.element = element
   this.activeItem = activeItem
@@ -1575,7 +1665,80 @@ PageHeaderNav.prototype.AddItem = function(text, link, callback) {
 
 module.exports = PageHeaderNav;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
+const columnIndex_ID = 0;
+const columnIndex_Index = 1;
+const columnIndex_Name = 2;
+const columnIndex_Grade = 3;
+
+let RouteTable = function(element, routes, editable, eventHandlerObject) {
+  this.element = element;
+  this.routes = routes;
+  this.contentEditable = editable;
+  this.eventHandlerObject = eventHandlerObject;
+}
+
+RouteTable.prototype.Refresh = function() {
+  let tableBody = this.element.getElementsByTagName('tbody')[0];
+  if( !tableBody ) tableBody = this.element.createTBody();
+  while( this.element.rows.length > 0 ) this.element.deleteRow(0);
+  this.routes.forEach( routeInfo => this.AppendRow(routeInfo) );
+}
+
+RouteTable.prototype.AppendRow = function(routeInfo) {
+  let newRow = this.element.insertRow(this.element.rows.length);
+  if( !routeInfo ) {
+    newRow.insertCell(columnIndex_ID);
+    newRow.insertCell(columnIndex_Index);
+    newRow.insertCell(columnIndex_Name);
+    newRow.insertCell(columnIndex_Grade);
+    if( this.contentEditable ) this.EnableRowEdit(newRow);
+    return newRow;
+  }
+  newRow.insertCell(columnIndex_ID).innerText = routeInfo.id;
+  newRow.insertCell(columnIndex_Index).innerText = routeInfo ? this.element.rows.length : '#';
+  newRow.insertCell(columnIndex_Name).innerText = routeInfo.name;
+  newRow.insertCell(columnIndex_Grade).innerText = routeInfo.grade;
+  if( this.contentEditable ) this.EnableRowEdit(newRow);
+  return newRow;
+}
+
+RouteTable.prototype.GetRowID = function(row) {
+  return row.cells[columnIndex_ID].innerText;
+}
+
+RouteTable.prototype.EnableRowEdit = function(row) {
+  row.cells[columnIndex_Name].setAttribute('contenteditable', true);
+  this.DisableCellMultilineEdit(row.cells[columnIndex_Name]);
+  row.cells[columnIndex_Name].addEventListener('focusout', event => {
+    let row = event.target.parentElement;
+    let id = row.cells[columnIndex_ID].innerText;
+    let name = event.target.innerText;
+    this.eventHandlerObject.OnRouteNameChanged(row, id, name);
+  });
+
+  row.cells[columnIndex_Grade].setAttribute('contenteditable', true);
+  this.DisableCellMultilineEdit(row.cells[columnIndex_Grade]);
+  row.cells[columnIndex_Grade].addEventListener('focusout', event => {
+    let row = event.target.parentElement;
+    let id = row.cells[columnIndex_ID].innerText;
+    let grade = event.target.innerText;
+    this.eventHandlerObject.OnRouteGradeChanged(row, id, grade);
+  });
+}
+
+RouteTable.prototype.DisableCellMultilineEdit = function(cell) {
+  cell.onkeydown = event => {
+    if( event.keyCode == 13 ) {
+      event.preventDefault();
+      document.activeElement.blur();
+    }
+  }
+}
+
+module.exports = RouteTable;
+
+},{}],32:[function(require,module,exports){
 let uuid = require('uuid');
 const Topo = require('./topo.cjs');
 
@@ -1607,7 +1770,7 @@ Route.prototype.GetJoinPoints = function() {
 
 module.exports = Route;
 
-},{"./topo.cjs":32,"uuid":1}],31:[function(require,module,exports){
+},{"./topo.cjs":34,"uuid":1}],33:[function(require,module,exports){
 const Crag = require("./crag.cjs");
 const { SaveImageAndUpdateFilename } = require("./image-storage.cjs");
 
@@ -1737,7 +1900,7 @@ TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
 
 module.exports = TopoMediaScroller;
 
-},{"./crag.cjs":24,"./image-storage.cjs":28}],32:[function(require,module,exports){
+},{"./crag.cjs":25,"./image-storage.cjs":29}],34:[function(require,module,exports){
 let uuid = require('uuid');
 
 let Topo = function(topo) {
