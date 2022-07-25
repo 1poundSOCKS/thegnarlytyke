@@ -104,10 +104,4 @@ dist
 .tern-port
 
 # my web
-/front-end/public/scripts/*.page.js
-
-# my api
-/api/lambda/build
-/api/lambda/output
-/api/lambda/test/output
-__pycache__
+public/scripts/*.page.js

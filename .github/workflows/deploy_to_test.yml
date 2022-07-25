@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  FRONT_END_DIR: ./front-end
+  WEB_DIR: .
   AWS_REGION: eu-west-2
   WEB_BUCKET_NAME: test.thegnarlytyke.com
 
@@ -32,22 +32,22 @@ jobs:
 
     - name: Clean cache
       run: npm cache clean --force
-      working-directory: ${{ env.FRONT_END_DIR }}
+      working-directory: ${{ env.WEB_DIR }}
 
     - name: Install dependencies
       run: npm install
-      working-directory: ${{ env.FRONT_END_DIR }}
+      working-directory: ${{ env.WEB_DIR }}
 
     - name: Build
       run: npm run build
-      working-directory: ${{ env.FRONT_END_DIR }}
+      working-directory: ${{ env.WEB_DIR }}
 
     - name: Run web script unit tests
       run: npm test
-      working-directory: ${{ env.FRONT_END_DIR }}
+      working-directory: ${{ env.WEB_DIR }}
 
     - name: Deploy static site to S3 bucket
-      run: aws s3 sync ${{ env.FRONT_END_DIR }}/public/ s3://${{ env.WEB_BUCKET_NAME }} --exclude "config.json" --delete
+      run: aws s3 sync ${{ env.WEB_DIR }}/public/ s3://${{ env.WEB_BUCKET_NAME }} --exclude "config.json" --delete
 
     - name: Deploy test config
-      run: aws s3 sync ${{ env.FRONT_END_DIR }}/config/test s3://${{ env.WEB_BUCKET_NAME }}
+      run: aws s3 sync ${{ env.WEB_DIR }}/config/test s3://${{ env.WEB_BUCKET_NAME }}
