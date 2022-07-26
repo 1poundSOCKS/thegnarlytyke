@@ -71,6 +71,7 @@ let OnCragSelected = async () => {
   _topoMediaScroller.LoadTopoImages(ImageStorage,true)
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag, null, OnCragRouteToggled);
   document.getElementById('crag-index-container').style = 'display:none'
+  window.scrollTo( 0, 0 );
   document.getElementById('crag-view-container').style = ''
 }
 
@@ -110,6 +111,7 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.Refresh();
   _mainTopoImage.AddMouseHandler(topoContainer);
   document.getElementById('crag-view-container').style = 'display:none'
+  window.scrollTo( 0, 0 );
   document.getElementById('topo-edit-container').style = ''
 }
 

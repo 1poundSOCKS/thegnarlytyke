@@ -49,6 +49,19 @@
       align-items: center;
       margin-bottom: 1rem;
     }
+    .crag-covers-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .topo-images-container-edit {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .topo-images-container-edit canvas {
+      margin: 5%;
+      width: 90%;
+      height: 90%;
+    }
   </style>
 </head>
   <body>
@@ -66,7 +79,7 @@
       <div class="status-bar-container">
         <input type="text" id="status" name="name" size="20" readonly class="status-bar">
       </div>
-      <div id="crag-covers-container" class="images-media-scroller"></div>
+      <div id="crag-covers-container" class="crag-covers-container"></div>
     </div>
     <div id="crag-view-container" style="display:none">
       <div class="icon-bar-container">
@@ -75,7 +88,7 @@
       <div class="crag-details-container">
         <input type="text" id="crag-name" name="crag-name">
       </div>
-      <div id="topo-images-container" class="topo-images-container"></div>
+      <div id="topo-images-container" class="topo-images-container-edit"></div>
     </div>
     <div id="topo-edit-container" style="display:none">
       <div class="icon-bar-container">
