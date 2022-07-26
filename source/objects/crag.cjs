@@ -19,6 +19,12 @@ Crag.prototype.Attach = function(cragObject) {
   this.topos = cragObject.topos ? cragObject.topos : [];
 }
 
+Crag.prototype.LoadForUserEdit = async function(id,dataStorage) {
+  const cragData = await dataStorage.LoadForUserEdit(`${id}.crag`)
+  this.Attach(cragData)
+  this.UpdateAfterRestore()
+}
+
 Crag.prototype.Save = async function(dataStorage) {
   const cragData = this.FormatForStorage();
   return dataStorage.Save(`${this.id}.crag`, cragData);
@@ -66,6 +72,30 @@ Crag.prototype.AppendRoute = function(name, grade) {
   route.grade = grade;
   this.routes.push(route);
   return route;
+}
+
+Crag.prototype.UpdateAfterRestore = function() {
+  const routeInfoMap = new Map();
+  if( this.routes ) this.routes.forEach( route => routeInfoMap.set(route.id, route) );
+
+  const pointArray = [];
+  const pointMap = new Map();
+
+  const toposWithRoutes = this.topos.filter( topo => topo.routes && topo.routes.length > 0 );
+
+  toposWithRoutes.forEach( topo => {
+    topo.routes.forEach( route => {
+      route.info = routeInfoMap.get(route.id);
+      route.points.forEach( point => {
+        pointArray.push(point);
+        pointMap.set(point.id, point);
+      });
+    });
+  });
+
+  pointArray.forEach( point => {
+    if( point.attachedTo ) point.attachedTo = pointMap.get(point.attachedTo);
+  });
 }
 
 Crag.prototype.FormatForStorage = function() {

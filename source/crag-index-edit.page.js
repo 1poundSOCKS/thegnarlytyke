@@ -10,6 +10,8 @@ const CragCache = require('./objects/crag-cache.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 const CragRouteTable = require('./objects/crag-route-table.cjs')
 const TopoRouteTable = require('./objects/topo-route-table.cjs')
+const TopoRouteTable2 = require('./objects/topo-route-table-2.cjs')
+const TopoImage = require('./objects/topo-image.cjs');
 
 let _cookie = null;
 let _pageHeaderNav = null;
@@ -21,6 +23,7 @@ let _currentCrag = null
 let _topoMediaScroller = null;
 let _cragRouteTable = null;
 let _topoRouteTable = null;
+let _topoRouteTableSelect = null;
 
 window.onload = () => {
   Config.Load().then( () => OnConfigLoad() );
@@ -34,7 +37,7 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
-  _cragCache = new CragCache(Config)
+  _cragCache = new CragCache(DataStorage)
 
   _iconBar = new IconBar(document.getElementById('icon-bar-container'))
   _iconBar.AddIcon('fa-plus','add crag', OnAddCrag)
@@ -44,8 +47,12 @@ let OnConfigLoad = async () => {
   const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);
 
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
+
   document.getElementById('image-file').onchange = OnUploadImageFile;
   document.getElementById("crag-name").onchange = OnCragNameChanged;
+
+  _topoRouteTableSelect = new TopoRouteTable2(document.getElementById('topo-edit-container'))
+  _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
 }
 
 let OnCragSelected = async () => {
@@ -86,11 +93,14 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _cragRouteTable.SetTopoID(topoID)
   const selectedTopo = _currentCrag.GetMatchingTopo(topoID)
   _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo, OnTopoRouteSelected)
+  _topoRouteTableSelect.Refresh(selectedTopo)
+  _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
+  _mainTopoImage.topo = selectedTopo;
+  _mainTopoImage.Refresh();
+  _mainTopoImage.AddMouseHandler(topoContainer);
 }
 
 let OnCragRouteToggled = (route) => {
-  console.log(`crag route: ${route.id}`)
-  // const selectedTopo = _currentCrag.GetMatchingTopo(topoID)
   _topoRouteTable.Refresh()
 }
 

@@ -12,24 +12,29 @@
       grid-template-columns: 1fr 1fr;
       justify-content: center;
     }
-    .route-tables-container table {
+    .topo-edit-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-content: center;
+    }
+    table {
       align-items: center;
       border-collapse: collapse;
       font-size: 1.5rem;
       width: 90%;
     }
-    .route-tables-container tr {
+    tr {
       border-top: 0.1rem solid black;
       border-bottom: 0.1rem solid black;
       background-color: darkgray;
       height: 2rem;
     }
-    .route-tables-container td {
+    td {
       text-align: left;
       overflow:hidden;
       white-space:nowrap;
     }
-    .route-tables-container td:nth-child(1) {
+    td:nth-child(1) {
       display: none;
     }
     .route-tables-container td:nth-child(5):hover {
@@ -50,13 +55,16 @@
     <input type="file" id="image-file" name="filename" style="display:none"></input>
     <div id="crag-covers-container" class="images-media-scroller"></div>
     <div class="crag-details">
-      <label for="crag-name">Crag name:</label>
       <input type="text" id="crag-name" name="crag-name">
     </div>
     <div id="topo-images-container" class="topo-images-container"></div>
     <div class="route-tables-container">
       <table id="crag-route-table"></table>
       <table id="topo-route-table"></table>
+    </div>
+    <div id="topo-edit-container">
+      <table id="topo-route-table-edit"></table>
+      <canvas id="topo-image-edit"></canvas>
     </div>
     <script src="./scripts/crag-index-edit.page.js"></script>
   </body>
