@@ -11,7 +11,7 @@ let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
   this.element.innerHTML = ''
 }
 
-TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage) {
+TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage, disableAutoSelect) {
   let cragTopoIDs = this.crag.topos.map( topo => topo.id );
   
   let topoImageContainers = cragTopoIDs.map( topoID => {
@@ -59,7 +59,7 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage) {
     }
   });
 
-  if( topoImageLoaders.length > 0 ) {
+  if( !disableAutoSelect && topoImageLoaders.length > 0 ) {
     await topoImageLoaders[0];
     this.OnTopoSelected(topoImageContainers[0]);
   }

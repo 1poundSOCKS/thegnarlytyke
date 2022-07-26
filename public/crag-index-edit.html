@@ -4,8 +4,7 @@
 <head>
   <title>the gnarly tyke</title>
   <link rel="stylesheet" href="stylesheets/crag-index-edit.css">
-  <link rel="stylesheet" href="fontawesome-free/css/fontawesome.min.css">
-  <link rel="stylesheet" href="fontawesome-free/css/solid.css">
+  <link rel="stylesheet" href="fontawesome-free/css/all.css">
   <style>
     .route-tables-container {
       display: grid;
@@ -40,31 +39,55 @@
     .route-tables-container td:nth-child(5):hover {
       color: white;
     }
+    .crag-details-container {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .topo-image-container {
+      display: flex;  
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
   <body>
     <div class="page-header-text">the gnarly tyke</div>
-      
+    
     <div id="page-header" class="page-header">
       <ul id="page-header-nav" class="page-header-nav">
     </div>
-    <div id="icon-bar-container" class="icon-bar-container"></div>
-    <div class="status-bar-container">
-      <input type="text" id="status" name="name" size="20" readonly class="status-bar">
-    </div>
     <input type="file" id="image-file" name="filename" style="display:none"></input>
-    <div id="crag-covers-container" class="images-media-scroller"></div>
-    <div class="crag-details">
-      <input type="text" id="crag-name" name="crag-name">
+    <div id="crag-index-container">
+      <div id="icon-bar-container" class="icon-bar-container">
+        <i id="add-crag" class="far fa-plus-square" title="add crag"></i>
+        <i id="save" class="far fa-save" title="save"></i>
+      </div>
+      <div class="status-bar-container">
+        <input type="text" id="status" name="name" size="20" readonly class="status-bar">
+      </div>
+      <div id="crag-covers-container" class="images-media-scroller"></div>
     </div>
-    <div id="topo-images-container" class="topo-images-container"></div>
-    <div class="route-tables-container">
-      <table id="crag-route-table"></table>
-      <table id="topo-route-table"></table>
+    <div id="crag-view-container" style="display:none">
+      <div class="icon-bar-container">
+        <i id="close-crag-view" class="far fa-window-close" title="close"></i>
+      </div>
+      <div class="crag-details-container">
+        <input type="text" id="crag-name" name="crag-name">
+      </div>
+      <div id="topo-images-container" class="topo-images-container"></div>
     </div>
-    <div id="topo-edit-container">
-      <table id="topo-route-table-edit"></table>
-      <canvas id="topo-image-edit"></canvas>
+    <div id="topo-edit-container" style="display:none">
+      <div class="icon-bar-container">
+        <i id="close-topo-view" class="far fa-window-close" title="close"></i>
+      </div>
+      <div class="topo-image-container">
+        <canvas id="topo-image-edit"></canvas>
+      </div>
+      <div class="route-tables-container">
+        <table id="crag-route-table"></table>
+        <table id="topo-route-table"></table>
+      </div>
     </div>
     <script src="./scripts/crag-index-edit.page.js"></script>
   </body>

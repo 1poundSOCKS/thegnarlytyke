@@ -40,8 +40,8 @@ let OnConfigLoad = async () => {
   _cragCache = new CragCache(DataStorage)
 
   _iconBar = new IconBar(document.getElementById('icon-bar-container'))
-  _iconBar.AddIcon('fa-plus','add crag', OnAddCrag)
-  _iconBar.AddIcon('fa-save','save changes', OnSaveChanges)
+  // _iconBar.AddIcon('fa-plus-square','add crag', OnAddCrag)
+  // _iconBar.AddIcon('fa-save','save changes', OnSaveChanges)
 
   _cragIndex = new CragIndex(Config);
   const cragIndexData = await _cragIndex.LoadForUserEdit(DataStorage, ImageStorage);
@@ -51,16 +51,27 @@ let OnConfigLoad = async () => {
   document.getElementById('image-file').onchange = OnUploadImageFile;
   document.getElementById("crag-name").onchange = OnCragNameChanged;
 
-  _topoRouteTableSelect = new TopoRouteTable2(document.getElementById('topo-edit-container'))
+  // _topoRouteTableSelect = new TopoRouteTable2(document.getElementById('topo-edit-container'))
   _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
+
+  document.getElementById('close-crag-view').onclick = () => {
+    document.getElementById('crag-view-container').style = 'display:none'
+    document.getElementById('crag-index-container').style = ''
+  }
+  document.getElementById('close-topo-view').onclick = () => {
+    document.getElementById('topo-edit-container').style = 'display:none'
+    document.getElementById('crag-view-container').style = ''
+  }
 }
 
 let OnCragSelected = async () => {
   document.getElementById("crag-name").value = _cragMediaScroller.selectedContainer.crag.name;
   _currentCrag = await _cragCache.Load(_cragMediaScroller.selectedContainer.crag.id)
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _currentCrag, false, OnTopoSelected)
-  _topoMediaScroller.LoadTopoImages(ImageStorage)
+  _topoMediaScroller.LoadTopoImages(ImageStorage,true)
   _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag, null, OnCragRouteToggled);
+  document.getElementById('crag-index-container').style = 'display:none'
+  document.getElementById('crag-view-container').style = ''
 }
 
 let OnCragNameChanged = () => {
@@ -93,11 +104,13 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _cragRouteTable.SetTopoID(topoID)
   const selectedTopo = _currentCrag.GetMatchingTopo(topoID)
   _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo, OnTopoRouteSelected)
-  _topoRouteTableSelect.Refresh(selectedTopo)
+  // _topoRouteTableSelect.Refresh(selectedTopo)
   _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
   _mainTopoImage.topo = selectedTopo;
   _mainTopoImage.Refresh();
   _mainTopoImage.AddMouseHandler(topoContainer);
+  document.getElementById('crag-view-container').style = 'display:none'
+  document.getElementById('topo-edit-container').style = ''
 }
 
 let OnCragRouteToggled = (route) => {
