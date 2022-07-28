@@ -9,6 +9,8 @@
   --page-header-menu-text-not-selected: darkgray;
   --page-header-menu-text-selected: white;
   --page-header-menu-text-active: white;
+  --icon: darkgray;
+  --icon-hover: black;
   --crag-name: black;
 }
 
@@ -147,14 +149,20 @@ i {
   background: --tgt-std-background-color;
 }
 
+/* topo images media scroller */
 .topo-images-container {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 10rem;
   overflow-x: auto;
-  gap: 0.5rem;
+  grid-gap: 0.5rem;
   justify-content: safe center;
-  background-color: var(--tgt-std-background-color);
+}
+
+.topo-container {
+  /* height: 100%; */
+  display: flex;
+  justify-content: center;
 }
 
 .topo-container-selected {
@@ -163,6 +171,7 @@ i {
 
 .topo-image {
   max-width: 100%;
+  max-height: 100%;
 }
 
 .topo-image:hover {
@@ -360,30 +369,6 @@ i {
 .icon-bar-container > i:hover {
   cursor: pointer;
   color: var(--tgt-std-light-color);
-}
-
-/* crag view */
-.crag-view-header {
-  text-align:center;
-  margin-bottom: 1rem;
-}
-
-.crag-name {
-  margin: auto;
-  font-size: 3rem;
-  color: var(--crag-name);
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.close-crag-view-icon {
-  font-size: 3rem;
-  margin-left: 1rem;
-}
-
-.close-crag-view-icon:hover {
-  cursor: pointer;
 }
 
 /* keep at the bottom */
