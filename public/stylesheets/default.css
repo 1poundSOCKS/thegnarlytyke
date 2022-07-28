@@ -147,15 +147,6 @@ i {
   background: --tgt-std-background-color;
 }
 
-.topo-images-container-initial {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2%;
-  background-color: var(--tgt-std-background-color);
-}
-
 .topo-images-container {
   display: grid;
   grid-auto-flow: column;
@@ -166,12 +157,8 @@ i {
   background-color: var(--tgt-std-background-color);
 }
 
-.topo-container:hover {
-  background-color: var(--tgt-highlight-background-color);
-}
-
 .topo-container-selected {
-  background-color: var(--tgt-highlight-background-color);
+  border-style: solid;
 }
 
 .topo-image {
