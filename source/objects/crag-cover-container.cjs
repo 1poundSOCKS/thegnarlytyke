@@ -64,4 +64,11 @@ CragCoverContainer.prototype.Refresh = function() {
   ctx.fillText(this.crag.name, xPosOfText, 50);
 }
 
+CragCoverContainer.prototype.CopyImageToCanvas = function(destCanvas) {
+  destCanvas.width = this.canvas.width
+  destCanvas.height = this.canvas.height
+  var ctx = destCanvas.getContext('2d')
+  ctx.drawImage(this.image,0,0)
+}
+
 module.exports = CragCoverContainer;

@@ -62,7 +62,16 @@
       width: 90%;
       height: 90%;
     }
-  </style>
+    .selected-crag-cover-image-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .selected-crag-cover-image {
+      height: 15rem;
+      border-style: solid;
+    }
+</style>
 </head>
   <body>
     <div class="page-header-text">the gnarly tyke</div>
@@ -83,7 +92,12 @@
     </div>
     <div id="crag-view-container" style="display:none">
       <div class="icon-bar-container">
+        <i id="upload-crag-cover-image" class="fas fa-file-upload" title="upload cover image"></i>
+        <i id="add-topo" class="far fa-plus-square" title="add topo"></i>
         <i id="close-crag-view" class="far fa-window-close" title="close"></i>
+      </div>
+      <div class="selected-crag-cover-image-container">
+        <canvas id="crag-cover-image" class="selected-crag-cover-image"></canvas>
       </div>
       <div class="crag-details-container">
         <input type="text" id="crag-name" name="crag-name">
@@ -92,6 +106,7 @@
     </div>
     <div id="topo-edit-container" style="display:none">
       <div class="icon-bar-container">
+        <i id="upload-topo-image" class="fas fa-file-upload" title="upload topo image"></i>
         <i id="close-topo-view" class="far fa-window-close" title="close"></i>
       </div>
       <div class="topo-image-container">
