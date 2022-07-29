@@ -10,7 +10,8 @@ const CragCache = require('./objects/crag-cache.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 const CragRouteTable = require('./objects/crag-route-table.cjs')
 const TopoRouteTable = require('./objects/topo-route-table.cjs')
-const TopoImage = require('./objects/topo-image.cjs');
+const TopoImage = require('./objects/topo-image.cjs')
+const ImageFileCompressor = require('./objects/image-file-compressor.cjs')
 
 let _cookie = null;
 let _pageHeaderNav = null;
@@ -25,7 +26,17 @@ let _topoRouteTable = null;
 let _mainTopoImage = null;
 
 window.onload = () => {
-  Config.Load().then( () => OnConfigLoad() );
+  InitWindowStyle()
+  Config.Load().then( () => OnConfigLoad() )
+}
+
+window.onresize = () => {
+  InitWindowStyle()
+}
+
+let InitWindowStyle = () => {
+  const cragCoversColumnCount = ~~(window.innerWidth / 400)
+  document.documentElement.style.setProperty("--crag-covers-column-count", cragCoversColumnCount)
 }
 
 let OnConfigLoad = async () => {
@@ -45,11 +56,14 @@ let OnConfigLoad = async () => {
 
   _cragMediaScroller = new CragMediaScroller(document.getElementById('crag-covers-container'), Config.images_url, cragIndexData.crags, OnCragSelected)
 
-  document.getElementById('image-file').onchange = OnUploadImageFile;
-  document.getElementById("crag-name").onchange = OnCragNameChanged;
-
   _cragCoverImage = document.getElementById('crag-cover-image')
   _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
+
+  /* page event handlers */
+  document.getElementById('add-crag').onclick = () => document.getElementById('add-crag-image-file').click()
+  document.getElementById('add-crag-image-file').onchange = () => OnAddCrag()
+
+  document.getElementById("crag-name").onchange = OnCragNameChanged;
 
   document.getElementById('close-crag-view').onclick = () => {
     document.getElementById('crag-view-container').style = 'display:none'
@@ -81,9 +95,17 @@ let OnCragNameChanged = () => {
   _cragMediaScroller.RefreshSelectedContainer();
 }
 
-module.exports = OnAddCrag = () => {
-  const crag = _cragIndex.AppendCrag();
-  _cragMediaScroller.AppendCrag(crag);
+let OnAddCrag = async () => {
+  const imageFiles = document.getElementById('add-crag-image-file')
+  const topoImageFiles = Array.from(imageFiles.files).map( file => {
+    return { file: file }
+  })
+
+  const compressor = new ImageFileCompressor(document.getElementById('image-file-compressor-canvas'))
+  const imageLoader = compressor.LoadAndCompress(topoImageFiles[0].file)
+
+  const cragIndexEntry = _cragIndex.AppendCrag('',imageLoader)
+  _cragMediaScroller.AppendCrag(cragIndexEntry)
 }
 
 let OnUploadImageFile = async () => {

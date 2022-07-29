@@ -24,6 +24,15 @@ ImageStorage.prototype.LoadImageFromFile = async function(filename) {
   });
 }
 
+ImageStorage.prototype.LoadImageFromDataURI = async function(imageData) {
+  return new Promise( (resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+    img.src = imageData;
+  });
+}
+
 ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
   const url = `${this.loadImageURL}?id=${ID}`;
   const response = await fetch(url, {

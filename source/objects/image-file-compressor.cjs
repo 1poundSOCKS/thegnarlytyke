@@ -1,19 +1,26 @@
 let ImageFileCompressor = function(canvas) {
   this.canvas = canvas;
+  this.imageData = null;
+  this.image = null;
+  this.compressedImageData = null;
+  this.compressedImage = null;
 }
 
 ImageFileCompressor.prototype.LoadAndCompress = async function(file) {
   const result = await this.LoadTopoImageFile(file);
-  const imageData = result.contents;
-  const image = await this.LoadImage(imageData);
+  this.imageData = result.contents;
+  this.image = await this.LoadImage(this.imageData);
   this.canvas.setAttribute('height', 500);
-  this.canvas.setAttribute('width', this.canvas.height * image.width / image.height);
+  this.canvas.setAttribute('width', this.canvas.height * this.image.width / this.image.height);
   let ctx = this.canvas.getContext('2d');
-  ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height);
-  const compressedImageData = this.canvas.toDataURL('image/jpeg', 0.5);
-  const compressedImage = await this.LoadImage(compressedImageData);
-  ctx.drawImage(compressedImage, 0, 0, this.canvas.width, this.canvas.height);
-  return compressedImageData;
+  ctx.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height);
+  this.compressedImageData = this.canvas.toDataURL('image/jpeg', 0.5);
+  const imageLoader = this.LoadImage(this.compressedImageData);
+  imageLoader.then( image => {
+    this.compressedImage = image
+  })
+
+  return imageLoader;
 }
 
 ImageFileCompressor.prototype.LoadTopoImageFile = file => new Promise( resolve => {

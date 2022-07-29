@@ -12,20 +12,28 @@ const TopoImage = require('./objects/topo-image.cjs');
 const TopoRouteTable = require('./objects/topo-route-table.cjs');
 
 let _cookie = null;
-let _pageHeaderNav = null;
 let _crag = null;
 let _topoMediaScroller = null;
 let _mainTopoImage = null;
-let _topoRouteTable = null;
 
 window.onload = () => {
+  InitWindowStyle()
   Config.Load().then( () => OnConfigLoad() );
+}
+
+window.onresize = () => {
+  InitWindowStyle()
+}
+
+let InitWindowStyle = () => {
+  const cragCoversColumnCount = Math.max(1,~~(window.innerWidth / 400))
+  document.documentElement.style.setProperty("--crag-covers-column-count", cragCoversColumnCount)
 }
 
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
   
-  _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
+  new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
   
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
@@ -80,5 +88,5 @@ let OnTopoSelected = (topoID, topoContainer) => {
   _mainTopoImage.image = _topoMediaScroller.topoImages.get(topoID);
   _mainTopoImage.topo = selectedTopo;
   _mainTopoImage.Refresh();
-  _topoRouteTable = new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo);
+  new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo);
 }

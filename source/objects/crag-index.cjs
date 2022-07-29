@@ -23,8 +23,8 @@ CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {
   crag.imageLoader = imageStorage.LoadImageFromFile(crag.imageFile);
 }
 
-CragIndex.prototype.AppendCrag = function() {
-  const cragCount = this.data.crags.push({id: uuid.v4(),name:"NEW CRAG"})
+CragIndex.prototype.AppendCrag = function(cragName,imageLoader) {
+  const cragCount = this.data.crags.push({id: uuid.v4(),name:cragName,imageLoader:imageLoader})
   return this.data.crags[cragCount-1]
 }
 
