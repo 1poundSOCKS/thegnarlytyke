@@ -36,7 +36,9 @@ window.onresize = () => {
 
 let InitWindowStyle = () => {
   const cragCoversColumnCount = ~~(window.innerWidth / 400)
+  const cragtoposColumnCount = ~~(window.innerWidth / 200)
   document.documentElement.style.setProperty("--crag-covers-column-count", cragCoversColumnCount)
+  document.documentElement.style.setProperty("--crag-topos-column-count", cragCoversColumnCount)
 }
 
 let OnConfigLoad = async () => {

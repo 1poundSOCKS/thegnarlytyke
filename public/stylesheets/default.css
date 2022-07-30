@@ -13,7 +13,8 @@
   --icon-hover: black;
   --crag-name: black;
   --default-border-color: darkgray;
-  --crag-covers-column-count: 3;
+  --crag-covers-column-count: 2;
+  --crag-topos-column-count: 4;
 }
 
 label, input {
