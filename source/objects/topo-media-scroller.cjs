@@ -27,7 +27,7 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage, disabl
   });
 
   const topoImageLoaders = [];
-  const crag = new Crag(this.crag);
+  const crag = this.crag;
   topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
     let topo = crag.GetMatchingTopo(topoID);
@@ -82,10 +82,11 @@ TopoMediaScroller.prototype.CreateTopoImageContainer = function(topoID) {
 }
 
 TopoMediaScroller.prototype.OnTopoSelected = function(topoContainer) {
-  if( this.currentTopoContainer ) this.currentTopoContainer.classList.remove('topo-container-selected');
+  if( this.currentTopoContainer ) this.currentTopoContainer.classList.remove('selected');
   this.currentTopoContainer = topoContainer;
-  this.currentTopoContainer.classList.add('topo-container-selected');
-  this.OnTopoSelectedCallback(this.currentTopoContainer.dataset.id, this.currentTopoContainer);
+  this.currentTopoContainer.classList.add('selected');
+  const topo = this.crag.GetMatchingTopo(this.currentTopoContainer.dataset.id)
+  this.OnTopoSelectedCallback(topo);
 }
 
 TopoMediaScroller.prototype.GetSelectedTopoID = function() {
