@@ -65,6 +65,9 @@ let OnConfigLoad = async () => {
   document.getElementById('add-crag').onclick = () => document.getElementById('add-crag-image-file').click()
   document.getElementById('add-crag-image-file').onchange = () => OnAddCrag()
 
+  document.getElementById('update-crag-cover-image').onclick = () => document.getElementById('update-crag-image-file').click()
+  document.getElementById('update-crag-image-file').onchange = () => OnUpdateCragImage()
+
   document.getElementById("crag-name").onchange = OnCragNameChanged;
 
   document.getElementById('close-crag-view').onclick = () => {
@@ -104,18 +107,27 @@ let OnAddCrag = async () => {
   })
 
   const compressor = new ImageFileCompressor(document.getElementById('image-file-compressor-canvas'))
-  const imageLoader = compressor.LoadAndCompress(topoImageFiles[0].file)
+  const image = compressor.LoadAndCompress(topoImageFiles[0].file)
 
-  const cragIndexEntry = _cragIndex.AppendCrag('',imageLoader)
+  const cragIndexEntry = _cragIndex.AppendCrag('',image)
   _cragMediaScroller.AppendCrag(cragIndexEntry)
 }
 
-let OnUploadImageFile = async () => {
-  const imageFileElement = document.getElementById('image-file');
-  _cragMediaScroller.selectedContainer.LoadImageFromFile(imageFileElement.files[0]);
+let OnUpdateCragImage = async () => {
+  console.log(`OnUpdateCragImage`)
+  const imageFiles = document.getElementById('update-crag-image-file')
+  const topoImageFiles = Array.from(imageFiles.files).map( file => {
+    return { file: file }
+  })
+
+  const compressor = new ImageFileCompressor(document.getElementById('image-file-compressor-canvas'))
+  const image = await compressor.LoadAndCompress(topoImageFiles[0].file)
+
+  _cragMediaScroller.selectedContainer.UpdateImage(image,compressor.compressedImageData)
+  _cragMediaScroller.selectedContainer.CopyImageToCanvas(_cragCoverImage)
 }
 
-module.exports = OnSaveChanges = () => {
+let OnSaveChanges = () => {
   document.getElementById("status").value = "Saving..."
   _cragIndex.Save(DataStorage, ImageStorage)
   .then( (response) => {

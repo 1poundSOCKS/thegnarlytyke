@@ -28,8 +28,7 @@ let CragCoverContainer = function(crag, imageURL) {
 
 CragCoverContainer.prototype.LoadImageFromFile = async function(file) {
   const ifc = new ImageFileCompressor(this.canvas);
-  this.crag.imageData = await ifc.LoadAndCompress(file);
-  this.crag.imageLoader = this.LoadImage(this.crag.imageData);
+  this.crag.imageLoader = await ifc.LoadAndCompress(file);
   this.image = await this.crag.imageLoader;
   this.Refresh();
 }
@@ -40,6 +39,13 @@ CragCoverContainer.prototype.LoadImage = (url) => new Promise( (resolve, reject)
   img.onerror = (err) => reject(err);
   img.src = url;
 });
+
+CragCoverContainer.prototype.UpdateImage = function(image, data) {
+  console.table(this.crag)
+  this.image = image
+  this.crag.imageData = data
+  this.Refresh()
+}
 
 CragCoverContainer.prototype.Refresh = function() {
   const ctx = this.canvas.getContext("2d");

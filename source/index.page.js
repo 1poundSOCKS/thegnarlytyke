@@ -2,8 +2,9 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const Cookie = require('./objects/cookie.cjs')
-const CragIndex = require('./objects/crag-index.cjs');
+// const CragIndex = require('./objects/crag-index.cjs');
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
+const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const CragCoverContainer = require('./objects/crag-cover-container.cjs');
 const CragStorage = require('./objects/crag-storage.cjs');
 const Crag = require('./objects/crag.cjs');
@@ -30,6 +31,8 @@ let InitWindowStyle = () => {
   document.documentElement.style.setProperty("--crag-covers-column-count", cragCoversColumnCount)
 }
 
+let cragIndexContainer = null;
+
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
   
@@ -37,22 +40,13 @@ let OnConfigLoad = async () => {
   
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
-  const cragIndex = new CragIndex();
-  await cragIndex.Load(DataStorage,ImageStorage);
-  const parentElement = document.getElementById('crag-covers-container');
-  cragIndex.data.crags.forEach( crag => {
-    AppendCrag(crag, parentElement);
+
+  cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
+  cragIndexContainer.Load(cragCoverContainer => {
+    DisplayCragView(cragCoverContainer.crag.id)
   })
 
   document.getElementById('close-crag-view').onclick = DisplayIndexView;
-}
-
-let AppendCrag = (crag, parentElement) => {
-  const cragCover = new CragCoverContainer(crag, Config.images_url);
-  parentElement.appendChild(cragCover.element);
-  cragCover.element.onclick = () => {
-    DisplayCragView(crag.id);
-  }
 }
 
 let DisplayIndexView = () => {

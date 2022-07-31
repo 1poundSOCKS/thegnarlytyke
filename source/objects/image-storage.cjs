@@ -8,7 +8,6 @@ let ImageStorage = function() {
 
 ImageStorage.prototype.Init = function(config, userID, userToken) {
   this.imagesPath = `${config.images_url}`;
-  this.loadImageURL = `${config.save_image_url}`;
   this.saveImageURL = `${config.save_image_url}`;
   this.userID = userID ? userID : "";
   this.userToken = userToken ? userToken : "";
