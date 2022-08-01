@@ -11,7 +11,7 @@ const TopoImage = require('./objects/topo-image.cjs')
 
 let _cookie = null;
 let _pageHeaderNav = null;
-let _cragIndex = null;
+// let _cragIndex = null;
 let _cragIndexContainer = null;
 let _currentCrag = null
 let _topoMediaScroller = null;
@@ -55,6 +55,8 @@ let OnConfigLoad = async () => {
 
   document.getElementById('update-crag-cover-image').onclick = () => document.getElementById('update-crag-image-file').click()
   document.getElementById('update-crag-image-file').onchange = () => OnUpdateCragImage()
+
+  document.getElementById('save').onclick = () => OnSave()
 
   document.getElementById("crag-name").onchange = OnCragNameChanged;
 
@@ -101,15 +103,8 @@ let OnUpdateCragImage = async () => {
   _cragIndexContainer.UpdateSelectedImage(imageFiles.files[0])
 }
 
-let OnSaveChanges = () => {
-  document.getElementById("status").value = "Saving..."
-  _cragIndex.Save(DataStorage, ImageStorage)
-  .then( (response) => {
-    document.getElementById("status").value = response.error ? "ERROR!" : "Success!"
-  })
-  .catch( (e) => {
-    document.getElementById("status").value = "ERROR!"
-  })
+let OnSave = () => {
+  _cragIndexContainer.Save()
 }
 
 let OnTopoSelected = (topoID, topoContainer) => {

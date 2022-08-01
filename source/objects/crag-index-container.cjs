@@ -16,6 +16,10 @@ CragIndexContainer.prototype.Load = async function(OnCragSelectedHandler) {
   })
 }
 
+CragIndexContainer.prototype.Save = async function() {
+  this.cragIndex.Save(this.dataStorage,this.imageStorage)
+}
+
 CragIndexContainer.prototype.AppendCrag = function(cragCover,OnCragSelectedHandler) {
   const cragCoverContainer = new CragCoverContainer(cragCover);
   this.element.appendChild(cragCoverContainer.element);
