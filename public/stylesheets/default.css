@@ -34,39 +34,6 @@ i {
   padding: 0.5rem;
 }
 
-.tgt-top-bar {
-  background: var(--tgt-header-background-color);
-  height: 1rem;
-}
-
-.tgt-bottom-bar {
-  background: var(--tgt-subheader-background-color);
-  height: 1rem;
-}
-
-.page-header-controls {
-  background: var(--tgt-subheader-background-color);
-  display: flex;
-  margin: auto;
-  width: 100%;
-  height: 4rem;
-  margin-bottom: 0.5rem;
-}
-
-.tgt-site-header-text {
-  background: var(--tgt-header-background-color);
-  font-family: var(--tgt-font);
-  font-size: 4rem;
-  font-weight: bold;
-  letter-spacing: .1em;
-  text-align: center;
-  margin-right: 0.5rem;
-}
-
-.tgt-site-header-text:hover {
-  cursor: pointer;
-}
-
 .page-header-text {
   background: var(--tgt-header-background-color);
   height: 3rem;
@@ -77,81 +44,6 @@ i {
   font-weight: bold;
   text-align: center;
   margin-bottom: 0.5rem;
-}
-
-.page-subheader-text {
-  background: var(--tgt-header-background-color);
-  height: 3rem;
-  color: var(--tgt-std-light-color);
-  letter-spacing: .1em;
-  font-family: var(--tgt-font);
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-  margin-bottom: 0.5rem;
-}
-
-.header-icon {
-  background: var(--tgt-subheader-background-color);
-  cursor: pointer;
-  color: var(--tgt-std-background-color);
-  font-family: var(--tgt-font);
-  font-size: 3rem;
-  text-align: center;
-}
-
-.header-icon:hover {
-  cursor: pointer;
-  color: var(--tgt-std-light-color);
-}
-
-.tgt-subheader {
-  display: block;
-  margin: auto;
-  margin-bottom: 1rem;
-  text-align: center;
-  background: var(--tgt-subheader-background-color);
-  color: var(--tgt-std-light-color);
-  letter-spacing: .1em;
-  font-size: 2rem;
-}
-
-.tgt-icon-bar {
-  font-size: 3rem;
-  text-align: center;
-  margin-right: 0.2rem;
-  margin-bottom: 1rem;
-  color: var(--tgt-std-dark-color);
-}
-
-.tgt-icon-address {
-  text-decoration: none;
-}
-
-.tgt-icon {
-  cursor: pointer;
-  color: var(--tgt-std-dark-color);
-  font-family: var(--tgt-font);
-}
-
-.tgt-icon:disabled {
-  color: var(--tgt-header-background-color);
-  background: var(--tgt-header-background-color);
-}
-
-.tgt-icon:hover {
-  cursor: pointer;
-  color: var(--tgt-std-light-color);
-}
-
-.tgt-icon-text {
-  font-family: var(--tgt-font);
-}
-
-.tgt-icon-bar > input {
-  font-size: 3rem;
-  background: --tgt-std-background-color;
 }
 
 /* topo images media scroller */

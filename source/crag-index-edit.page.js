@@ -1,20 +1,16 @@
 const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
-const CragIndex = require('./objects/crag-index.cjs');
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
-const IconBar = require('./objects/icon-bar.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 const CragRouteTable = require('./objects/crag-route-table.cjs')
 const TopoRouteTable = require('./objects/topo-route-table.cjs')
 const TopoImage = require('./objects/topo-image.cjs')
-const ImageFileCompressor = require('./objects/image-file-compressor.cjs')
 
 let _cookie = null;
 let _pageHeaderNav = null;
-let _iconBar = null;
 let _cragIndex = null;
 let _cragIndexContainer = null;
 let _currentCrag = null
@@ -47,10 +43,7 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
-  _iconBar = new IconBar(document.getElementById('icon-bar-container'))
-
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
-  // _cragIndexContainer.Load(DisplayCragView)
   _cragIndexContainer.Load(SelectCragCoverContainer)
 
   _cragCoverImage = document.getElementById('crag-cover-image')
@@ -100,29 +93,12 @@ let OnCragNameChanged = () => {
 
 let OnAddCrag = async () => {
   const imageFiles = document.getElementById('add-crag-image-file')
-  const topoImageFiles = Array.from(imageFiles.files).map( file => {
-    return { file: file }
-  })
-
-  const compressor = new ImageFileCompressor(document.getElementById('image-file-compressor-canvas'))
-  const image = compressor.LoadAndCompress(topoImageFiles[0].file)
-
-  const cragIndexEntry = _cragIndex.AppendCrag('',image)
-  _cragMediaScroller.AppendCrag(cragIndexEntry)
+  _cragIndexContainer.AddNewCrag(imageFiles.files[0],SelectCragCoverContainer)
 }
 
 let OnUpdateCragImage = async () => {
-  console.log(`OnUpdateCragImage`)
   const imageFiles = document.getElementById('update-crag-image-file')
-  const topoImageFiles = Array.from(imageFiles.files).map( file => {
-    return { file: file }
-  })
-
-  const compressor = new ImageFileCompressor(document.getElementById('image-file-compressor-canvas'))
-  const image = await compressor.LoadAndCompress(topoImageFiles[0].file)
-
-  _cragMediaScroller.selectedContainer.UpdateImage(image,compressor.compressedImageData)
-  _cragMediaScroller.selectedContainer.CopyImageToCanvas(_cragCoverImage)
+  _cragIndexContainer.UpdateSelectedImage(imageFiles.files[0])
 }
 
 let OnSaveChanges = () => {

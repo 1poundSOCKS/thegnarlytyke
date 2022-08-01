@@ -44,7 +44,7 @@ let OnConfigLoad = async () => {
 let DisplayIndexView = () => {
   document.getElementById('crag-view-container').style = 'display:none'
   window.scrollTo( 0, 0 );
-  _cragIndexContainer.RemoveSelectedStyle();
+  _cragIndexContainer.Unselect();
   document.getElementById('crag-covers-container').style = ''
 }
 
