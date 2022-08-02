@@ -52,7 +52,7 @@ let DisplayCragView = async cragCoverContainer => {
   document.getElementById('crag-covers-container').style = 'display:none'
   window.scrollTo( 0, 0 );
   
-  const crag = await cragCoverContainer.LoadCrag(Config)
+  const crag = await cragCoverContainer.LoadCrag(DataStorage)
   document.getElementById('crag-name').innerText = crag.name;
 
   _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);

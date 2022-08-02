@@ -1,5 +1,7 @@
 const CragIndex = require('./crag-index.cjs');
 const CragCoverContainer = require("./crag-cover-container.cjs");
+const TopoMediaScroller = require('./topo-media-scroller.cjs')
+const CragRouteTable = require('./crag-route-table.cjs')
 
 let CragIndexContainer = function(element,dataStorage,imageStorage) {
   this.element = element
@@ -65,6 +67,22 @@ CragIndexContainer.prototype.AddNewCrag = async function(imageFile,OnCragSelecte
 
 CragIndexContainer.prototype.UpdateSelectedImage = async function(imageFile) {
   if( this.selectedContainer ) this.selectedContainer.UpdateImage(imageFile)
+}
+
+CragIndexContainer.prototype.EditSelectedCrag = async function(topoImagesContainerElement,cragRouteTableElement) {
+  const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
+  document.getElementById("crag-name").innerText = crag.name
+  const topoMediaScroller = new TopoMediaScroller(topoImagesContainerElement, crag, false, this.OnTopoSelected)
+  topoMediaScroller.LoadTopoImages(this.imageStorage,true)
+  _cragRouteTable = new CragRouteTable(cragRouteTableElement, crag, null, this.OnCragRouteToggled);
+}
+
+CragIndexContainer.prototype.OnTopoSelected = function() {
+  
+}
+
+CragIndexContainer.prototype.OnCragRouteToggled = function() {
+  
 }
 
 module.exports = CragIndexContainer;

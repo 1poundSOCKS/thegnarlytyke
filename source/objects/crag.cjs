@@ -19,10 +19,22 @@ Crag.prototype.Attach = function(cragObject) {
   this.topos = cragObject.topos ? cragObject.topos : [];
 }
 
-Crag.prototype.LoadForUserEdit = async function(id,dataStorage) {
-  const cragData = await dataStorage.LoadForUserEdit(`${id}.crag`)
+Crag.prototype.Load = async function(id,dataStorage) {
+  const cragData = await dataStorage.Load(`${id}.crag`)
   this.Attach(cragData)
   this.UpdateAfterRestore()
+}
+
+Crag.prototype.SafeLoad = async function(id,dataStorage) {
+  try {
+    await this.Load(id,dataStorage)
+  }
+  catch ( err ) {
+    this.id = id;
+    this.name = ''
+    this.routes = []
+    this.topos = []
+  }
 }
 
 Crag.prototype.Save = async function(dataStorage) {

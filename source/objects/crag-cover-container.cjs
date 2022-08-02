@@ -1,5 +1,4 @@
 const ImageFileCompressor = require('./image-file-compressor.cjs');
-const CragStorage = require('./crag-storage.cjs');
 const Crag = require('./crag.cjs');
 
 let CragCoverContainer = function(cragCover) {
@@ -12,15 +11,9 @@ let CragCoverContainer = function(cragCover) {
   this.element.appendChild(this.canvas);
 }
 
-CragCoverContainer.prototype.LoadCrag = async function(config) {
-  try {
-    const cragStorage = new CragStorage('client', config);
-    this.crag = new Crag(await cragStorage.Load(this.cragCover.id));
-  }
-  catch ( err ) {
-    this.crag = new Crag({id:this.cragCover.id});
-  }
-
+CragCoverContainer.prototype.LoadCrag = async function(dataStorage) {
+  this.crag = new Crag()
+  await this.crag.SafeLoad(this.cragCover.id,dataStorage)
   return this.crag
 }
 

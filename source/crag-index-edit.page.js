@@ -4,8 +4,6 @@ const ImageStorage = require('./objects/image-storage.cjs');
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
-const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
-const CragRouteTable = require('./objects/crag-route-table.cjs')
 const TopoRouteTable = require('./objects/topo-route-table.cjs')
 const TopoImage = require('./objects/topo-image.cjs')
 
@@ -29,7 +27,7 @@ window.onresize = () => {
 
 let InitWindowStyle = () => {
   const cragCoversColumnCount = ~~(window.innerWidth / 400)
-  const cragtoposColumnCount = ~~(window.innerWidth / 200)
+  const cragtoposColumnCount = ~~(window.innerWidth / 400)
   document.documentElement.style.setProperty("--crag-covers-column-count", cragCoversColumnCount)
   document.documentElement.style.setProperty("--crag-topos-column-count", cragtoposColumnCount)
 }
@@ -55,6 +53,8 @@ let OnConfigLoad = async () => {
   document.getElementById('update-crag-cover-image').onclick = () => document.getElementById('update-crag-image-file').click()
   document.getElementById('update-crag-image-file').onchange = () => OnUpdateCragImage()
 
+  document.getElementById('edit-crag').onclick = () => OnEditCrag()
+
   document.getElementById('save').onclick = () => OnSave()
 
   document.getElementById("crag-name").onchange = OnCragNameChanged;
@@ -72,21 +72,6 @@ let OnConfigLoad = async () => {
 let SelectCragCoverContainer = cragCoverContainer => {
 }
 
-let DisplayCragView = async cragCoverContainer => {
-  document.getElementById('crag-index-container').style = 'display:none'
-
-  cragCoverContainer.CopyImageToCanvas(_cragCoverImage)
-  document.getElementById("crag-name").value = cragCoverContainer.cragIndexEntry.name;
-  _currentCrag = await cragCoverContainer.LoadCrag(Config)
-  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), _currentCrag, false, OnTopoSelected)
-  _topoMediaScroller.LoadTopoImages(ImageStorage,true)
-  _cragRouteTable = new CragRouteTable(document.getElementById('crag-route-table'), _currentCrag, null, OnCragRouteToggled);
-  
-  document.getElementById('crag-index-container').style = 'display:none'
-  window.scrollTo( 0, 0 );
-  document.getElementById('crag-view-container').style = ''
-}
-
 let OnCragNameChanged = () => {
   if( _cragMediaScroller.selectedContainer ) _cragMediaScroller.selectedContainer.crag.name = document.getElementById("crag-name").value;
   _cragMediaScroller.RefreshSelectedContainer();
@@ -100,6 +85,13 @@ let OnAddCrag = async () => {
 let OnUpdateCragImage = async () => {
   const imageFiles = document.getElementById('update-crag-image-file')
   _cragIndexContainer.UpdateSelectedImage(imageFiles.files[0])
+}
+
+let OnEditCrag = async () => {
+  document.getElementById('crag-index-container').style = 'display:none'
+  await _cragIndexContainer.EditSelectedCrag(document.getElementById('topo-images-container'),document.getElementById('crag-route-table'))
+  window.scrollTo( 0, 0 );
+  document.getElementById('crag-view-container').style = ''
 }
 
 let OnSave = () => {

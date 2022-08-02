@@ -70,6 +70,9 @@
       height: 30rem;
       margin-bottom: 1rem;
     }
+    .crag-view-header {
+      display: flex;
+    }
 </style>
 </head>
   <body>
@@ -82,6 +85,7 @@
       <div id="icon-bar-container" class="icon-bar-container">
         <i id="add-crag" class="far fa-plus-square" title="add crag"></i>
         <i id="update-crag-cover-image" class="fas fa-file-upload" title="update cover image"></i>
+        <i id="edit-crag" class="fas fa-edit" title="edit crag"></i>
         <i id="save" class="far fa-save" title="save"></i>
       </div>
       <div class="status-bar-container" style="display:none">
@@ -94,11 +98,8 @@
         <i id="add-topo" class="far fa-plus-square" title="add topo"></i>
         <i id="close-crag-view" class="far fa-window-close" title="close"></i>
       </div>
-      <div class="crag-details-container">
-        <input type="text" id="crag-name" name="crag-name">
-      </div>
-      <div class="selected-crag-cover-image-container">
-        <canvas id="crag-cover-image" class="selected-crag-cover-image"></canvas>
+      <div id="crag-view-header" class="crag-view-header">
+        <span id="crag-name" class="crag-name"></span>
       </div>
       <div id="topo-images-container" class="topo-images-container-edit"></div>
     </div>

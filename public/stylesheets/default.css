@@ -303,6 +303,16 @@ i {
   width: 100%;
 }
 
+/* crag details */
+.crag-name {
+  margin: auto;
+  font-size: 3rem;
+  color: var(--crag-name);
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 /* keep at the bottom */
 .do-not-display {
   display: none;

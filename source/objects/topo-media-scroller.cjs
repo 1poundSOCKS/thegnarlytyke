@@ -13,7 +13,7 @@ let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
 
 TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage, disableAutoSelect) {
   let cragTopoIDs = this.crag.topos.map( topo => topo.id );
-  
+
   let topoImageContainers = cragTopoIDs.map( topoID => {
     return this.element.appendChild(this.CreateTopoImageContainer(topoID));
   });
