@@ -39,7 +39,7 @@ let OnConfigLoad = async () => {
 
   _pageHeaderNav = new PageHeaderNav(document.getElementById('page-header-nav'),'edit',_cookie,Config.mode == "edit");
 
-  DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
+  DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)

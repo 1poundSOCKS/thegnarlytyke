@@ -40,7 +40,7 @@ CragCoverContainer.prototype.LoadImage = async function(imageStorage) {
 CragCoverContainer.prototype.SaveImage = async function(imageStorage) {
   if( !this.imageData ) return null
   const saveResponse = await imageStorage.SaveImage(this.cragCover.id,this.imageData,'crag')
-  if( saveResponse.filename ) this.cragCover.imageFile = filename
+  if( saveResponse.filename ) this.cragCover.imageFile = saveResponse.filename
   return saveResponse
 }
 

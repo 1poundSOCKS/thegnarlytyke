@@ -20,7 +20,7 @@ CragIndexContainer.prototype.Save = async function() {
   const imageSaves = this.cragCoverContainers
   .map( container => container.SaveImage(this.imageStorage))
   .filter( saveResponse => saveResponse )
-  Promise.all(imageSaves)
+  await Promise.all(imageSaves)
   this.cragIndex.Save(this.dataStorage,this.imageStorage)
 }
 
