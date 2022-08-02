@@ -26,15 +26,28 @@ CragCoverContainer.prototype.LoadCrag = async function(config) {
 
 CragCoverContainer.prototype.UpdateImage = async function(imageFile) {
   const compressor = new ImageFileCompressor(this.canvas)
-  this.cragCover.image = await compressor.LoadAndCompress(imageFile)
-  this.cragCover.imageData = compressor.compressedImageData
+  this.image = await compressor.LoadAndCompress(imageFile)
+  this.imageData = compressor.compressedImageData
   this.Refresh()
+}
+
+CragCoverContainer.prototype.LoadImage = async function(imageStorage) {
+  if( !this.cragCover.imageFile ) return
+  this.image = await imageStorage.LoadImageFromFile(this.cragCover.imageFile)
+  this.Refresh()
+}
+
+CragCoverContainer.prototype.SaveImage = async function(imageStorage) {
+  if( !this.imageData ) return null
+  const saveResponse = await imageStorage.SaveImage(this.cragCover.id,this.imageData,'crag')
+  if( saveResponse.filename ) this.cragCover.imageFile = filename
+  return saveResponse
 }
 
 CragCoverContainer.prototype.Refresh = function() {
   const ctx = this.canvas.getContext("2d");
 
-  const image = this.cragCover.image
+  const image = this.image
 
   if( image ) {
     this.canvas.width = image.width;
@@ -60,7 +73,7 @@ CragCoverContainer.prototype.CopyImageToCanvas = function(destCanvas) {
   destCanvas.width = this.canvas.width
   destCanvas.height = this.canvas.height
   var ctx = destCanvas.getContext('2d')
-  ctx.drawImage(this.cragCover.image,0,0)
+  ctx.drawImage(this.image,0,0)
 }
 
 module.exports = CragCoverContainer;

@@ -4,44 +4,23 @@ let CragIndex = function() {
   this.data = null;
 }
 
-CragIndex.prototype.Load = async function(dataStorage, imageStorage) {
+CragIndex.prototype.Load = async function(dataStorage) {
   this.data = await dataStorage.Load('crag-index');
-  this.data.crags.forEach( crag => delete crag.imageLoader )
-  if( imageStorage ) this.data.crags.forEach( crag => this.LoadCragImage(imageStorage, crag) )
   return this.data;
 }
 
-CragIndex.prototype.Save = async function(dataStorage, imageStorage) {
-  const cragsBeforeImageSaves = this.data.crags.map( crag => {
-    const cragData = {id:crag.id,name:crag.name}
-    if( crag.imageData ) cragData.imageSaveResponse = imageStorage.Save(crag.id,crag.imageData,'crag')
-    else if( crag.imageFile ) cragData.imageFile = crag.imageFile
-    return cragData
-  })
-
-  const imageSaveResponses = cragsBeforeImageSaves.map( crag => crag.imageSaveResponse )
-  await Promise.all(imageSaveResponses)
-
-  const cragsAfterImageSaves = cragsBeforeImageSaves.map( crag => {
-    const cragData = {id:crag.id,name:crag.name}
-    if( crag.imageSaveResponse ) cragData.imageFile = crag.imageSaveResponse.filename
-    else cragData.imageFile = crag.imageFile;
-    return cragData
-  })
-
-  dataStorage.Save('crag-index', {crags:cragsAfterImageSaves});
+CragIndex.prototype.Save = async function(dataStorage) {
+  dataStorage.Save('crag-index', this.data);
 }
 
-CragIndex.prototype.LoadForUserEdit = async function(dataStorage, imageStorage) {
+CragIndex.prototype.LoadForUserEdit = async function(dataStorage) {
   this.data = await dataStorage.LoadForUserEdit('crag-index');
-  this.data.crags.forEach( crag => delete crag.imageLoader )
-  if( imageStorage ) this.data.crags.forEach( crag => this.LoadCragImage(imageStorage, crag) )
   return this.data;
 }
 
 CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {
-  if( !crag.imageFile ) return
-  crag.imageLoader = imageStorage.LoadImageFromFile(crag.imageFile);
+  if( !crag.imageFile ) return null
+  return imageStorage.LoadImageFromFile(crag.imageFile)
 }
 
 CragIndex.prototype.AppendCrag = function(cragName,imageLoader) {

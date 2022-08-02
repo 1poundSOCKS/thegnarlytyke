@@ -11,7 +11,6 @@ const TopoImage = require('./objects/topo-image.cjs')
 
 let _cookie = null;
 let _pageHeaderNav = null;
-// let _cragIndex = null;
 let _cragIndexContainer = null;
 let _currentCrag = null
 let _topoMediaScroller = null;

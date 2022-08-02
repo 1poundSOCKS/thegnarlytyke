@@ -17,6 +17,10 @@ CragIndexContainer.prototype.Load = async function(OnCragSelectedHandler) {
 }
 
 CragIndexContainer.prototype.Save = async function() {
+  const imageSaves = this.cragCoverContainers
+  .map( container => container.SaveImage(this.imageStorage))
+  .filter( saveResponse => saveResponse )
+  Promise.all(imageSaves)
   this.cragIndex.Save(this.dataStorage,this.imageStorage)
 }
 
@@ -24,15 +28,9 @@ CragIndexContainer.prototype.AppendCrag = function(cragCover,OnCragSelectedHandl
   const cragCoverContainer = new CragCoverContainer(cragCover);
   this.element.appendChild(cragCoverContainer.element);
   
-  if( cragCover.imageLoader ) {
-    cragCover.imageLoader.then( image => {
-      cragCover.image = image;
-      cragCoverContainer.Refresh();
-     })
-  }
-
   this.cragCoverContainers.push(cragCoverContainer)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
+  cragCoverContainer.LoadImage(this.imageStorage)
   return cragCoverContainer
 }
 

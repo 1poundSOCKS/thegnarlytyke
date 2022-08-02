@@ -47,13 +47,7 @@ ImageStorage.prototype.LoadImageFromAPI = async function(ID) {
   });
 }
 
-ImageStorage.prototype.SaveImageAndUpdateFilename = async function(ID, imageData, filenameObject) {
-  const response = await this.SaveImage(ID, imageData);
-  if( response.filename ) filenameObject.imageFile = response.filename;
-  return response;
-}
-
-ImageStorage.prototype.Save = async function(ID, imageData, type) {
+ImageStorage.prototype.SaveImage = async function(ID, imageData, type) {
   if( !type ) type = "topo";
   const url = `${this.saveImageURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${ID}&type=${type}`;
   const response = await fetch(url, {
