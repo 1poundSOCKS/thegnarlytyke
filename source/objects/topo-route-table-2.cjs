@@ -5,6 +5,7 @@ const columnIndex_Button = 4;
 
 let TopoRouteTable2 = function(parentElement, OnRouteSelectedCallback) {
   this.element = parentElement.appendChild(document.createElement('table'))
+  this.element.setAttribute('class','topo-route-table')
   this.OnRouteSelectedCallback = OnRouteSelectedCallback
 }
 

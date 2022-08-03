@@ -1,17 +1,18 @@
 const Crag = require("./crag.cjs");
 const { SaveImageAndUpdateFilename } = require("./image-storage.cjs");
 
-let TopoMediaScroller = function(element, crag, edit, OnTopoSelectedCallback) {
-  this.element = element;
-  this.crag = crag;
-  this.currentTopoContainer = null;
-  this.edit = edit;
-  this.topoImages = new Map();
-  this.OnTopoSelectedCallback = OnTopoSelectedCallback;
-  this.element.innerHTML = ''
+let TopoMediaScroller = function(element,uploadTriggerElement) {
+  this.element = element
+  this.uploadTriggerElement = uploadTriggerElement
 }
 
-TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage, disableAutoSelect) {
+TopoMediaScroller.prototype.LoadTopoImages = async function(crag,imageStorage) {
+  this.crag = crag
+  this.imageStorage = imageStorage
+  this.element.innerHTML = ''
+  this.currentTopoContainer = null
+  this.topoImages = new Map()
+
   let cragTopoIDs = this.crag.topos.map( topo => topo.id );
 
   let topoImageContainers = cragTopoIDs.map( topoID => {
@@ -27,7 +28,6 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage, disabl
   });
 
   const topoImageLoaders = [];
-  const crag = this.crag;
   topoImageCanvases.forEach( async canvas => {
     let topoID = canvas.parentElement.dataset.id;
     let topo = crag.GetMatchingTopo(topoID);
@@ -59,10 +59,25 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(imageStorage, disabl
     }
   });
 
-  if( !disableAutoSelect && topoImageLoaders.length > 0 ) {
+  if( this.autoSelectOnRefresh && topoImageLoaders.length > 0 ) {
     await topoImageLoaders[0];
     this.OnTopoSelected(topoImageContainers[0]);
   }
+
+  if( this.uploadTriggerElement ) this.AddFileUpload(this.uploadTriggerElement)
+}
+
+TopoMediaScroller.prototype.AddFileUpload = function(triggerElement) {
+  const container = document.createElement('div')
+  container.setAttribute('style','display:none')
+  const file = document.createElement('input')
+  file.setAttribute('type','file')
+  file.setAttribute('id','topo-media-scroller-load-file')
+  file.setAttribute('name','filename')
+  file.onchange = this.OnFileUpload
+  container.appendChild(file)
+  this.element.appendChild(container)
+  triggerElement.onclick = () => file.click()
 }
 
 TopoMediaScroller.prototype.AddTopo = function(topo) {
@@ -85,13 +100,25 @@ TopoMediaScroller.prototype.OnTopoSelected = function(topoContainer) {
   if( this.currentTopoContainer ) this.currentTopoContainer.classList.remove('selected');
   this.currentTopoContainer = topoContainer;
   this.currentTopoContainer.classList.add('selected');
-  const topo = this.crag.GetMatchingTopo(this.currentTopoContainer.dataset.id)
-  this.OnTopoSelectedCallback(topo);
+  const selectedTopoID = this.GetSelectedTopoID()
+  const selectedTopo = this.GetSelectedTopo()
+
+  if( this.topoImage ) {
+    this.topoImage.image = this.topoImages.get(selectedTopoID)
+    this.topoImage.topo = selectedTopo
+    this.topoImage.Refresh()
+  }
+  if( this.topoRouteTable ) this.topoRouteTable.Refresh(selectedTopo)
 }
 
 TopoMediaScroller.prototype.GetSelectedTopoID = function() {
   if( !this.currentTopoContainer ) return null;
   return this.currentTopoContainer.dataset.id;
+}
+
+TopoMediaScroller.prototype.GetSelectedTopo = function() {
+  if( !this.currentTopoContainer ) return null;
+  return this.crag.GetMatchingTopo(this.currentTopoContainer.dataset.id);
 }
 
 TopoMediaScroller.prototype.GetSelectedTopoCanvas = function() {

@@ -6,12 +6,10 @@ const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
-const TopoRouteTable = require('./objects/topo-route-table.cjs');
+const TopoRouteTable2 = require('./objects/topo-route-table-2.cjs');
 
 let _cookie = null;
 let _cragIndexContainer = null;
-let _topoMediaScroller = null;
-let _mainTopoImage = null;
 
 window.onload = () => {
   InitWindowStyle()
@@ -35,7 +33,17 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
+  const topoImage = new TopoImage(document.getElementById('main-topo-image'), false);
+
+  const topoRouteTable = new TopoRouteTable2(document.getElementById('topo-route-table-container'))
+
+  const _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
+  _topoMediaScroller.topoImage = topoImage
+  _topoMediaScroller.topoRouteTable = topoRouteTable
+  _topoMediaScroller.autoSelectOnRefresh = true
+  
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
+  _cragIndexContainer.topoMediaScroller = _topoMediaScroller
   _cragIndexContainer.Load(DisplayCragView)
 
   document.getElementById('close-crag-view').onclick = DisplayIndexView;
@@ -50,22 +58,7 @@ let DisplayIndexView = () => {
 
 let DisplayCragView = async cragCoverContainer => {
   document.getElementById('crag-covers-container').style = 'display:none'
-  window.scrollTo( 0, 0 );
-  
-  const crag = await cragCoverContainer.LoadCrag(DataStorage)
-  document.getElementById('crag-name').innerText = crag.name;
-
-  _mainTopoImage = new TopoImage(document.getElementById('main-topo-image'), false);
-
-  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'), crag, false, OnTopoSelected);
-  _topoMediaScroller.LoadTopoImages(ImageStorage);
+  window.scrollTo( 0, 0 );  
+  document.getElementById('crag-name').innerText = cragCoverContainer.crag.name;
   document.getElementById('crag-view-container').style = ''
-}
-
-let OnTopoSelected = (selectedTopo) => {
-  document.getElementById('main-topo-container').classList.remove('do-not-display');
-  _mainTopoImage.image = _topoMediaScroller.topoImages.get(selectedTopo.id);
-  _mainTopoImage.topo = selectedTopo;
-  _mainTopoImage.Refresh();
-  new TopoRouteTable(document.getElementById('topo-route-table'), selectedTopo);
 }

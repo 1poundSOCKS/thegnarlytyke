@@ -1,7 +1,5 @@
 const CragIndex = require('./crag-index.cjs');
 const CragCoverContainer = require("./crag-cover-container.cjs");
-const TopoMediaScroller = require('./topo-media-scroller.cjs')
-const CragRouteTable = require('./crag-route-table.cjs')
 
 let CragIndexContainer = function(element,dataStorage,imageStorage) {
   this.element = element
@@ -9,6 +7,7 @@ let CragIndexContainer = function(element,dataStorage,imageStorage) {
   this.imageStorage = imageStorage
   this.cragCoverContainers = []
   this.cragIndex = new CragIndex()
+  this.topoMediaScroller = null
 }
 
 CragIndexContainer.prototype.Load = async function(OnCragSelectedHandler) {
@@ -37,11 +36,12 @@ CragIndexContainer.prototype.AppendCrag = function(cragCover,OnCragSelectedHandl
 }
 
 CragIndexContainer.prototype.AddSelectionHandler = function(cragCoverContainer,OnCragSelectedHandler) {
-  cragCoverContainer.element.onclick = () => {
+  cragCoverContainer.element.onclick = async () => {
     this.Unselect()
     cragCoverContainer.element.classList.add('selected')
     this.selectedContainer = cragCoverContainer;
-    OnCragSelectedHandler(this.selectedContainer);
+    await this.ShowSelectedCrag()
+    if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
   }
 }
 
@@ -69,12 +69,16 @@ CragIndexContainer.prototype.UpdateSelectedImage = async function(imageFile) {
   if( this.selectedContainer ) this.selectedContainer.UpdateImage(imageFile)
 }
 
-CragIndexContainer.prototype.EditSelectedCrag = async function(topoImagesContainerElement,cragRouteTableElement) {
+CragIndexContainer.prototype.ShowSelectedCrag = async function() {
+  if( !this.topoMediaScroller ) return
+  const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
+  this.topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
+}
+
+CragIndexContainer.prototype.EditSelectedCrag = async function(topoMediaScroller) {
   const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
   document.getElementById("crag-name").innerText = crag.name
-  const topoMediaScroller = new TopoMediaScroller(topoImagesContainerElement, crag, false, this.OnTopoSelected)
-  topoMediaScroller.LoadTopoImages(this.imageStorage,true)
-  _cragRouteTable = new CragRouteTable(cragRouteTableElement, crag, null, this.OnCragRouteToggled);
+  topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
 }
 
 CragIndexContainer.prototype.OnTopoSelected = function() {
