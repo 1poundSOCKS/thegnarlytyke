@@ -8,7 +8,6 @@ const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
 const TopoImage = require('./objects/topo-image.cjs');
 const TopoRouteTable2 = require('./objects/topo-route-table-2.cjs');
 
-let _cookie = null;
 let _cragIndexContainer = null;
 
 window.onload = () => {
@@ -26,9 +25,9 @@ let InitWindowStyle = () => {
 }
 
 let OnConfigLoad = async () => {
-  _cookie = new Cookie();
+  const cookie = new Cookie();
   
-  new PageHeaderNav(document.getElementById('page-header-nav'),'home',_cookie,Config.mode == "edit");
+  new PageHeaderNav(document.getElementById('page-header-nav'),'home',cookie,Config.mode == "edit");
   
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
@@ -37,10 +36,10 @@ let OnConfigLoad = async () => {
 
   const topoRouteTable = new TopoRouteTable2(document.getElementById('topo-route-table-container'))
 
-  const _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
-  _topoMediaScroller.topoImage = topoImage
-  _topoMediaScroller.topoRouteTable = topoRouteTable
-  _topoMediaScroller.autoSelectOnRefresh = true
+  const topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
+  topoMediaScroller.topoImage = topoImage
+  topoMediaScroller.topoRouteTable = topoRouteTable
+  topoMediaScroller.autoSelectOnRefresh = true
   
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.topoMediaScroller = _topoMediaScroller
