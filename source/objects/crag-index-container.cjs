@@ -40,7 +40,6 @@ CragIndexContainer.prototype.AddFileUpload = function() {
 CragIndexContainer.prototype.UpdateImage = function(cragCovercontainer) {
   if( !this.fileUpload ) return
   this.fileUpload.onchange = () => {
-    console.log(this.fileUpload.files[0])
     cragCovercontainer.UpdateImage(this.fileUpload.files[0])
   }
   this.fileUpload.click()
@@ -97,13 +96,13 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
 CragIndexContainer.prototype.ShowSelectedCrag = async function() {
   if( !this.topoMediaScroller ) return
   const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
-  this.topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
+  this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
 }
 
 CragIndexContainer.prototype.EditSelectedCrag = async function() {
   const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
   document.getElementById("crag-name").innerText = crag.name
-  this.topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
+  this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
 }
 
 CragIndexContainer.prototype.OnTopoSelected = function() {

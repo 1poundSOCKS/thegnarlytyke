@@ -1,12 +1,11 @@
-const Crag = require("./crag.cjs");
-const { SaveImageAndUpdateFilename } = require("./image-storage.cjs");
+const Topo = require("./topo.cjs")
 
 let TopoMediaScroller = function(element,uploadTriggerElement) {
   this.element = element
   this.uploadTriggerElement = uploadTriggerElement
 }
 
-TopoMediaScroller.prototype.LoadTopoImages = async function(crag,imageStorage) {
+TopoMediaScroller.prototype.Refresh = async function(crag,imageStorage) {
   this.crag = crag
   this.imageStorage = imageStorage
   this.element.innerHTML = ''
@@ -63,21 +62,12 @@ TopoMediaScroller.prototype.LoadTopoImages = async function(crag,imageStorage) {
     await topoImageLoaders[0];
     this.OnTopoSelected(topoImageContainers[0]);
   }
-
-  if( this.uploadTriggerElement ) this.AddFileUpload(this.uploadTriggerElement)
 }
 
-TopoMediaScroller.prototype.AddFileUpload = function(triggerElement) {
-  const container = document.createElement('div')
-  container.setAttribute('style','display:none')
-  const file = document.createElement('input')
-  file.setAttribute('type','file')
-  file.setAttribute('id','topo-media-scroller-load-file')
-  file.setAttribute('name','filename')
-  file.onchange = this.OnFileUpload
-  container.appendChild(file)
-  this.element.appendChild(container)
-  triggerElement.onclick = () => file.click()
+TopoMediaScroller.prototype.AddNewTopo = function() {
+  const topo = new Topo()
+  this.crag.AppendTopo(topo.topo)
+  this.AddTopo(topo)
 }
 
 TopoMediaScroller.prototype.AddTopo = function(topo) {

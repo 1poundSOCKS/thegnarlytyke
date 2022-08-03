@@ -12,6 +12,7 @@ let CragCoverContainer = function(cragCover) {
 }
 
 CragCoverContainer.prototype.LoadCrag = async function(dataStorage) {
+  if( this.crag ) return this.crag
   this.crag = new Crag()
   await this.crag.SafeLoad(this.cragCover.id,dataStorage)
   return this.crag

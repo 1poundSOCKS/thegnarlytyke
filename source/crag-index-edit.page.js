@@ -35,10 +35,10 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
-  const topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'),document.getElementById('update-topo-image'))
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'),document.getElementById('update-topo-image'))
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
-  _cragIndexContainer.topoMediaScroller = topoMediaScroller
+  _cragIndexContainer.topoMediaScroller = _topoMediaScroller
   _cragIndexContainer.Load(SelectCragCoverContainer)
 
   _cragCoverImage = document.getElementById('crag-cover-image')
@@ -49,6 +49,8 @@ let OnConfigLoad = async () => {
   document.getElementById('update-crag-cover-image').onclick = () => _cragIndexContainer.UpdateSelectedImage()
   document.getElementById('edit-crag').onclick = () => OnEditCrag()
   document.getElementById('save').onclick = () => OnSave()
+  document.getElementById('add-topo').onclick = () => _topoMediaScroller.AddNewTopo()
+  document.getElementById('update-topo-image').onclick = () => _topoMediaScroller.UpdateSelectedImage()
   document.getElementById("crag-name").onchange = OnCragNameChanged;
   document.getElementById('close-crag-view').onclick = () => {
     document.getElementById('crag-view-container').style = 'display:none'
