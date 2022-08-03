@@ -52,12 +52,12 @@ let DisplayIndexView = () => {
   document.getElementById('crag-view-container').style = 'display:none'
   window.scrollTo( 0, 0 );
   _cragIndexContainer.Unselect();
-  document.getElementById('crag-covers-container').style = ''
+  document.getElementById('crag-index-container').style = ''
 }
 
-let DisplayCragView = async cragCoverContainer => {
-  document.getElementById('crag-covers-container').style = 'display:none'
+let DisplayCragView = async container => {
+  document.getElementById('crag-index-container').style = 'display:none'
   window.scrollTo( 0, 0 );  
-  document.getElementById('crag-name').innerText = cragCoverContainer.crag.name;
+  document.getElementById('crag-name').innerText = container.crag.name;
   document.getElementById('crag-view-container').style = ''
 }

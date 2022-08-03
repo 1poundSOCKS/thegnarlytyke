@@ -18,6 +18,7 @@ CragCoverContainer.prototype.LoadCrag = async function(dataStorage) {
 }
 
 CragCoverContainer.prototype.UpdateImage = async function(imageFile) {
+  console.log(imageFile)
   const compressor = new ImageFileCompressor(this.canvas)
   this.image = await compressor.LoadAndCompress(imageFile)
   this.imageData = compressor.compressedImageData

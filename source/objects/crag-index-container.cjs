@@ -10,6 +10,7 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   this.cragCoverContainers = []
   this.cragIndex = new CragIndex()
   this.topoMediaScroller = null
+  this.AddFileUpload()
 }
 
 CragIndexContainer.prototype.Load = async function(OnCragSelectedHandler) {
@@ -27,10 +28,32 @@ CragIndexContainer.prototype.Save = async function() {
   this.cragIndex.Save(this.dataStorage,this.imageStorage)
 }
 
+CragIndexContainer.prototype.AddFileUpload = function() {
+  const container = document.createElement('div')
+  container.setAttribute('style','display:none')
+  this.fileUpload = document.createElement('input')
+  this.fileUpload.setAttribute('type','file')
+  container.appendChild(this.fileUpload)
+  this.element.appendChild(container)
+}
+
+CragIndexContainer.prototype.UpdateImage = function(cragCovercontainer) {
+  if( !this.fileUpload ) return
+  this.fileUpload.onchange = () => {
+    console.log(this.fileUpload.files[0])
+    cragCovercontainer.UpdateImage(this.fileUpload.files[0])
+  }
+  this.fileUpload.click()
+}
+
+CragIndexContainer.prototype.UpdateSelectedImage = function() {
+  if( !this.selectedContainer ) return
+  this.UpdateImage(this.selectedContainer)
+}
+
 CragIndexContainer.prototype.AppendCrag = function(cragCover,OnCragSelectedHandler) {
   const cragCoverContainer = new CragCoverContainer(cragCover);
   this.element.appendChild(cragCoverContainer.element);
-  
   this.cragCoverContainers.push(cragCoverContainer)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
   cragCoverContainer.LoadImage(this.imageStorage)
@@ -39,12 +62,16 @@ CragIndexContainer.prototype.AppendCrag = function(cragCover,OnCragSelectedHandl
 
 CragIndexContainer.prototype.AddSelectionHandler = function(cragCoverContainer,OnCragSelectedHandler) {
   cragCoverContainer.element.onclick = async () => {
-    this.Unselect()
-    cragCoverContainer.element.classList.add('selected')
-    this.selectedContainer = cragCoverContainer;
-    await this.ShowSelectedCrag()
-    if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
+    this.SelectContainer(cragCoverContainer,OnCragSelectedHandler)
   }
+}
+
+CragIndexContainer.prototype.SelectContainer = async function(cragCoverContainer,OnCragSelectedHandler) {
+  this.Unselect()
+  cragCoverContainer.element.classList.add('selected')
+  this.selectedContainer = cragCoverContainer;
+  await this.ShowSelectedCrag()
+  if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
 }
 
 CragIndexContainer.prototype.RefreshSelectedContainer = function() {
@@ -58,17 +85,13 @@ CragIndexContainer.prototype.Unselect = function() {
   this.selectedContainer = null;
 }
 
-CragIndexContainer.prototype.AddNewCrag = async function(imageFile,OnCragSelectedHandler) {
+CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) {
   const cragIndexEntry = this.cragIndex.AppendCrag('')
   const cragCoverContainer = new CragCoverContainer(cragIndexEntry)
   this.cragCoverContainers.push(cragCoverContainer)
+  this.UpdateImage(cragCoverContainer)
   this.element.appendChild(cragCoverContainer.element)
-  await cragCoverContainer.UpdateImage(imageFile)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
-}
-
-CragIndexContainer.prototype.UpdateSelectedImage = async function(imageFile) {
-  if( this.selectedContainer ) this.selectedContainer.UpdateImage(imageFile)
 }
 
 CragIndexContainer.prototype.ShowSelectedCrag = async function() {

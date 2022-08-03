@@ -45,10 +45,8 @@ let OnConfigLoad = async () => {
   _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
 
   /* page event handlers */
-  document.getElementById('add-crag').onclick = () => document.getElementById('add-crag-image-file').click()
-  document.getElementById('add-crag-image-file').onchange = () => OnAddCrag()
-  document.getElementById('update-crag-cover-image').onclick = () => document.getElementById('update-crag-image-file').click()
-  document.getElementById('update-crag-image-file').onchange = () => OnUpdateCragImage()
+  document.getElementById('add-crag').onclick = () => _cragIndexContainer.AddNewCrag()
+  document.getElementById('update-crag-cover-image').onclick = () => _cragIndexContainer.UpdateSelectedImage()
   document.getElementById('edit-crag').onclick = () => OnEditCrag()
   document.getElementById('save').onclick = () => OnSave()
   document.getElementById("crag-name").onchange = OnCragNameChanged;
@@ -68,16 +66,6 @@ let SelectCragCoverContainer = cragCoverContainer => {
 let OnCragNameChanged = () => {
   if( _cragMediaScroller.selectedContainer ) _cragMediaScroller.selectedContainer.crag.name = document.getElementById("crag-name").value;
   _cragMediaScroller.RefreshSelectedContainer();
-}
-
-let OnAddCrag = async () => {
-  const imageFiles = document.getElementById('add-crag-image-file')
-  _cragIndexContainer.AddNewCrag(imageFiles.files[0],SelectCragCoverContainer)
-}
-
-let OnUpdateCragImage = async () => {
-  const imageFiles = document.getElementById('update-crag-image-file')
-  _cragIndexContainer.UpdateSelectedImage(imageFiles.files[0])
 }
 
 let OnEditCrag = async () => {
