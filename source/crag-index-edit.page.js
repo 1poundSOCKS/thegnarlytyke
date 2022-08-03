@@ -82,7 +82,7 @@ let OnUpdateCragImage = async () => {
 
 let OnEditCrag = async () => {
   document.getElementById('crag-index-container').style = 'display:none'
-  // await _cragIndexContainer.EditSelectedCrag(_topoMediaScroller)
+  await _cragIndexContainer.EditSelectedCrag()
   window.scrollTo( 0, 0 );
   document.getElementById('crag-view-container').style = ''
 }

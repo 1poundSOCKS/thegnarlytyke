@@ -41,8 +41,8 @@ let OnConfigLoad = async () => {
   topoMediaScroller.topoRouteTable = topoRouteTable
   topoMediaScroller.autoSelectOnRefresh = true
   
-  _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
-  _cragIndexContainer.topoMediaScroller = _topoMediaScroller
+  _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-index-container'),DataStorage,ImageStorage)
+  _cragIndexContainer.topoMediaScroller = topoMediaScroller
   _cragIndexContainer.Load(DisplayCragView)
 
   document.getElementById('close-crag-view').onclick = DisplayIndexView;

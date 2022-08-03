@@ -1,8 +1,10 @@
 const CragIndex = require('./crag-index.cjs');
 const CragCoverContainer = require("./crag-cover-container.cjs");
 
-let CragIndexContainer = function(element,dataStorage,imageStorage) {
-  this.element = element
+let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
+  this.element = document.createElement('div')
+  this.element.classList.add('crag-covers-container')
+  parentElement.appendChild(this.element)
   this.dataStorage = dataStorage
   this.imageStorage = imageStorage
   this.cragCoverContainers = []
@@ -75,10 +77,10 @@ CragIndexContainer.prototype.ShowSelectedCrag = async function() {
   this.topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
 }
 
-CragIndexContainer.prototype.EditSelectedCrag = async function(topoMediaScroller) {
+CragIndexContainer.prototype.EditSelectedCrag = async function() {
   const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
   document.getElementById("crag-name").innerText = crag.name
-  topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
+  this.topoMediaScroller.LoadTopoImages(crag,this.imageStorage,true)
 }
 
 CragIndexContainer.prototype.OnTopoSelected = function() {
