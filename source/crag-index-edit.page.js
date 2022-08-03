@@ -35,7 +35,7 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
-  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'),document.getElementById('update-topo-image'))
+  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.topoMediaScroller = _topoMediaScroller

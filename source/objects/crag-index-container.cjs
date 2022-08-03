@@ -1,5 +1,6 @@
 const CragIndex = require('./crag-index.cjs');
 const CragCoverContainer = require("./crag-cover-container.cjs");
+const FileSelector = require('./file-selector.cjs');
 
 let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   this.element = document.createElement('div')
@@ -10,7 +11,7 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   this.cragCoverContainers = []
   this.cragIndex = new CragIndex()
   this.topoMediaScroller = null
-  this.AddFileUpload()
+  this.fileSelector = new FileSelector(this.element)
 }
 
 CragIndexContainer.prototype.Load = async function(OnCragSelectedHandler) {
@@ -28,21 +29,8 @@ CragIndexContainer.prototype.Save = async function() {
   this.cragIndex.Save(this.dataStorage,this.imageStorage)
 }
 
-CragIndexContainer.prototype.AddFileUpload = function() {
-  const container = document.createElement('div')
-  container.setAttribute('style','display:none')
-  this.fileUpload = document.createElement('input')
-  this.fileUpload.setAttribute('type','file')
-  container.appendChild(this.fileUpload)
-  this.element.appendChild(container)
-}
-
 CragIndexContainer.prototype.UpdateImage = function(cragCovercontainer) {
-  if( !this.fileUpload ) return
-  this.fileUpload.onchange = () => {
-    cragCovercontainer.UpdateImage(this.fileUpload.files[0])
-  }
-  this.fileUpload.click()
+  this.fileSelector.SelectFile( file => cragCovercontainer.UpdateImage(file))
 }
 
 CragIndexContainer.prototype.UpdateSelectedImage = function() {
