@@ -18,7 +18,11 @@ let TopoImageContainer = function(parentElement, topo, callbackObject) {
 }
 
 TopoImageContainer.prototype.LoadImage = async function(imageStorage) {
-  if( this.topo.imageFile ) {
+  if( this.topo.imageData ) {
+    this.image = await imageStorage.LoadImageFromDataURI(this.topo.imageData)
+    this.Refresh()
+  }
+  else if( this.topo.imageFile ) {
       this.imageLoader = imageStorage.LoadImageFromFile(this.topo.imageFile);
       this.image = await this.imageLoader;
       this.Refresh();
@@ -67,7 +71,7 @@ TopoMediaScroller.prototype.AddNewTopo = function() {
     const image = await compressor.LoadAndCompress(file)
     const imageData = compressor.compressedImageData
     topoImageContainer.image = image
-    topoImageContainer.imageData = imageData
+    topoImageContainer.topo.imageData = imageData
     this.topoImageContainers.push(topoImageContainer)
     this.crag.topos.push(topoImageContainer.topo)
     topoImageContainer.Refresh()
