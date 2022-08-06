@@ -3,6 +3,10 @@ const FileSelector = require('./file-selector.cjs')
 const ImageFileCompressor = require('./image-file-compressor.cjs')
 
 let TopoImageContainer = function(parentElement, topo, callbackObject) {
+  if( !topo ) {
+    topo = new Topo().topo
+  }
+
   this.element = document.createElement('div')
   this.element.classList.add('topo-container')
   this.element.setAttribute('data-id', topo.id)
@@ -61,31 +65,16 @@ TopoMediaScroller.prototype.Refresh = async function(crag,imageStorage) {
 }
 
 TopoMediaScroller.prototype.AddNewTopo = function() {
-  const topo = new Topo()
-  const canvas = this.AddTopo(topo.topo)
-  this.crag.AppendTopo(topo.topo)
+  const topoImageContainer = new TopoImageContainer(this.element,null,this)
+  this.topoImageContainers.push(topoImageContainer)
   this.fileSelector.SelectFile( async file => {
-    const compressor = new ImageFileCompressor(canvas)
+    const compressor = new ImageFileCompressor(topoImageContainer.canvas)
     const image = await compressor.LoadAndCompress(file)
     const imageData = compressor.compressedImageData
-    this.topoImages.set(topo.topo.id,image)
+    topoImageContainer.image = image
+    topoImageContainer.imageData = imageData
+    topoImageContainer.Refresh()
   })
-}
-
-TopoMediaScroller.prototype.AddTopo = function(topo) {
-  const container = this.element.appendChild(this.CreateTopoImageContainer(topo.id));
-  let canvas = document.createElement('canvas');
-  canvas.classList.add('topo-image');
-  canvas = container.appendChild(canvas);
-  canvas.onclick = event => this.OnTopoSelected(event.target.parentElement);
-  return canvas;
-}
-
-TopoMediaScroller.prototype.CreateTopoImageContainer = function(topoID) {
-  let container = document.createElement('div');
-  container.classList.add('topo-container');
-  container.setAttribute('data-id', topoID);
-  return container;
 }
 
 TopoMediaScroller.prototype.OnTopoSelected = function(topoImageContainer) {
