@@ -53,11 +53,11 @@ CragIndexContainer.prototype.AddSelectionHandler = function(cragCoverContainer,O
   }
 }
 
-CragIndexContainer.prototype.SelectContainer = async function(cragCoverContainer,OnCragSelectedHandler) {
+CragIndexContainer.prototype.SelectContainer = function(cragCoverContainer,OnCragSelectedHandler) {
   this.Unselect()
   cragCoverContainer.element.classList.add('selected')
   this.selectedContainer = cragCoverContainer;
-  await this.ShowSelectedCrag()
+  this.ShowSelectedCrag()
   if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
 }
 
@@ -82,15 +82,10 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
 }
 
 CragIndexContainer.prototype.ShowSelectedCrag = async function() {
-  if( !this.topoMediaScroller ) return
   const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
+  if( this.cragNameElement ) this.cragNameElement.innerText = crag.name
   this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
-}
-
-CragIndexContainer.prototype.EditSelectedCrag = async function() {
-  const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
-  document.getElementById("crag-name").innerText = crag.name
-  this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
+  return crag
 }
 
 CragIndexContainer.prototype.OnTopoSelected = function() {

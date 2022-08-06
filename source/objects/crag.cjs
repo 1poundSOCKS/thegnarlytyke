@@ -21,20 +21,21 @@ Crag.prototype.Attach = function(cragObject) {
 
 Crag.prototype.Load = async function(id,dataStorage) {
   const cragData = await dataStorage.Load(`${id}.crag`)
+  if( cragData.error ) throw cragData.error
   this.Attach(cragData)
   this.UpdateAfterRestore()
+  return this
 }
 
-Crag.prototype.SafeLoad = async function(id,dataStorage) {
-  try {
-    await this.Load(id,dataStorage)
-  }
-  catch ( err ) {
+Crag.prototype.SafeLoad = function(id,dataStorage) {
+  return this.Load(id,dataStorage)
+  .catch( err => {
     this.id = id;
     this.name = ''
     this.routes = []
     this.topos = []
-  }
+    return this
+  })
 }
 
 Crag.prototype.Save = async function(dataStorage) {

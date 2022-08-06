@@ -53,7 +53,7 @@ TopoMediaScroller.prototype.Refresh = async function(crag,imageStorage) {
   this.imageStorage = imageStorage
   this.element.innerHTML = ''
   this.selectedTopoImageContainer = null
-  this.topoImages = new Map()
+  // this.topoImages = new Map()
 
   this.topoImageContainers = this.crag.topos.map( topo => new TopoImageContainer(this.element,topo,this) )
 
@@ -78,7 +78,6 @@ TopoMediaScroller.prototype.AddNewTopo = function() {
 }
 
 TopoMediaScroller.prototype.OnTopoSelected = function(topoImageContainer) {
-  console.log(topoImageContainer)
   if( this.selectedTopoImageContainer ) this.selectedTopoImageContainer.Unselect()
   this.selectedTopoImageContainer = topoImageContainer
   this.selectedTopoImageContainer.Select()
@@ -113,9 +112,9 @@ TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
   return topoCanvas;
 }
 
-TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
-  this.topoImages.set(this.GetSelectedTopoID(), image);
-}
+// TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
+//   this.topoImages.set(this.GetSelectedTopoID(), image);
+// }
 
 TopoMediaScroller.prototype.ShiftCurrentTopoLeft = function() {
   if( !this.currentTopoContainer ) return;

@@ -42,6 +42,7 @@ let OnConfigLoad = async () => {
   topoMediaScroller.autoSelectOnRefresh = true
   
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-index-container'),DataStorage,ImageStorage)
+  _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
   _cragIndexContainer.topoMediaScroller = topoMediaScroller
   _cragIndexContainer.Load(DisplayCragView)
 
@@ -58,6 +59,6 @@ let DisplayIndexView = () => {
 let DisplayCragView = async container => {
   document.getElementById('crag-index-container').style = 'display:none'
   window.scrollTo( 0, 0 );  
-  document.getElementById('crag-name').innerText = container.crag.name;
+  // document.getElementById('crag-name').innerText = container.crag.name;
   document.getElementById('crag-view-container').style = ''
 }

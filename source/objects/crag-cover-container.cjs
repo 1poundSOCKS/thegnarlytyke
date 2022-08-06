@@ -11,11 +11,10 @@ let CragCoverContainer = function(cragCover) {
   this.element.appendChild(this.canvas);
 }
 
-CragCoverContainer.prototype.LoadCrag = async function(dataStorage) {
+CragCoverContainer.prototype.LoadCrag = function(dataStorage) {
   if( this.crag ) return this.crag
   this.crag = new Crag()
-  await this.crag.SafeLoad(this.cragCover.id,dataStorage)
-  return this.crag
+  return this.crag.SafeLoad(this.cragCover.id,dataStorage)
 }
 
 CragCoverContainer.prototype.UpdateImage = async function(imageFile) {

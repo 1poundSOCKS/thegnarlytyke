@@ -35,14 +35,15 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
+  _cragCoverImage = document.getElementById('crag-cover-image')
+  _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
+
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
+  _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
   _cragIndexContainer.topoMediaScroller = _topoMediaScroller
-  _cragIndexContainer.Load(SelectCragCoverContainer)
-
-  _cragCoverImage = document.getElementById('crag-cover-image')
-  _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
+  await _cragIndexContainer.Load(SelectCragCoverContainer)
 
   /* page event handlers */
   document.getElementById('add-crag').onclick = () => _cragIndexContainer.AddNewCrag()
@@ -51,7 +52,7 @@ let OnConfigLoad = async () => {
   document.getElementById('save').onclick = () => OnSave()
   document.getElementById('add-topo').onclick = () => _topoMediaScroller.AddNewTopo()
   document.getElementById('update-topo-image').onclick = () => _topoMediaScroller.UpdateSelectedImage()
-  document.getElementById("crag-name").onchange = OnCragNameChanged;
+  // document.getElementById("crag-name").onchange = OnCragNameChanged;
   document.getElementById('close-crag-view').onclick = () => {
     document.getElementById('crag-view-container').style = 'display:none'
     document.getElementById('crag-index-container').style = ''
@@ -65,16 +66,17 @@ let OnConfigLoad = async () => {
 let SelectCragCoverContainer = cragCoverContainer => {
 }
 
-let OnCragNameChanged = () => {
-  if( _cragMediaScroller.selectedContainer ) _cragMediaScroller.selectedContainer.crag.name = document.getElementById("crag-name").value;
-  _cragMediaScroller.RefreshSelectedContainer();
-}
+// let OnCragNameChanged = () => {
+//   if( _cragMediaScroller.selectedContainer ) _cragMediaScroller.selectedContainer.crag.name = document.getElementById("crag-name").value;
+//   _cragMediaScroller.RefreshSelectedContainer();
+// }
 
-let OnEditCrag = async () => {
+let OnEditCrag = () => {
   document.getElementById('crag-index-container').style = 'display:none'
-  await _cragIndexContainer.EditSelectedCrag()
-  window.scrollTo( 0, 0 );
-  document.getElementById('crag-view-container').style = ''
+  _cragIndexContainer.ShowSelectedCrag().then( () => {
+    window.scrollTo( 0, 0 );
+    document.getElementById('crag-view-container').style = ''
+  })
 }
 
 let OnSave = () => {
