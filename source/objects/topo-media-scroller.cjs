@@ -3,10 +3,7 @@ const FileSelector = require('./file-selector.cjs')
 const ImageFileCompressor = require('./image-file-compressor.cjs')
 
 let TopoImageContainer = function(parentElement, topo, callbackObject) {
-  if( !topo ) {
-    topo = new Topo().topo
-  }
-
+  if( !topo ) topo = new Topo().topo
   this.element = document.createElement('div')
   this.element.classList.add('topo-container')
   this.element.setAttribute('data-id', topo.id)
@@ -53,7 +50,6 @@ TopoMediaScroller.prototype.Refresh = async function(crag,imageStorage) {
   this.imageStorage = imageStorage
   this.element.innerHTML = ''
   this.selectedTopoImageContainer = null
-  // this.topoImages = new Map()
 
   this.topoImageContainers = this.crag.topos.map( topo => new TopoImageContainer(this.element,topo,this) )
 
@@ -66,13 +62,14 @@ TopoMediaScroller.prototype.Refresh = async function(crag,imageStorage) {
 
 TopoMediaScroller.prototype.AddNewTopo = function() {
   const topoImageContainer = new TopoImageContainer(this.element,null,this)
-  this.topoImageContainers.push(topoImageContainer)
   this.fileSelector.SelectFile( async file => {
     const compressor = new ImageFileCompressor(topoImageContainer.canvas)
     const image = await compressor.LoadAndCompress(file)
     const imageData = compressor.compressedImageData
     topoImageContainer.image = image
     topoImageContainer.imageData = imageData
+    this.topoImageContainers.push(topoImageContainer)
+    this.crag.topos.push(topoImageContainer.topo)
     topoImageContainer.Refresh()
   })
 }
@@ -111,10 +108,6 @@ TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
   ctx.drawImage(topoImage, 0, 0, topoCanvas.width, topoCanvas.height);
   return topoCanvas;
 }
-
-// TopoMediaScroller.prototype.UpdateSelectedTopoImage = function(image) {
-//   this.topoImages.set(this.GetSelectedTopoID(), image);
-// }
 
 TopoMediaScroller.prototype.ShiftCurrentTopoLeft = function() {
   if( !this.currentTopoContainer ) return;

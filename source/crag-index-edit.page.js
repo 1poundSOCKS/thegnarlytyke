@@ -43,7 +43,7 @@ let OnConfigLoad = async () => {
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
   _cragIndexContainer.topoMediaScroller = _topoMediaScroller
-  await _cragIndexContainer.Load(SelectCragCoverContainer)
+  _cragIndexContainer.Load(SelectCragCoverContainer)
 
   /* page event handlers */
   document.getElementById('add-crag').onclick = () => _cragIndexContainer.AddNewCrag()
@@ -66,15 +66,11 @@ let OnConfigLoad = async () => {
 let SelectCragCoverContainer = cragCoverContainer => {
 }
 
-// let OnCragNameChanged = () => {
-//   if( _cragMediaScroller.selectedContainer ) _cragMediaScroller.selectedContainer.crag.name = document.getElementById("crag-name").value;
-//   _cragMediaScroller.RefreshSelectedContainer();
-// }
-
 let OnEditCrag = () => {
-  document.getElementById('crag-index-container').style = 'display:none'
-  _cragIndexContainer.ShowSelectedCrag().then( () => {
-    window.scrollTo( 0, 0 );
+  _cragIndexContainer.ShowSelectedCrag().then( (crag) => {
+    if( !crag ) return
+    document.getElementById('crag-index-container').style = 'display:none'
+    window.scrollTo( 0, 0 )
     document.getElementById('crag-view-container').style = ''
   })
 }

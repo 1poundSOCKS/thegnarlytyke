@@ -14,16 +14,18 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   this.fileSelector = new FileSelector(this.element)
 }
 
-CragIndexContainer.prototype.Load = async function(OnCragSelectedHandler) {
-  await this.cragIndex.Load(this.dataStorage,this.imageStorage)
-  this.cragIndex.data.crags.forEach( cragCover => {
-    this.AppendCrag(cragCover,OnCragSelectedHandler);
+CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
+  this.cragIndex.Load(this.dataStorage,this.imageStorage)
+  .then( () => {
+    this.cragIndex.data.crags.forEach( cragDetails => {
+      this.AppendCrag(cragDetails,OnCragSelectedHandler);
+    })
   })
 }
 
 CragIndexContainer.prototype.Save = async function() {
   const imageSaves = this.cragCoverContainers
-  .map( container => container.SaveImage(this.imageStorage))
+  .map( container => container.SaveCrag(this.dataStorage,this.imageStorage))
   .filter( saveResponse => saveResponse )
   await Promise.all(imageSaves)
   this.cragIndex.Save(this.dataStorage,this.imageStorage)
@@ -38,8 +40,8 @@ CragIndexContainer.prototype.UpdateSelectedImage = function() {
   this.UpdateImage(this.selectedContainer)
 }
 
-CragIndexContainer.prototype.AppendCrag = function(cragCover,OnCragSelectedHandler) {
-  const cragCoverContainer = new CragCoverContainer(cragCover);
+CragIndexContainer.prototype.AppendCrag = function(cragDetails,OnCragSelectedHandler) {
+  const cragCoverContainer = new CragCoverContainer(cragDetails);
   this.element.appendChild(cragCoverContainer.element);
   this.cragCoverContainers.push(cragCoverContainer)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
@@ -82,6 +84,7 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
 }
 
 CragIndexContainer.prototype.ShowSelectedCrag = async function() {
+  if( !this.selectedContainer ) return null
   const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
   if( this.cragNameElement ) this.cragNameElement.innerText = crag.name
   this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
