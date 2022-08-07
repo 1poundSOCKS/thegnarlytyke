@@ -8,7 +8,7 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   parentElement.appendChild(this.element)
   this.dataStorage = dataStorage
   this.imageStorage = imageStorage
-  this.cragCoverContainers = []
+  this.cragCoverContainers = new Map()
   this.cragIndex = new CragIndex()
   this.topoMediaScroller = null
   this.fileSelector = new FileSelector(this.element)
@@ -17,6 +17,7 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
 CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
   this.cragIndex.Load(this.dataStorage,this.imageStorage)
   .then( () => {
+    this.data = this.cragIndex.data.crags
     this.cragIndex.data.crags.forEach( cragDetails => {
       this.AppendCrag(cragDetails,OnCragSelectedHandler);
     })
@@ -24,11 +25,12 @@ CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
 }
 
 CragIndexContainer.prototype.Save = async function() {
-  const imageSaves = this.cragCoverContainers
-  .map( container => container.SaveCrag(this.dataStorage,this.imageStorage))
+  const imageSaves = Array.from(this.cragCoverContainers.values())
+  .map( container => container.Save(this.dataStorage,this.imageStorage))
   .filter( saveResponse => saveResponse )
   await Promise.all(imageSaves)
   this.cragIndex.Save(this.dataStorage,this.imageStorage)
+  .then( () => console.log(`saved!!!`))
 }
 
 CragIndexContainer.prototype.UpdateImage = function(cragCovercontainer) {
@@ -43,7 +45,7 @@ CragIndexContainer.prototype.UpdateSelectedImage = function() {
 CragIndexContainer.prototype.AppendCrag = function(cragDetails,OnCragSelectedHandler) {
   const cragCoverContainer = new CragCoverContainer(cragDetails);
   this.element.appendChild(cragCoverContainer.element);
-  this.cragCoverContainers.push(cragCoverContainer)
+  this.cragCoverContainers.set(cragCoverContainer.id,cragCoverContainer)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
   cragCoverContainer.LoadImage(this.imageStorage)
   return cragCoverContainer
@@ -68,8 +70,8 @@ CragIndexContainer.prototype.RefreshSelectedContainer = function() {
 }
 
 CragIndexContainer.prototype.Unselect = function() {
-  this.cragCoverContainers.forEach( cragCoverContainer => {
-    cragCoverContainer.element.classList.remove('selected')
+  this.GetContainers().forEach( cragCoverContainer => {
+    cragCoverContainer.classList.remove('selected')
   })
   this.selectedContainer = null;
 }
@@ -77,7 +79,7 @@ CragIndexContainer.prototype.Unselect = function() {
 CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) {
   const cragIndexEntry = this.cragIndex.AppendCrag('')
   const cragCoverContainer = new CragCoverContainer(cragIndexEntry)
-  this.cragCoverContainers.push(cragCoverContainer)
+  this.cragCoverContainers.set(cragCoverContainer.id,cragCoverContainer)
   this.UpdateImage(cragCoverContainer)
   this.element.appendChild(cragCoverContainer.element)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
@@ -85,10 +87,47 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
 
 CragIndexContainer.prototype.ShowSelectedCrag = async function() {
   if( !this.selectedContainer ) return null
-  const crag = await this.selectedContainer.LoadCrag(this.dataStorage)
-  if( this.cragNameElement ) this.cragNameElement.innerText = crag.name
+  const crag = await this.selectedContainer.Load(this.dataStorage)
+  if( this.cragNameElement ) {
+    if( this.cragNameElement.nodeName.toLowerCase() === 'input' ) {
+      this.cragNameElement.value = this.selectedContainer.cragDetails.name
+      this.cragNameElement.onchange = () => {
+        this.selectedContainer.cragDetails.name = this.cragNameElement.value
+        this.selectedContainer.crag.name = this.cragNameElement.value
+      }
+    }
+    else {
+      this.cragNameElement.innerText = this.selectedContainer.cragDetails.name
+    }
+  }
+
   this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
   return crag
+}
+
+CragIndexContainer.prototype.ShiftCragLeft = function() {
+  if( !this.selectedContainer ) return
+  this.selectedContainer.ShiftLeft()
+  this.RefreshData()
+}
+
+CragIndexContainer.prototype.ShiftCragRight = function() {
+  if( !this.selectedContainer ) return
+  this.selectedContainer.ShiftRight()
+  this.RefreshData()
+}
+
+CragIndexContainer.prototype.RefreshData = function() {
+  const cragContainers = this.GetContainers()
+  this.data.length = 0
+  cragContainers.forEach( crag => {
+    this.data.push(this.cragCoverContainers.get(crag.dataset.id).cragDetails)
+  })
+}
+
+CragIndexContainer.prototype.GetContainers = function() {
+  return Array.from(this.element.childNodes)
+  .filter( element => element.dataset.id )
 }
 
 CragIndexContainer.prototype.OnTopoSelected = function() {

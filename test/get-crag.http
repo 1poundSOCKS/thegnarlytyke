@@ -1,2 +1,0 @@
-GET http://localhost:80/get_crag
-Content-Type: application/json

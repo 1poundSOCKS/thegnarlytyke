@@ -1,2 +1,0 @@
-GET http://localhost:80/get_image?filename=01adad96-6c4b-40bf-a465-e7d80d7c5a3b.jpg
-Content-Type: application/json

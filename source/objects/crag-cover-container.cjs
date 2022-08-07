@@ -2,22 +2,23 @@ const ImageFileCompressor = require('./image-file-compressor.cjs');
 const Crag = require('./crag.cjs');
 
 let CragCoverContainer = function(cragDetails) {
+  this.id = cragDetails.id
   this.element = document.createElement('div');
+  this.element.dataset.id = this.id;
   this.element.classList.add("crag-cover-container")
   this.cragDetails = cragDetails
-  this.element.setAttribute('data-id', this.cragDetails.id);
   this.canvas = document.createElement('canvas');
   this.canvas.classList.add("crag-cover-image");
   this.element.appendChild(this.canvas);
 }
 
-CragCoverContainer.prototype.LoadCrag = function(dataStorage) {
+CragCoverContainer.prototype.Load = function(dataStorage) {
   if( this.crag ) return this.crag
   this.crag = new Crag()
   return this.crag.SafeLoad(this.cragDetails.id,dataStorage)
 }
 
-CragCoverContainer.prototype.SaveCrag = async function (dataStorage,imageStorage) {
+CragCoverContainer.prototype.Save = async function (dataStorage,imageStorage) {
   const imageSaveResponse = await this.SaveImage(imageStorage)
   if( imageSaveResponse == null ) return null
   return this.crag.Save(dataStorage)
@@ -76,6 +77,48 @@ CragCoverContainer.prototype.CopyImageToCanvas = function(destCanvas) {
   destCanvas.height = this.canvas.height
   var ctx = destCanvas.getContext('2d')
   ctx.drawImage(this.image,0,0)
+}
+
+CragCoverContainer.prototype.ShiftLeft = function() {
+  const previousCrag = this.GetPreviousSibling()
+  if( previousCrag == null ) return
+  this.InsertBefore(previousCrag)
+}
+
+CragCoverContainer.prototype.ShiftRight = function() {
+  const nextCrag = this.GetNextSibling()
+  if( nextCrag == null ) return
+  this.InsertAfter(nextCrag)
+}
+
+CragCoverContainer.prototype.GetPreviousSibling = function() {
+  const previousCrags = []
+  let element = this.element
+  while( element.previousSibling ) {
+    if( element.previousSibling.dataset.id ) previousCrags.push(element.previousSibling)
+    element = element.previousSibling
+  }
+  if( previousCrags.length == 0 ) return null
+  return previousCrags[0]
+}
+
+CragCoverContainer.prototype.GetNextSibling = function() {
+  const subsequentCrags = []
+  let element = this.element
+  while( element.nextSibling ) {
+    if( element.nextSibling.dataset.id ) subsequentCrags.push(element.nextSibling)
+    element = element.nextSibling
+  }
+  if( subsequentCrags.length == 0 ) return null
+  return subsequentCrags[0]
+}
+
+CragCoverContainer.prototype.InsertBefore = function(element) {
+  this.element.parentElement.insertBefore(this.element,element)
+}
+
+CragCoverContainer.prototype.InsertAfter = function(element) {
+  element.parentElement.insertBefore(element,this.element)
 }
 
 module.exports = CragCoverContainer;

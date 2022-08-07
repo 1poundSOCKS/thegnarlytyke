@@ -45,34 +45,47 @@ let OnConfigLoad = async () => {
   _cragIndexContainer.topoMediaScroller = _topoMediaScroller
   _cragIndexContainer.Load(SelectCragCoverContainer)
 
-  /* page event handlers */
-  document.getElementById('add-crag').onclick = () => _cragIndexContainer.AddNewCrag()
-  document.getElementById('update-crag-cover-image').onclick = () => _cragIndexContainer.UpdateSelectedImage()
-  document.getElementById('edit-crag').onclick = () => OnEditCrag()
-  document.getElementById('save').onclick = () => OnSave()
-  document.getElementById('add-topo').onclick = () => _topoMediaScroller.AddNewTopo()
-  document.getElementById('update-topo-image').onclick = () => _topoMediaScroller.UpdateSelectedImage()
-  // document.getElementById("crag-name").onchange = OnCragNameChanged;
-  document.getElementById('close-crag-view').onclick = () => {
-    document.getElementById('crag-view-container').style = 'display:none'
-    document.getElementById('crag-index-container').style = ''
-  }
-  document.getElementById('close-topo-view').onclick = () => {
-    document.getElementById('topo-edit-container').style = 'display:none'
-    document.getElementById('crag-view-container').style = ''
-  }
+  OnEditIndex()
+  document.getElementById('icon-save').onclick = () => OnSave()
 }
 
 let SelectCragCoverContainer = cragCoverContainer => {
 }
 
+let OnEditIndex = () => {
+  document.getElementById('crag-view-container').style = 'display:none'
+  document.getElementById('topo-edit-container').style = 'display:none'
+  _cragIndexContainer.RefreshSelectedContainer()
+  document.getElementById('icon-add').onclick = () => _cragIndexContainer.AddNewCrag()
+  document.getElementById('icon-update-image').onclick = () => _cragIndexContainer.UpdateSelectedImage()
+  document.getElementById('icon-shift-left').onclick = () => _cragIndexContainer.ShiftCragLeft()
+  document.getElementById('icon-shift-right').onclick = () => _cragIndexContainer.ShiftCragRight()
+  document.getElementById('icon-edit').onclick = () => OnEditCrag()
+  document.getElementById('crag-index-container').style = ''
+}
+
 let OnEditCrag = () => {
-  _cragIndexContainer.ShowSelectedCrag().then( (crag) => {
+  _cragIndexContainer.ShowSelectedCrag()
+  .then( (crag) => {
     if( !crag ) return
     document.getElementById('crag-index-container').style = 'display:none'
+    document.getElementById('topo-edit-container').style = 'display:none'
+    document.getElementById('icon-add').onclick = () => _topoMediaScroller.AddNew()
+    document.getElementById('icon-update-image').onclick = () => _topoMediaScroller.UpdateSelectedImage()
+    document.getElementById('icon-shift-left').onclick = () => _topoMediaScroller.ShiftSelectedLeft()
+    document.getElementById('icon-shift-right').onclick = () => _topoMediaScroller.ShiftSelectedRight()
+    document.getElementById('icon-edit').onclick = () => OnEditTopo()
+    document.getElementById('icon-close').onclick = () => OnEditIndex()
     window.scrollTo( 0, 0 )
     document.getElementById('crag-view-container').style = ''
   })
+}
+
+let OnEditTopo = () => {
+  document.getElementById('crag-view-container').style = 'display:none'
+  document.getElementById('icon-close').onclick = () => OnEditCrag()
+  window.scrollTo( 0, 0 )
+  document.getElementById('topo-edit-container').style = ''
 }
 
 let OnSave = () => {

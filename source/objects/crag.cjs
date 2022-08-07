@@ -7,6 +7,7 @@ let Crag = function(cragObject) {
   }
   else {
     this.id = uuid.v4();
+    this.name = ''
     this.routes = [];
     this.topos = [];
   }
@@ -14,7 +15,7 @@ let Crag = function(cragObject) {
 
 Crag.prototype.Attach = function(cragObject) {
   this.id = cragObject.id;
-  this.name = cragObject.name;
+  this.name = cragObject.name ? cragObject.name : '';
   this.routes = cragObject.routes ? cragObject.routes : [];
   this.topos = cragObject.topos ? cragObject.topos : [];
 }

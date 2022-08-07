@@ -73,6 +73,10 @@
     .crag-view-header {
       display: flex;
     }
+    .crag-name {
+      color: var(--crag-name-color);
+      background-color: var(--tgt-std-background-color);
+    }
 </style>
 </head>
   <body>
@@ -81,34 +85,28 @@
     <div id="page-header" class="page-header">
       <ul id="page-header-nav" class="page-header-nav">
     </div>
+    <div id="icon-bar-container" class="icon-bar-container">
+      <i id="icon-add" class="far fa-plus-square" title="add"></i>
+      <i id="icon-update-image" class="fas fa-file-upload" title="update image"></i>
+      <i id="icon-shift-left" class="fas fa-arrow-left" title="shift left"></i>
+      <i id="icon-shift-right" class="fas fa-arrow-right" title="shift right"></i>
+      <i id="icon-edit" class="fas fa-edit" title="edit"></i>
+      <i id="icon-save" class="far fa-save" title="save"></i>
+      <i id="icon-close" class="far fa-window-close" title="close"></i>
+    </div>
     <div id="crag-index-container">
-      <div id="icon-bar-container" class="icon-bar-container">
-        <i id="add-crag" class="far fa-plus-square" title="add crag"></i>
-        <i id="update-crag-cover-image" class="fas fa-file-upload" title="update cover image"></i>
-        <i id="edit-crag" class="fas fa-edit" title="edit crag"></i>
-        <i id="save" class="far fa-save" title="save"></i>
-      </div>
       <div class="status-bar-container" style="display:none">
         <input type="text" id="status" name="name" size="20" readonly class="status-bar">
       </div>
       <div id="crag-covers-container"></div>
     </div>
     <div id="crag-view-container" style="display:none">
-      <div class="icon-bar-container">
-        <i id="add-topo" class="far fa-plus-square" title="add topo"></i>
-        <i id="update-topo-image" class="fas fa-file-upload" title="update topo image"></i>
-        <i id="close-crag-view" class="far fa-window-close" title="close"></i>
-      </div>
       <div id="crag-view-header" class="crag-view-header">
-        <span id="crag-name" class="crag-name"></span>
+        <input id="crag-name" class="crag-name"></input>
       </div>
       <div id="topo-images-container" class="topo-images-container-edit"></div>
     </div>
     <div id="topo-edit-container" style="display:none">
-      <div class="icon-bar-container">
-        <i id="upload-topo-image" class="fas fa-file-upload" title="update topo image"></i>
-        <i id="close-topo-view" class="far fa-window-close" title="close"></i>
-      </div>
       <div class="topo-image-container">
         <canvas id="topo-image-edit"></canvas>
       </div>
