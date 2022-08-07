@@ -1,56 +1,5 @@
-const Topo = require("./topo.cjs")
+const TopoImageContainer = require('./topo-image-container.cjs')
 const FileSelector = require('./file-selector.cjs')
-const ImageFileCompressor = require('./image-file-compressor.cjs');
-
-let TopoImageContainer = function(parentElement, topo, callbackObject) {
-  if( !topo ) topo = new Topo().topo
-  this.id = topo.id
-  this.element = document.createElement('div')
-  this.element.classList.add('topo-container')
-  this.element.dataset.id = topo.id
-  this.canvas = document.createElement('canvas')
-  this.canvas.classList.add('topo-image')
-  this.canvas = this.element.appendChild(this.canvas)
-  parentElement.appendChild(this.element)
-  this.topo = topo
-  this.element.onclick = () => {
-    callbackObject.OnTopoSelected(this)
-  }
-}
-
-TopoImageContainer.prototype.LoadImage = async function(imageStorage) {
-  if( this.topo.imageData ) {
-    this.topo.image = await imageStorage.LoadImageFromDataURI(this.topo.imageData)
-    this.Refresh()
-  }
-  else if( this.topo.imageFile ) {
-      this.imageLoader = imageStorage.LoadImageFromFile(this.topo.imageFile);
-      this.topo.image = await this.imageLoader;
-      this.Refresh();
-  }
-}
-
-TopoImageContainer.prototype.Refresh = function() {
-  this.canvas.setAttribute('width', this.topo.image.width);
-  this.canvas.setAttribute('height', this.topo.image.height);
-  let ctx = this.canvas.getContext('2d');
-  ctx.drawImage(this.topo.image, 0, 0);
-}
-
-TopoImageContainer.prototype.Select = function() {
-  this.element.classList.add('selected');
-}
-
-TopoImageContainer.prototype.Unselect = function() {
-  this.element.classList.remove('selected');
-}
-
-TopoImageContainer.prototype.UpdateImage = async function(imageFile) {
-  const compressor = new ImageFileCompressor(this.canvas)
-  this.topo.image = await compressor.LoadAndCompress(imageFile)
-  this.topo.imageData = compressor.compressedImageData
-  this.Refresh()
-}
 
 let TopoMediaScroller = function(element) {
   this.element = element
@@ -143,20 +92,16 @@ TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
   return topoCanvas;
 }
 
-TopoMediaScroller.prototype.ShiftCurrentTopoLeft = function() {
-  if( !this.currentTopoContainer ) return;
-  const parentNode = this.currentTopoContainer.parentNode;
-  const previousContainer = this.currentTopoContainer.previousSibling;
-  this.currentTopoContainer.remove();
-  parentNode.insertBefore(this.currentTopoContainer, previousContainer);
+TopoMediaScroller.prototype.ShiftSelectedLeft = function() {
+  if( !this.selectedTopoImageContainer ) return
+  this.selectedTopoImageContainer.ShiftLeft()
+  this.RefreshData()
 }
 
-TopoMediaScroller.prototype.ShiftCurrentTopoRight = function() {
-  if( !this.currentTopoContainer ) return;
-  const parentNode = this.currentTopoContainer.parentNode;
-  const nextContainer = this.currentTopoContainer.nextSibling;
-  nextContainer.remove();
-  parentNode.insertBefore(nextContainer, this.currentTopoContainer);
+TopoMediaScroller.prototype.ShiftSelectedRight = function() {
+  if( !this.selectedTopoImageContainer ) return
+  this.selectedTopoImageContainer.ShiftRight()
+  this.RefreshData()
 }
 
 module.exports = TopoMediaScroller;

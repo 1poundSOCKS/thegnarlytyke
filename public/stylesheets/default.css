@@ -261,7 +261,7 @@ i {
   border-color: var(--tgt-std-dark-color);
 }
 .icon-bar-container > i {
-  font-size: 3rem;
+  font-size: 4rem;
   color: var(--tgt-std-dark-color);
   background-color: var(--tgt-std-background-color);
 }
