@@ -13,9 +13,18 @@ let CragCoverContainer = function(cragDetails) {
 }
 
 CragCoverContainer.prototype.Load = function(dataStorage) {
-  if( this.crag ) return this.crag
-  this.crag = new Crag()
-  return this.crag.SafeLoad(this.cragDetails.id,dataStorage)
+  return new Promise( (accept,reject) => {
+    if( this.crag ) {
+      accept(this.crag)
+      return
+    }
+    this.crag = new Crag()
+    this.crag.SafeLoad(this.cragDetails.id,dataStorage)
+    .then( () => {
+      accept(this.crag)
+    })
+    .catch( () => reject() )
+  })
 }
 
 CragCoverContainer.prototype.Save = async function (dataStorage,imageStorage) {

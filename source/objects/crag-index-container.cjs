@@ -61,8 +61,9 @@ CragIndexContainer.prototype.SelectContainer = function(cragCoverContainer,OnCra
   this.Unselect()
   cragCoverContainer.element.classList.add('selected')
   this.selectedContainer = cragCoverContainer;
-  this.ShowSelectedCrag()
-  if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
+  this.ShowSelectedCrag().then( () => {
+    if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
+  })
 }
 
 CragIndexContainer.prototype.RefreshSelectedContainer = function() {
@@ -85,24 +86,31 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
 }
 
-CragIndexContainer.prototype.ShowSelectedCrag = async function() {
-  if( !this.selectedContainer ) return null
-  const crag = await this.selectedContainer.Load(this.dataStorage)
-  if( this.cragNameElement ) {
-    if( this.cragNameElement.nodeName.toLowerCase() === 'input' ) {
-      this.cragNameElement.value = this.selectedContainer.cragDetails.name
-      this.cragNameElement.onchange = () => {
-        this.selectedContainer.cragDetails.name = this.cragNameElement.value
-        this.selectedContainer.crag.name = this.cragNameElement.value
+CragIndexContainer.prototype.ShowSelectedCrag = function() {
+  return new Promise( (accept,reject) => {
+    if( !this.selectedContainer ) {
+      accept(null)
+      return
+    }
+    this.selectedContainer.Load(this.dataStorage)
+    .then( crag => {
+      if( this.cragNameElement ) {
+        if( this.cragNameElement.nodeName.toLowerCase() === 'input' ) {
+          this.cragNameElement.value = this.selectedContainer.cragDetails.name
+          this.cragNameElement.onchange = () => {
+            this.selectedContainer.cragDetails.name = this.cragNameElement.value
+            this.selectedContainer.crag.name = this.cragNameElement.value
+          }
+        }
+        else {
+          this.cragNameElement.innerText = this.selectedContainer.cragDetails.name
+        }
       }
-    }
-    else {
-      this.cragNameElement.innerText = this.selectedContainer.cragDetails.name
-    }
-  }
-
-  this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
-  return crag
+      this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
+      accept(crag)
+    })
+    .catch( () => reject() )
+  })
 }
 
 CragIndexContainer.prototype.ShiftCragLeft = function() {
