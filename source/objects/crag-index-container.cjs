@@ -24,13 +24,19 @@ CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
   })
 }
 
-CragIndexContainer.prototype.Save = async function() {
+CragIndexContainer.prototype.Save = function() {
+  console.log(`saving crags...`)
   const cragImageSaves = Array.from(this.cragCoverContainers.values())
   .map( container => container.Save(this.dataStorage,this.imageStorage))
   .filter( saveResponse => saveResponse )
-  await Promise.all(cragImageSaves)
-  this.cragIndex.Save(this.dataStorage,this.imageStorage)
-  .then( () => console.log(`saved!!!`))
+  Promise.all(cragImageSaves)
+  .then( () => {
+    console.log(`images saved, saving crag index...`)
+    this.cragIndex.Save(this.dataStorage,this.imageStorage)
+    .then( () => console.log(`all saved!!!`) )
+    .catch( err => console.error(err) )
+  })
+  .catch( err => console.error(err) )
 }
 
 CragIndexContainer.prototype.UpdateImage = function(cragCovercontainer) {

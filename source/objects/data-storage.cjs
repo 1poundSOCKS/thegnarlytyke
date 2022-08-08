@@ -24,15 +24,22 @@ DataStorage.prototype.LoadUsingAPI = async function(object_id) {
   return response.json();
 }
 
-DataStorage.prototype.Save = async function(object_id, data) {
-  const requestBody = JSON.stringify(data, null, 2);
-  const url = `${this.saveDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}`;
-  const response = await fetch(url, {
-    method: 'POST',
-    mode: 'cors',
-    body: requestBody
-  });
-  return response.json();
+DataStorage.prototype.Save = function(object_id, data) {
+  return new Promise( (accept,reject) => {
+    const requestBody = JSON.stringify(data, null, 2);
+    const url = `${this.saveDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}`;
+    fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      body: requestBody
+    })
+    .then( responseData => responseData.json() )
+    .then( response => {
+      if( response.error ) reject(response.error)
+      else accept(response.filename)
+    })
+    .catch( err => reject(err ))
+  })
 }
 
 module.exports = new DataStorage;

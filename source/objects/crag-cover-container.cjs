@@ -27,10 +27,20 @@ CragCoverContainer.prototype.Load = function(dataStorage) {
   })
 }
 
-CragCoverContainer.prototype.Save = async function (dataStorage,imageStorage) {
-  const imageSaveResponse = await this.SaveImage(imageStorage)
-  if( imageSaveResponse == null ) return null
-  return this.crag.Save(dataStorage)
+CragCoverContainer.prototype.Save = function (dataStorage,imageStorage) {
+  return new Promise( (accept,reject) => {
+    this.SaveImage(imageStorage)
+    .then( () => {
+      if( !this.crag ) {
+        accept()
+        return
+      }
+      this.crag.Save(dataStorage,imageStorage)
+      .then( () => accept() )
+      .catch( err => reject(err) )
+    })
+    .catch( (err) => reject(err) )
+  })
 }
 
 CragCoverContainer.prototype.UpdateImage = async function(imageFile) {

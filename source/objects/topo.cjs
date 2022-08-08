@@ -137,6 +137,22 @@ Topo.prototype.GetSortedRouteEndPoints = function() {
   .filter( point => point );
 }
 
+Topo.prototype.SaveImage = function(imageStorage) {
+  return new Promise( (accept,reject) => {
+    imageStorage.SaveImage(this.topo.id,this.topo.imageData,'topo')
+    .then( (response) => {
+      if( response.error ) {
+        reject(response.error)
+        return
+      }
+      this.topo.imageFile = response.filename
+      delete this.topo.imageData
+      accept(this.topo.imageFile)
+    })
+    .catch( err => reject(err) )
+  })
+}
+
 module.exports = Topo;
 
 let GetNearestPointForRoute = (x, y, route) => GetNextNearestPointForRoute(x, y, route, null);

@@ -1,5 +1,6 @@
 let uuid = require('uuid');
 const Route = require('./route.cjs');
+const Topo = require('./topo.cjs');
 
 let Crag = function(cragObject) {
   if( cragObject ) {
@@ -39,9 +40,40 @@ Crag.prototype.SafeLoad = function(id,dataStorage) {
   })
 }
 
-Crag.prototype.Save = async function(dataStorage) {
-  const cragData = this.FormatForStorage();
-  return dataStorage.Save(`${this.id}.crag`, cragData);
+Crag.prototype.Save = function(dataStorage,imageStorage) {
+  return new Promise( (accept,reject) => {
+    this.SaveTopoImages(imageStorage)
+    .then( () => {
+      const cragData = this.FormatForStorage();
+      dataStorage.Save(`${this.id}.crag`, cragData)
+      .then( (filename) => {
+        accept(filename)
+      })
+      .catch( err => {
+        reject(err)
+      })
+    })
+    .catch( err => {
+      reject(err)
+    })
+  })
+}
+
+Crag.prototype.SaveTopoImages = function(imageStorage) {
+  return new Promise( (accept, reject) => {
+    if( !imageStorage ) {
+      accept()
+      return
+    }
+    const toposWithImagesToSave = this.topos.filter( topo => topo.imageData )
+    const topoImageSaves = toposWithImagesToSave.map( topoData => {
+      const topo = new Topo(topoData)
+      return topo.SaveImage(imageStorage)
+    })
+    Promise.all(topoImageSaves)
+    .then( () => accept() )
+    .catch( err => reject(err) )
+  })
 }
 
 Crag.prototype.AppendTopo = function(topo) {
