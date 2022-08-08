@@ -39,6 +39,7 @@ let OnConfigLoad = async () => {
   _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
+  _topoMediaScroller.topoImage = _mainTopoImage
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
