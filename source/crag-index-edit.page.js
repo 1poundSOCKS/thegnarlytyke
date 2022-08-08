@@ -6,6 +6,7 @@ const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
 const TopoImage = require('./objects/topo-image.cjs');
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
+const TopoRouteTable2 = require('./objects/topo-route-table-2.cjs')
 
 let _cookie = null;
 let _cragIndexContainer = null;
@@ -37,9 +38,13 @@ let OnConfigLoad = async () => {
   
   _cragCoverImage = document.getElementById('crag-cover-image')
   _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
+  _mainTopoImage.AddMouseHandler()
+
+  const topoRouteTable = new TopoRouteTable2(document.getElementById('route-tables-container'))
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
   _topoMediaScroller.topoImage = _mainTopoImage
+  _topoMediaScroller.topoRouteTable = topoRouteTable
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
