@@ -22,6 +22,7 @@ CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
       this.AppendCrag(cragDetails,OnCragSelectedHandler);
     })
   })
+  .catch( err => console.log(err) )
 }
 
 CragIndexContainer.prototype.Save = function() {

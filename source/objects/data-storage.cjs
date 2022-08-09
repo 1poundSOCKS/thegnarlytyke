@@ -12,16 +12,27 @@ DataStorage.prototype.Init = function(config, userID, userToken,loadUsingAPI) {
   this.loadUsingAPI = loadUsingAPI;
 }
 
-DataStorage.prototype.Load = async function(object_id) {
-  if( this.loadUsingAPI ) return this.LoadUsingAPI(object_id)
-
-  const response = await fetch(`${this.dataURL}${object_id}.json`, {cache: "reload"});
-  return response.json();
+DataStorage.prototype.Load = function(object_id) {
+  return new Promise( (accept,reject) => {
+    const url = this.loadUsingAPI ? 
+    `${this.loadDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}` : `${this.dataURL}${object_id}.json`
+    const headers = this.loadUsingAPI ? null : {cache: "reload"}
+    this.LoadWithURL(url,headers)
+    .then( response => accept(response) )
+    .catch( err => reject(err) )
+  })
 }
 
-DataStorage.prototype.LoadUsingAPI = async function(object_id) {
-  const response = await fetch(`${this.loadDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}`);
-  return response.json();
+DataStorage.prototype.LoadWithURL = function(url,headers) {
+  return new Promise( (accept,reject) => {
+    fetch(url,headers)
+    .then( responseData => responseData.json() )
+    .then( response => {
+      if( response.error ) reject(response.error)
+      else accept(response)
+    })
+    .catch( err => reject(err) )
+  })
 }
 
 DataStorage.prototype.Save = function(object_id, data) {

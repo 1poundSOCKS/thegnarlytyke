@@ -4,18 +4,22 @@ let CragIndex = function() {
   this.data = null;
 }
 
-CragIndex.prototype.Load = async function(dataStorage) {
-  this.data = await dataStorage.Load('crag-index');
-  return this.data;
+CragIndex.prototype.Load = function(dataStorage) {
+  return new Promise( (accept,reject) => {
+    dataStorage.Load('crag-index')
+    .then( data => {
+      this.data = data
+      accept(this.data)
+    })
+    .catch( err => {
+      this.data = null
+      reject(err)
+    })
+  })
 }
 
 CragIndex.prototype.Save = async function(dataStorage) {
   dataStorage.Save('crag-index', this.data);
-}
-
-CragIndex.prototype.LoadForUserEdit = async function(dataStorage) {
-  this.data = await dataStorage.LoadForUserEdit('crag-index');
-  return this.data;
 }
 
 CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {
