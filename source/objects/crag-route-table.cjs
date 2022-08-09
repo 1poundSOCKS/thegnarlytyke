@@ -3,7 +3,7 @@ const Topo = require("./topo.cjs");
 
 const columnIndex_AddRouteToTopoSwitch = 4;
 
-let CragRouteTable = function(parent, crag, topoData, OnRouteToggled) {
+let CragRouteTable = function(parent) {
   this.parent = parent  
   this.element = document.createElement('table')
   this.parent.appendChild(this.element)
