@@ -4,13 +4,13 @@ const ImageStorage = require('./objects/image-storage.cjs');
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
-const TopoImage = require('./objects/topo-image.cjs');
-const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
-const TopoRouteTable2 = require('./objects/topo-route-table-2.cjs')
+const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
+const TopoEditContainer = require('./objects/topo-edit-container.cjs')
 
 let _cookie = null;
 let _cragIndexContainer = null;
 let _mainTopoImage = null;
+let _topoEditContainer = null
 
 window.onload = () => {
   InitWindowStyle()
@@ -37,14 +37,10 @@ let OnConfigLoad = async () => {
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
   
   _cragCoverImage = document.getElementById('crag-cover-image')
-  _mainTopoImage = new TopoImage(document.getElementById('topo-image-edit'), true);
-  _mainTopoImage.AddMouseHandler()
-
-  const topoRouteTable = new TopoRouteTable2(document.getElementById('route-tables-container'))
+  _topoEditContainer = new TopoEditContainer(document.getElementById('topo-edit-container'))
 
   _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
   _topoMediaScroller.topoImage = _mainTopoImage
-  _topoMediaScroller.topoRouteTable = topoRouteTable
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
@@ -60,7 +56,7 @@ let SelectCragCoverContainer = cragCoverContainer => {
 
 let OnEditIndex = () => {
   document.getElementById('crag-view-container').style = 'display:none'
-  document.getElementById('topo-edit-container').style = 'display:none'
+  _topoEditContainer.Hide()
   _cragIndexContainer.RefreshSelectedContainer()
   document.getElementById('icon-add').onclick = () => _cragIndexContainer.AddNewCrag()
   document.getElementById('icon-update-image').onclick = () => _cragIndexContainer.UpdateSelectedImage()
@@ -75,7 +71,7 @@ let OnEditCrag = () => {
   .then( (crag) => {
     if( !crag ) return
     document.getElementById('crag-index-container').style = 'display:none'
-    document.getElementById('topo-edit-container').style = 'display:none'
+    _topoEditContainer.Hide()
     document.getElementById('icon-add').onclick = () => _topoMediaScroller.AddNew()
     document.getElementById('icon-update-image').onclick = () => _topoMediaScroller.UpdateSelectedImage()
     document.getElementById('icon-shift-left').onclick = () => _topoMediaScroller.ShiftSelectedLeft()
@@ -90,7 +86,9 @@ let OnEditCrag = () => {
 let OnEditTopo = () => {
   document.getElementById('crag-view-container').style = 'display:none'
   document.getElementById('icon-close').onclick = () => OnEditCrag()
+  _topoEditContainer.Refresh(_cragIndexContainer.selectedCrag,_topoMediaScroller.selectedTopo)
   window.scrollTo( 0, 0 )
+  _topoEditContainer.Unhide()
   document.getElementById('topo-edit-container').style = ''
 }
 

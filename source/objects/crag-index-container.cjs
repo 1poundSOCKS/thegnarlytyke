@@ -1,7 +1,6 @@
 const CragIndex = require('./crag-index.cjs');
 const CragCoverContainer = require("./crag-cover-container.cjs");
 const FileSelector = require('./file-selector.cjs');
-const CragRouteTable = require('./crag-route-table.cjs');
 
 let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   this.element = document.createElement('div')
@@ -13,7 +12,6 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
   this.cragIndex = new CragIndex()
   this.topoMediaScroller = null
   this.fileSelector = new FileSelector(this.element)
-  this.cragRouteTable = new CragRouteTable(document.getElementById('route-tables-container'));
 }
 
 CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
@@ -105,6 +103,7 @@ CragIndexContainer.prototype.ShowSelectedCrag = function() {
     }
     this.selectedContainer.Load(this.dataStorage)
     .then( crag => {
+      this.selectedCrag = crag
       if( this.cragNameElement ) {
         if( this.cragNameElement.nodeName.toLowerCase() === 'input' ) {
           this.cragNameElement.value = this.selectedContainer.cragDetails.name
@@ -118,7 +117,6 @@ CragIndexContainer.prototype.ShowSelectedCrag = function() {
         }
       }
       this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
-      this.cragRouteTable.Refresh(crag)
       accept(crag)
     })
     .catch( () => reject() )

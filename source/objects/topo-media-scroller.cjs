@@ -61,7 +61,7 @@ TopoMediaScroller.prototype.OnTopoSelected = function(topoImageContainer) {
   if( this.selectedTopoImageContainer ) this.selectedTopoImageContainer.Unselect()
   this.selectedTopoImageContainer = topoImageContainer
   this.selectedTopoImageContainer.Select()
-
+  this.selectedTopo = this.crag.GetMatchingTopo(this.selectedTopoImageContainer.element.dataset.id)
   if( this.topoImage ) {
     this.topoImage.image = topoImageContainer.topo.image
     this.topoImage.topo = topoImageContainer.topo
@@ -69,20 +69,6 @@ TopoMediaScroller.prototype.OnTopoSelected = function(topoImageContainer) {
   }
   if( this.topoRouteTable ) this.topoRouteTable.Refresh(topoImageContainer.topo)
 }
-
-TopoMediaScroller.prototype.GetSelectedTopoID = function() {
-  if( !this.currentTopoContainer ) return null;
-  return this.currentTopoContainer.dataset.id;
-}
-
-TopoMediaScroller.prototype.GetSelectedTopo = function() {
-  if( !this.currentTopoContainer ) return null;
-  return this.crag.GetMatchingTopo(this.currentTopoContainer.dataset.id);
-}
-
-TopoMediaScroller.prototype.GetSelectedTopoCanvas = function() {
-  return this.currentTopoContainer.children[0]
-};
 
 TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
   topoCanvas.setAttribute('width', topoImage.width);

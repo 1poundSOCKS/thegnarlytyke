@@ -22,23 +22,29 @@ TopoImage.prototype.Clear = function() {
   ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }
 
-TopoImage.prototype.Refresh = function() {
-  if( !this.image ) {
-    this.Clear();
-    return;
+TopoImage.prototype.Refresh = function(topo) {
+  if( topo ) {
+    this.topo = topo
+    this.image = this.topo.image
   }
 
-  if( this.image.height == 500 ) {
-    this.canvas.setAttribute('width', this.image.width);
-    this.canvas.setAttribute('height', this.image.height);  
+  if( this.topo?.image ) {
+    if( this.image.height == 500 ) {
+      this.canvas.setAttribute('width', this.image.width);
+      this.canvas.setAttribute('height', this.image.height);  
+    }
+    else {
+      this.canvas.height = 500;
+      this.canvas.width = this.image.width * this.canvas.height / this.image.height;  
+    }
+  
+    let ctx = this.canvas.getContext('2d');
+    ctx.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height);
   }
   else {
-    this.canvas.height = 500;
-    this.canvas.width = this.image.width * this.canvas.height / this.image.height;  
+    this.Clear();
   }
 
-  let ctx = this.canvas.getContext('2d');
-  ctx.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height);
   this.DrawOverlay();
 }
 
