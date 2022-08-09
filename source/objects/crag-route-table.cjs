@@ -3,13 +3,10 @@ const Topo = require("./topo.cjs");
 
 const columnIndex_AddRouteToTopoSwitch = 4;
 
-let CragRouteTable = function(element, crag, topoData, OnRouteToggled) {
-  this.element = element;
-  this.table = new RouteTable(element, crag.routes, true, this);
-  this.crag = crag;
-  this.topo = topoData ? new Topo(topoData) : null;
-  this.OnRouteToggled = OnRouteToggled;
-  this.Refresh();
+let CragRouteTable = function(parent, crag, topoData, OnRouteToggled) {
+  this.parent = parent  
+  this.element = document.createElement('table')
+  this.parent.appendChild(this.element)
 }
 
 CragRouteTable.prototype.SetTopoID = function(topoID) {
@@ -17,7 +14,12 @@ CragRouteTable.prototype.SetTopoID = function(topoID) {
   this.Refresh();
 }
 
-CragRouteTable.prototype.Refresh = function() {
+CragRouteTable.prototype.Refresh = function(crag, topoData, OnRouteToggled) {
+  this.crag = crag;
+  this.topo = topoData ? new Topo(topoData) : null;
+  this.table = new RouteTable(this.element, this.crag.routes, true, this);
+  this.OnRouteToggled = OnRouteToggled;
+
   if( !this.crag ) {
     this.table.Refresh([]);
     return;
