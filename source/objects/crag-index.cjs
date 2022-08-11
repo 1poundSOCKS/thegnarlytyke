@@ -6,7 +6,7 @@ let CragIndex = function() {
 
 CragIndex.prototype.Load = function(dataStorage) {
   return new Promise( (accept,reject) => {
-    dataStorage.Load('crag-index')
+    dataStorage.Load('crag-index',false)
     .then( data => {
       this.data = data
       accept(this.data)
@@ -19,7 +19,7 @@ CragIndex.prototype.Load = function(dataStorage) {
 }
 
 CragIndex.prototype.Save = async function(dataStorage) {
-  dataStorage.Save('crag-index', this.data);
+  dataStorage.Save('crag-index', this.data, false);
 }
 
 CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {

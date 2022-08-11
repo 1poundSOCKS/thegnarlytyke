@@ -22,7 +22,7 @@ Crag.prototype.Attach = function(cragObject) {
 }
 
 Crag.prototype.Load = async function(id,dataStorage) {
-  const cragData = await dataStorage.Load(`${id}.crag`)
+  const cragData = await dataStorage.Load(`${id}.crag`,true)
   if( cragData.error ) throw cragData.error
   this.Attach(cragData)
   this.UpdateAfterRestore()
@@ -45,7 +45,7 @@ Crag.prototype.Save = function(dataStorage,imageStorage) {
     this.SaveTopoImages(imageStorage)
     .then( () => {
       const cragData = this.FormatForStorage();
-      dataStorage.Save(`${this.id}.crag`, cragData)
+      dataStorage.Save(`${this.id}.crag`, cragData, true)
       .then( (filename) => {
         accept(filename)
       })

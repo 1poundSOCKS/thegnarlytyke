@@ -12,10 +12,10 @@ DataStorage.prototype.Init = function(config, userID, userToken,loadUsingAPI) {
   this.loadUsingAPI = loadUsingAPI;
 }
 
-DataStorage.prototype.Load = function(object_id) {
+DataStorage.prototype.Load = function(object_id,versioned) {
   return new Promise( (accept,reject) => {
     const url = this.loadUsingAPI ? 
-    `${this.loadDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}` : `${this.dataURL}${object_id}.json`
+    `${this.loadDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}&versioned=${versioned}` : `${this.dataURL}${object_id}.json`
     const headers = this.loadUsingAPI ? null : {cache: "reload"}
     this.LoadWithURL(url,headers)
     .then( response => accept(response) )
@@ -35,10 +35,10 @@ DataStorage.prototype.LoadWithURL = function(url,headers) {
   })
 }
 
-DataStorage.prototype.Save = function(object_id, data) {
+DataStorage.prototype.Save = function(object_id, data, versioned) {
   return new Promise( (accept,reject) => {
     const requestBody = JSON.stringify(data, null, 2);
-    const url = `${this.saveDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}`;
+    const url = `${this.saveDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}&versioned=${versioned}`;
     fetch(url, {
       method: 'POST',
       mode: 'cors',
