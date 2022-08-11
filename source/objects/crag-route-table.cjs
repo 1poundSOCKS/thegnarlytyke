@@ -3,10 +3,12 @@ const Topo = require("./topo.cjs");
 
 const columnIndex_AddRouteToTopoSwitch = 4;
 
-let CragRouteTable = function(parent) {
-  this.parent = parent  
+let CragRouteTable = function(parent,callbackObject) {
+  this.parent = parent
   this.element = document.createElement('table')
   this.parent.appendChild(this.element)
+
+  this.callbackObject = callbackObject
 }
 
 CragRouteTable.prototype.SetTopoID = function(topoID) {
@@ -49,13 +51,13 @@ CragRouteTable.prototype.AddButtonsToRow = function(row, cragRoute, routeOnTopo)
       this.topo.AppendRoute(route);
       buttonCell.classList.remove('fa-toggle-off');
       buttonCell.classList.add('fa-toggle-on');
-      if( this.OnRouteToggled ) this.OnRouteToggled(cragRoute);
+      if( this.callbackObject ) this.callbackObject.OnCragRouteToggled(this.crag,cragRoute)
     }
     else {
       this.topo.RemoveMatchingRoute(routeID);
       buttonCell.classList.remove('fa-toggle-on');
       buttonCell.classList.add('fa-toggle-off');
-      if( this.OnRouteToggled ) this.OnRouteToggled(cragRoute);
+      if( this.callbackObject ) this.callbackObject.OnCragRouteToggled(this.crag,cragRoute)
     }
   }
 }

@@ -3,14 +3,13 @@ const Topo = require('./topo.cjs');
 
 const columnIndex_Button = 4;
 
-let TopoRouteTable2 = function(parentElement, OnRouteSelectedCallback) {
+let TopoRouteTable2 = function(parentElement, callbackObject) {
   this.element = parentElement.appendChild(document.createElement('table'))
-  this.element.setAttribute('class','topo-route-table')
-  this.OnRouteSelectedCallback = OnRouteSelectedCallback
+  this.callbackObject = callbackObject
 }
 
 TopoRouteTable2.prototype.Refresh = function(topoData) {
-  this.topo = new Topo(topoData);
+  if( topoData ) this.topo = new Topo(topoData);
   this.routeInfo = this.topo.GetSortedRouteInfo();
   this.table = new RouteTable(this.element, this.routeInfo);
   this.selectedRow = null;
@@ -19,7 +18,7 @@ TopoRouteTable2.prototype.Refresh = function(topoData) {
   
   this.table.Refresh();
   
-  if( this.OnRouteSelectedCallback ) {
+  if( this.callbackObject ) {
     Array.from(this.table.element.rows).forEach( row => {
       row.insertCell(columnIndex_Button);
       row.onclick = event => {
@@ -41,7 +40,7 @@ TopoRouteTable2.prototype.OnRowClick = function(rowElement) {
   buttonCell.classList.add('fa-edit');
   this.selectedRouteID = this.table.GetRowID(this.selectedRow);
   this.selectedRoute = this.topo.GetMatchingRoute(this.selectedRouteID);
-  if( this.OnRouteSelectedCallback ) this.OnRouteSelectedCallback(this.selectedRoute);
+  if( this.callbackObject ) this.callbackObject.OnTopoRouteSelected(this.selectedRoute);
 }
 
 module.exports = TopoRouteTable2;
