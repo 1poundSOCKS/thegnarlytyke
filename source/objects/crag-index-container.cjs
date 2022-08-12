@@ -69,16 +69,7 @@ CragIndexContainer.prototype.SelectContainer = function(cragCoverContainer,OnCra
   cragCoverContainer.element.classList.add('selected')
   this.selectedContainer = cragCoverContainer;
 
-  if( this.autoShowOnSelect ) {
-    this.ShowSelectedCrag()
-    .then( () => {
-      if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
-    })
-    .catch( err => console.log(err) )
-    }
-  else {
-    if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
-  }
+  if( OnCragSelectedHandler ) OnCragSelectedHandler(this.selectedContainer);
 }
 
 CragIndexContainer.prototype.RefreshSelectedContainer = function() {
