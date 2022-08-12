@@ -98,14 +98,14 @@ let OnSave = () => {
 }
 
 let OnPublishUserUpdates = () => {
-  fetch(Config.publish_user_updates_url)
+  fetch(`${Config.publish_user_updates_url}?user_id=${_cookie.GetValue("user-id")}&user_token=${_cookie.GetValue("user-token")}`)
   .then( responseData => responseData.json() )
   .then( response => {
     if( response.error ) {
       console.log(response.error)
       return
     }
-    console.log('published successfully!')
+    console.log('published!')
   })
   .catch( err => console.log(err) )
 }

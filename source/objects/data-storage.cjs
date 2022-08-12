@@ -14,7 +14,6 @@ DataStorage.prototype.Init = function(config, userID, userToken,loadUsingAPI) {
 
 DataStorage.prototype.Load = function(object_id,versioned) {
   return new Promise( (accept,reject) => {
-
     const url = this.loadUsingAPI ? 
     `${this.loadDataURL}?user_id=${this.userID}&user_token=${this.userToken}&id=${object_id}&versioned=${versioned}` : `${this.dataURL}${object_id}.json`
     const headers = this.loadUsingAPI ? null : {cache: "reload"}
