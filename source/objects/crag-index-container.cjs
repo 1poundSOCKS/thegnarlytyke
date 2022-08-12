@@ -28,7 +28,7 @@ CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
 CragIndexContainer.prototype.Save = function() {
   console.log(`saving crags...`)
   const cragImageSaves = Array.from(this.cragCoverContainers.values())
-  .map( container => container.Save(this.dataStorage,this.imageStorage))
+  .map( container => container.SaveCrag(this.dataStorage,this.imageStorage))
   .filter( saveResponse => saveResponse )
   Promise.all(cragImageSaves)
   .then( () => {
@@ -98,7 +98,7 @@ CragIndexContainer.prototype.ShowSelectedCrag = function() {
       accept(null)
       return
     }
-    this.selectedContainer.Load(this.dataStorage)
+    this.selectedContainer.LoadCrag(this.dataStorage)
     .then( crag => {
       this.selectedCrag = crag
       if( this.cragNameElement ) {

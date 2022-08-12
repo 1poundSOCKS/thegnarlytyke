@@ -18,11 +18,11 @@ CragIndex.prototype.Load = function(dataStorage) {
   })
 }
 
-CragIndex.prototype.Save = async function(dataStorage) {
-  dataStorage.Save('crag-index', this.data, false);
+CragIndex.prototype.Save = function(dataStorage) {
+  return dataStorage.Save('crag-index', this.data, false);
 }
 
-CragIndex.prototype.LoadCragImage = async function(imageStorage, crag) {
+CragIndex.prototype.LoadCragImage = function(imageStorage, crag) {
   if( !crag.imageFile ) return null
   return imageStorage.LoadImageFromFile(crag.imageFile)
 }

@@ -12,14 +12,16 @@ let CragCoverContainer = function(cragDetails) {
   this.element.appendChild(this.canvas);
 }
 
-CragCoverContainer.prototype.Load = function(dataStorage) {
+CragCoverContainer.prototype.LoadCrag = function(dataStorage) {
   return new Promise( (accept,reject) => {
     if( this.crag ) {
       accept(this.crag)
       return
     }
+    let cragKey = this.cragDetails.cragKey
+    if( !cragKey ) cragKey = `${this.cragDetails.id}.crag`
     this.crag = new Crag()
-    this.crag.SafeLoad(this.cragDetails.id,dataStorage)
+    this.crag.SafeLoad(cragKey,dataStorage,this.cragDetails.id)
     .then( () => {
       accept(this.crag)
     })
@@ -27,7 +29,7 @@ CragCoverContainer.prototype.Load = function(dataStorage) {
   })
 }
 
-CragCoverContainer.prototype.Save = function (dataStorage,imageStorage) {
+CragCoverContainer.prototype.SaveCrag = function (dataStorage,imageStorage) {
   return new Promise( (accept,reject) => {
     this.SaveImage(imageStorage)
     .then( () => {
@@ -36,7 +38,10 @@ CragCoverContainer.prototype.Save = function (dataStorage,imageStorage) {
         return
       }
       this.crag.Save(dataStorage,imageStorage)
-      .then( () => accept() )
+      .then( key => {
+        this.cragDetails.cragKey = key
+        accept()
+      })
       .catch( err => reject(err) )
     })
     .catch( (err) => reject(err) )

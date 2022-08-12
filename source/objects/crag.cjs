@@ -21,16 +21,20 @@ Crag.prototype.Attach = function(cragObject) {
   this.topos = cragObject.topos ? cragObject.topos : [];
 }
 
-Crag.prototype.Load = async function(id,dataStorage) {
-  const cragData = await dataStorage.Load(`${id}.crag`,true)
-  if( cragData.error ) throw cragData.error
-  this.Attach(cragData)
-  this.UpdateAfterRestore()
-  return this
+Crag.prototype.Load = function(key,dataStorage) {
+  return new Promise( (accept,reject) => {
+    dataStorage.Load(key,true)
+    .then( cragData => {
+      if( cragData.error ) reject(cragData.error)
+      this.Attach(cragData)
+      this.UpdateAfterRestore()
+      accept(cragData)
+    })
+  })
 }
 
-Crag.prototype.SafeLoad = function(id,dataStorage) {
-  return this.Load(id,dataStorage)
+Crag.prototype.SafeLoad = function(key,dataStorage,id) {
+  return this.Load(key,dataStorage)
   .catch( () => {
     this.id = id;
     this.name = ''
@@ -46,8 +50,8 @@ Crag.prototype.Save = function(dataStorage,imageStorage) {
     .then( () => {
       const cragData = this.FormatForStorage();
       dataStorage.Save(`${this.id}.crag`, cragData, true)
-      .then( (filename) => {
-        accept(filename)
+      .then( (key) => {
+        accept(key)
       })
       .catch( err => {
         reject(err)
