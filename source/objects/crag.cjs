@@ -31,7 +31,7 @@ Crag.prototype.Load = async function(id,dataStorage) {
 
 Crag.prototype.SafeLoad = function(id,dataStorage) {
   return this.Load(id,dataStorage)
-  .catch( err => {
+  .catch( () => {
     this.id = id;
     this.name = ''
     this.routes = []

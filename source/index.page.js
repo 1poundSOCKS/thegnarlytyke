@@ -56,8 +56,10 @@ let DisplayIndexView = () => {
   document.getElementById('crag-index-container').style = ''
 }
 
-let DisplayCragView = async container => {
+let DisplayCragView = container => {
   document.getElementById('crag-index-container').style = 'display:none'
-  window.scrollTo( 0, 0 );  
-  document.getElementById('crag-view-container').style = ''
+  _cragIndexContainer.ShowSelectedCrag().then( () => {
+    window.scrollTo( 0, 0 );  
+    document.getElementById('crag-view-container').style = ''
+  })
 }
