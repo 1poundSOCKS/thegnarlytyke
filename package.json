@@ -8,9 +8,9 @@
     "start": "node index.js",
     "test": "jest --verbose",
     "build-index": "browserify source/index.page.js -o public/scripts/index.page.js",
-    "build-crag-index-edit": "browserify source/crag-index-edit.page.js -o public/scripts/crag-index-edit.page.js",
+    "build-crag-edit": "browserify source/crag-edit.page.js -o public/scripts/crag-edit.page.js",
     "build-logon": "browserify source/logon.page.js -o public/scripts/logon.page.js",
-    "build": "npm run build-index && npm run build-crag-index-edit && npm run build-logon",
+    "build": "npm run build-index && npm run build-crag-edit && npm run build-logon",
     "watch": "watchify source/bundle.js -o public/bundle.js -v"
   },
   "keywords": [],

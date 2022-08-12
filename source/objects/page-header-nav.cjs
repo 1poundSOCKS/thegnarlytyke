@@ -5,7 +5,7 @@ let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.AddItem('home','index.html')
 
   if( this.cookie?.IsUserLoggedOn() ) {
-    if( allowEdit ) this.AddItem('edit', 'crag-index-edit.html')
+    if( allowEdit ) this.AddItem('edit', 'crag-edit.html')
     this.AddItem('logoff', null, () => {
       this.cookie.Logoff()
       window.location.href = 'index.html'
