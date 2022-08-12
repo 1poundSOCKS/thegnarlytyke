@@ -5,7 +5,7 @@ const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
-const TopoEditContainer = require('./objects/topo-edit-container.cjs')
+const TopoEditContainer = require('./objects/topo-edit-container.cjs');
 
 let _cookie = null;
 let _cragIndexContainer = null;
@@ -63,6 +63,7 @@ let OnEditIndex = () => {
   document.getElementById('icon-shift-left').onclick = () => _cragIndexContainer.ShiftCragLeft()
   document.getElementById('icon-shift-right').onclick = () => _cragIndexContainer.ShiftCragRight()
   document.getElementById('icon-edit').onclick = () => OnEditCrag()
+  document.getElementById('icon-publish').onclick = () => OnPublishUserUpdates()
   document.getElementById('crag-index-container').style = ''
 }
 
@@ -94,4 +95,17 @@ let OnEditTopo = () => {
 
 let OnSave = () => {
   _cragIndexContainer.Save()
+}
+
+let OnPublishUserUpdates = () => {
+  fetch(Config.publish_user_updates_url)
+  .then( responseData => responseData.json() )
+  .then( response => {
+    if( response.error ) {
+      console.log(response.error)
+      return
+    }
+    console.log('published successfully!')
+  })
+  .catch( err => console.log(err) )
 }

@@ -6,5 +6,6 @@
   "save_image_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/save-image",
   "save_data_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/save-data",
   "load_data_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/load-data",
+  "publish_user_updates_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/publish-user-updates",
   "logon_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/logon"
 }
