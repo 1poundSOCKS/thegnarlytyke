@@ -4,11 +4,10 @@ const ImageStorage = require('./objects/image-storage.cjs');
 const Cookie = require('./objects/cookie.cjs')
 const PageHeaderNav = require('./objects/page-header-nav.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
-const TopoMediaScroller = require('./objects/topo-media-scroller.cjs');
-const TopoImage = require('./objects/topo-image.cjs');
-const TopoRouteTable2 = require('./objects/topo-route-table-2.cjs');
+const CragViewContainer = require('./objects/crag-view-container.cjs')
 
 let _cragIndexContainer = null;
+let _cragViewContainer = null
 
 window.onload = () => {
   InitWindowStyle()
@@ -32,21 +31,17 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
-  const topoImage = new TopoImage(document.getElementById('main-topo-image'), false);
+  _cragViewContainer = new CragViewContainer(document.getElementById('main-topo-container'),ImageStorage)
 
-  const topoRouteTable = new TopoRouteTable2(document.getElementById('topo-route-table-container'))
-
-  const topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
-  topoMediaScroller.topoImage = topoImage
-  topoMediaScroller.topoRouteTable = topoRouteTable
-  topoMediaScroller.autoSelectOnRefresh = true
-  
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-index-container'),DataStorage,ImageStorage)
-  _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
-  _cragIndexContainer.topoMediaScroller = topoMediaScroller
-  _cragIndexContainer.Load(DisplayCragView)
+  
+  _cragIndexContainer.Load(() => {
+    DisplayCragView()
+  })
 
-  document.getElementById('close-crag-view').onclick = DisplayIndexView;
+  document.getElementById('close-crag-view').onclick = () => {
+    DisplayIndexView()
+  }
 }
 
 let DisplayIndexView = () => {
@@ -58,7 +53,9 @@ let DisplayIndexView = () => {
 
 let DisplayCragView = container => {
   document.getElementById('crag-index-container').style = 'display:none'
-  _cragIndexContainer.ShowSelectedCrag().then( () => {
+  _cragIndexContainer.selectedContainer.LoadCrag(DataStorage)
+  .then( crag => _cragViewContainer.Refresh(crag) )
+  .then( () => {
     window.scrollTo( 0, 0 );  
     document.getElementById('crag-view-container').style = ''
   })

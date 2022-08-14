@@ -17,8 +17,8 @@ CragRouteTable.prototype.SetTopoID = function(topoID) {
 }
 
 CragRouteTable.prototype.Refresh = function(crag, topoData, OnRouteToggled) {
-  this.crag = crag;
-  this.topo = topoData ? new Topo(topoData) : null;
+  if( crag ) this.crag = crag
+  if( topoData ) this.topo = topoData ? new Topo(topoData) : null;
   this.table = new RouteTable(this.element, this.crag.routes, true, this);
   this.OnRouteToggled = OnRouteToggled;
 

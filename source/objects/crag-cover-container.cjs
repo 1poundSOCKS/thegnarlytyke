@@ -1,7 +1,8 @@
 const ImageFileCompressor = require('./image-file-compressor.cjs');
 const Crag = require('./crag.cjs');
 
-let CragCoverContainer = function(cragDetails) {
+let CragCoverContainer = function(cragDetails,newCrag) {
+  this.newCrag = newCrag
   this.id = cragDetails.id
   this.element = document.createElement('div');
   this.element.dataset.id = this.id;
@@ -14,14 +15,21 @@ let CragCoverContainer = function(cragDetails) {
 
 CragCoverContainer.prototype.LoadCrag = function(dataStorage) {
   return new Promise( (accept,reject) => {
+     //crag already loaded
     if( this.crag ) {
+      accept(this.crag)
+      return
+    }
+    // crag added but not previously saved
+    if( this.newCrag ) {
+      this.crag = new Crag()
       accept(this.crag)
       return
     }
     let cragKey = this.cragDetails.cragKey
     if( !cragKey ) cragKey = `${this.cragDetails.id}.crag`
     this.crag = new Crag()
-    this.crag.SafeLoad(cragKey,dataStorage,this.cragDetails.id)
+    this.crag.SafeLoad(cragKey,dataStorage,this.cragDetails.id,this.cragDetails.name)
     .then( () => {
       accept(this.crag)
     })

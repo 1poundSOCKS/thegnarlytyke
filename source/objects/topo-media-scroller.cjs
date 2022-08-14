@@ -7,25 +7,30 @@ let TopoMediaScroller = function(element) {
   this.fileSelector = new FileSelector(this.element)
 }
 
-TopoMediaScroller.prototype.Refresh = async function(crag,imageStorage) {
-  this.crag = crag
-  this.data = crag.topos
-  this.imageStorage = imageStorage
-  this.element.innerHTML = ''
-  this.selectedTopoImageContainer = null
-  this.topoImageContainers.clear()
+TopoMediaScroller.prototype.Refresh = function(crag,imageStorage) {
+  return new Promise( accept => {
+    this.crag = crag
+    this.data = crag.topos
+    this.imageStorage = imageStorage
+    this.element.innerHTML = ''
+    this.selectedTopoImageContainer = null
+    this.topoImageContainers.clear()
+  
+    const topoImageLoads = this.data.map( topo => {
+      const topoImageContainer = new TopoImageContainer(this.element,topo,this)
+      this.topoImageContainers.set(topo.id,topoImageContainer)
+      topoImageContainer.LoadImage(imageStorage)
+    })
+  
+    if( this.autoSelectOnRefresh && topoImageLoads.length > 0 ) {
+      const firstTopo = this.topoImageContainers.get(this.data[0].id)
+      firstTopo.imageLoader.then( () => {
+        this.OnTopoSelected(this.topoImageContainers.get(this.data[0].id));
+      })
+    }
 
-  const topoImageLoads = this.data.map( topo => {
-    const topoImageContainer = new TopoImageContainer(this.element,topo,this)
-    this.topoImageContainers.set(topo.id,topoImageContainer)
-    topoImageContainer.LoadImage(imageStorage)
+    accept()
   })
-
-  if( this.autoSelectOnRefresh && topoImageLoads.length > 0 ) {
-    const firstTopo = this.topoImageContainers.get(this.data[0].id)
-    await firstTopo.imageLoader
-    this.OnTopoSelected(this.topoImageContainers.get(this.data[0].id));
-  }
 }
 
 TopoMediaScroller.prototype.AddNew = function() {

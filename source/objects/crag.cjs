@@ -33,11 +33,12 @@ Crag.prototype.Load = function(key,dataStorage) {
   })
 }
 
-Crag.prototype.SafeLoad = function(key,dataStorage,id) {
+Crag.prototype.SafeLoad = function(key,dataStorage,id,name) {
   return this.Load(key,dataStorage)
-  .catch( () => {
+  .catch( (err) => {
+    console.log(`error loading crag: ${err}`)
     this.id = id;
-    this.name = ''
+    this.name = name ? name : ''
     this.routes = []
     this.topos = []
     return this
