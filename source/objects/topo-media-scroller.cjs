@@ -29,7 +29,10 @@ TopoMediaScroller.prototype.Refresh = function(crag,imageStorage) {
       })
     }
 
-    accept()
+    Promise.all(topoImageLoads)
+    .then( () => {
+      accept()
+    })
   })
 }
 
