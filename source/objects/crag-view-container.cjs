@@ -32,9 +32,11 @@ CragViewContainer.prototype.Refresh = function(crag) {
       }
     }
     this.topoMediaScroller.Refresh(this.crag,this.imageStorage,true)
-    if( this.crag.topos?.length == 0 ) this.topoContainer.style = 'display:none'
-    else this.topoContainer.style = ''
-    accept()
+    .then( () => {
+      if( this.crag.topos?.length == 0 ) this.topoContainer.style = 'display:none'
+      else this.topoContainer.style = ''
+      accept()
+    })
   })
 }
 

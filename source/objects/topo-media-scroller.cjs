@@ -19,7 +19,7 @@ TopoMediaScroller.prototype.Refresh = function(crag,imageStorage) {
     const topoImageLoads = this.data.map( topo => {
       const topoImageContainer = new TopoImageContainer(this.element,topo,this)
       this.topoImageContainers.set(topo.id,topoImageContainer)
-      topoImageContainer.LoadImage(imageStorage)
+      return topoImageContainer.LoadImage(imageStorage)
     })
   
     if( this.autoSelectOnRefresh && topoImageLoads.length > 0 ) {

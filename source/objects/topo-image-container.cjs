@@ -1,5 +1,6 @@
 const Topo = require("./topo.cjs")
 const ImageFileCompressor = require('./image-file-compressor.cjs');
+const TopoOverlay = require("./topo-overlay.cjs");
 
 let TopoImageContainer = function(parentElement, topo, callbackObject) {
   if( !topo ) topo = new Topo().topo
@@ -34,6 +35,8 @@ TopoImageContainer.prototype.Refresh = function() {
   this.canvas.setAttribute('height', this.topo.image.height);
   let ctx = this.canvas.getContext('2d');
   ctx.drawImage(this.topo.image, 0, 0);
+  const topoOverlay = new TopoOverlay(this.topo,false,true);
+  topoOverlay.Draw(this.canvas);
 }
 
 TopoImageContainer.prototype.Select = function() {

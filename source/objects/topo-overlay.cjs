@@ -6,10 +6,11 @@ const routeStartPointColor = "rgb(40, 150, 40)";
 const routeEndPointColor = "rgb(150, 20, 20)";
 const routeJoinPointColor = "rgb(150, 150, 150)";
 
-let TopoOverlay = function(topo, forEditor) {
+let TopoOverlay = function(topo, forEditor, omitRouteNumbers) {
   this.topo = topo;
   this.forEditor = forEditor;
   this.highlightedPoint = null;
+  this.omitRouteNumbers = omitRouteNumbers
 }
 
 TopoOverlay.prototype.Draw = function(canvas) {
@@ -125,8 +126,10 @@ TopoOverlay.prototype.DrawPoint = function(ctx, x, y, text, color) {
   ctx.lineWidth = fontSize;
   ctx.strokeStyle = "#000000";
   ctx.stroke();
-  ctx.fillStyle = "rgb(230,230,230)";
-  ctx.fillText(text, x - (widthOfText * 0.5), y + (widthOfText * 0.6));
+  if( !this.omitRouteNumbers ) {
+    ctx.fillStyle = "rgb(230,230,230)";
+    ctx.fillText(text, x - (widthOfText * 0.5), y + (widthOfText * 0.6));
+  }
   return radiusOfPoint * 2;
 }
 
