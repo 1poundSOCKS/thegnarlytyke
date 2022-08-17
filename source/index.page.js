@@ -28,9 +28,10 @@ let OnConfigLoad = async () => {
   
   new PageHeader(document.getElementById('page-header-container'),'home',cookie,Config)
 
-  document.getElementById('page').appendChild(CreateCragIndexContainer())
-  document.getElementById('page').appendChild(CreateCragViewContainer())
-  document.getElementById('page').appendChild(CreateTopoImagesContainer())
+  const page = document.getElementById('page')
+  page.appendChild(CreateCragIndexContainer())
+  page.appendChild(CreateCragViewContainer())
+  page.appendChild(CreateTopoImagesContainer())
   
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
