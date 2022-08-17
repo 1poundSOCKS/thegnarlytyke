@@ -27,6 +27,10 @@ let OnConfigLoad = async () => {
   const cookie = new Cookie();
   
   new PageHeader(document.getElementById('page-header-container'),'home',cookie,Config)
+
+  document.getElementById('page').appendChild(CreateCragIndexContainer())
+  document.getElementById('page').appendChild(CreateCragViewContainer())
+  document.getElementById('page').appendChild(CreateTopoImagesContainer())
   
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
@@ -59,4 +63,66 @@ let DisplayCragView = container => {
     window.scrollTo( 0, 0 );  
     document.getElementById('crag-view-container').style = ''
   })
+}
+
+let CreateCragIndexContainer = () => {
+  const element = document.createElement('div')
+  element.id = 'crag-index-container'
+  return element
+}
+
+let CreateCragViewContainer = () => {
+  const element = document.createElement('div')
+  element.id = 'crag-view-container'
+  element.style = 'display:none'
+  element.appendChild(CreateCragViewHeader())
+  element.appendChild(CreateTopoImagesContainer())
+  element.appendChild(CreateMainTopoContainer())
+  return element
+}
+
+let CreateCragViewHeader = () => {
+  const element = document.createElement('div')
+  element.id = 'crag-view-header'
+  element.classList.add('crag-view-header')
+  const cragName = document.createElement('span')
+  cragName.id = 'crag-name'
+  cragName.classList.add('crag-name')
+  element.appendChild(cragName)
+  const closeIcon = document.createElement('i')
+  closeIcon.id = 'close-crag-view'
+  closeIcon.classList.add('close-crag-view-icon','far','fa-window-close')
+  closeIcon.title = 'close'
+  element.appendChild(closeIcon)
+  return element
+}
+
+let CreateTopoImagesContainer = () => {
+  const element = document.createElement('div')
+  element.id = 'topo-images-container'
+  element.classList.add('topo-images-container')
+  return element
+}
+
+let CreateMainTopoContainer = () => {
+  const element = document.createElement('div')
+  element.id = 'main-topo-container'
+  element.classList.add('main-topo-container')
+  
+  const imageContainer = document.createElement('div')
+  imageContainer.classList.add('main-topo-image-container')
+  
+  const imageCanvas = document.createElement('canvas')
+  imageCanvas.id = 'main-topo-image'
+  imageCanvas.classList.add('main-topo-image')
+  imageContainer.appendChild(imageCanvas)
+  
+  element.appendChild(imageContainer)
+  
+  const tableContainer = document.createElement('div')
+  tableContainer.id = 'topo-route-table-container'
+  tableContainer.classList.add('topo-route-table-container')
+  element.appendChild(tableContainer)
+
+  return element
 }
