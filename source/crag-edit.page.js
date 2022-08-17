@@ -35,6 +35,8 @@ let OnConfigLoad = async () => {
 
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
+
+  document.getElementById('icon-bar-container').style = ''
   
   _cragCoverImage = document.getElementById('crag-cover-image')
   _topoEditContainer = new TopoEditContainer(document.getElementById('topo-edit-container'))
