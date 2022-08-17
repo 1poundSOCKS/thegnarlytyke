@@ -1,5 +1,4 @@
 let uuid = require('uuid');
-const Topo = require('./topo.cjs');
 
 let Route = function(route) {
   if( !route ) this.route = {id:uuid.v4()};

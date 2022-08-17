@@ -1,7 +1,7 @@
 const Route = require("./route.cjs");
 const Topo = require("./topo.cjs");
 
-const routeLineColor = "rgb(255, 255, 255)";
+const routeLineStrokeStyle = "rgba(255, 255, 0, 0.6)";
 const routeStartPointColor = "rgb(40, 150, 40)";
 const routeEndPointColor = "rgb(150, 20, 20)";
 const routeJoinPointColor = "rgb(150, 150, 150)";
@@ -23,27 +23,25 @@ TopoOverlay.prototype.Draw = function(canvas) {
 }
 
 TopoOverlay.prototype.DrawRouteLines = function(ctx) {
-  const topo = new Topo(this.topo);
-  const topoLines = topo.GetRouteLines();
+  this.topo.routes.forEach( routeData => {
+    const route = new Route(routeData)
+    const points = route.GetResolvedPoints()
 
-  const overlayLines = topoLines.map( line => {
-    return {
-      startX: line.startPoint.x * ctx.canvas.width,
-      startY: line.startPoint.y * ctx.canvas.height,
-      endX: line.endPoint.x * ctx.canvas.width,
-      endY: line.endPoint.y * ctx.canvas.height
-    };
-  });
+    const absPoints = points.map( point => {
+      return { x: point.x * ctx.canvas.width, y: point.y * ctx.canvas.height }
+    })
 
-  overlayLines.forEach( line => {
-    ctx.beginPath();
-    ctx.setLineDash([10, 10]);
-    ctx.moveTo(line.startX, line.startY);
-    ctx.lineTo(line.endX, line.endY);
     ctx.lineWidth = "4";
-    ctx.strokeStyle = routeLineColor;
-    ctx.stroke();
+    ctx.strokeStyle = routeLineStrokeStyle;
+    ctx.setLineDash([10, 10]);
+    ctx.moveTo((absPoints[0].x), absPoints[0].y);
+
+    for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
+      ctx.lineTo(absPoints[pointIndex].x, absPoints[pointIndex].y);
+    }
   });
+
+  ctx.stroke();
 }
 
 TopoOverlay.prototype.DrawRouteStartPoints = function(ctx) {
@@ -57,13 +55,21 @@ TopoOverlay.prototype.DrawRouteStartPoints = function(ctx) {
     }
   });
 
-  const startCounts = new Map();
-  indexedPoints.forEach( point => {
-    let count = startCounts.get(point.point.id);
-    if( !count ) count = 0;
-    this.DrawRouteStartPoint(ctx, point.point, point.index, count);
-    startCounts.set(point.point.id, count + 1);
-  });
+  const startGroups = new Map()
+  indexedPoints.forEach( indexedPoint => {
+    let group = startGroups.get(indexedPoint.point.id)
+    if( !group ) {
+      group = []
+      startGroups.set(indexedPoint.point.id, group)
+    }
+    group.push(indexedPoint)
+  })
+
+  startGroups.forEach( (startPoints) => {
+    startPoints.forEach( (indexedPoint,index) => {
+        this.DrawRouteStartPoint(ctx, indexedPoint.point, indexedPoint.index, index, startPoints.length);
+    })
+  })
 }
 
 TopoOverlay.prototype.DrawRouteEndPoints = function(ctx) {
@@ -96,8 +102,11 @@ TopoOverlay.prototype.DrawRouteJoinPoints = function(ctx) {
   });
 }
 
-TopoOverlay.prototype.DrawRouteStartPoint = function(ctx, point, index, number) {
-  this.DrawPoint(ctx, point.x, point.y + number * 0.04, index + 1, routeStartPointColor);
+TopoOverlay.prototype.DrawRouteStartPoint = function(ctx, point, index, number, groupTotal) {
+  const row = (number == 0 ? 0 : 1)
+  const secondRowCount = groupTotal - 1
+  const rowPosition = (row == 0 ? 0 :  number - (secondRowCount + 1) / 2)
+  this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y + row * 0.04, index + 1, routeStartPointColor);
 }
 
 TopoOverlay.prototype.DrawRouteEndPoint = function(ctx, point, index, number) {
