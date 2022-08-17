@@ -23,17 +23,20 @@ TopoOverlay.prototype.Draw = function(canvas) {
 }
 
 TopoOverlay.prototype.DrawRouteLines = function(ctx) {
+  ctx.lineWidth = "4";
+  ctx.strokeStyle = routeLineStrokeStyle;
+  ctx.setLineDash([10, 10]);
+
   this.topo.routes.forEach( routeData => {
     const route = new Route(routeData)
     const points = route.GetResolvedPoints()
+    
+    if( points.length == 0 ) return
 
     const absPoints = points.map( point => {
       return { x: point.x * ctx.canvas.width, y: point.y * ctx.canvas.height }
     })
 
-    ctx.lineWidth = "4";
-    ctx.strokeStyle = routeLineStrokeStyle;
-    ctx.setLineDash([10, 10]);
     ctx.moveTo((absPoints[0].x), absPoints[0].y);
 
     for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
