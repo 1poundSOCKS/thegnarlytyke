@@ -10,6 +10,9 @@ window.onload = () => {
 let OnConfigLoad = async () => {
   new PageHeader(document.getElementById('page-header-container'),'logon')
 
+  const page = document.getElementById('page')
+  page.appendChild(CreateLogonForm())
+
   document.getElementById("submit-logon").onclick = () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -24,4 +27,47 @@ let OnConfigLoad = async () => {
       }
     })
   }
+}
+
+let CreateLogonForm = () => {
+  const form = document.createElement('form')
+  form.classList.add('centered')
+  form.appendChild( CreateLogonDetail('email') )
+  form.appendChild( CreateLogonDetail('password') )
+  form.appendChild( CreateFormInput() )
+  return form
+}
+
+let CreateLogonDetail = (name) => {
+  const div = document.createElement('div')
+  div.classList.add('logon-detail')
+  div.appendChild( CreateLabel(name) )
+  div.appendChild( CreateInput(name) )
+  return div
+}
+
+let CreateLabel = (name) => {
+  const div = document.createElement('div')
+  const label = document.createElement('label')
+  label.for = name
+  label.innerText = `${name}:`
+  div.appendChild(label)
+  return div
+}
+
+let CreateInput = (name) => {
+  const div = document.createElement('div')
+  const input = document.createElement('input')
+  input.id = name
+  input.type = 'text'
+  div.appendChild(input)
+  return div
+}
+
+let CreateFormInput = () => {
+  const input = document.createElement('input')
+  input.id = 'submit-logon'
+  input.type = 'button'
+  input.value = 'submit'
+  return input
 }
