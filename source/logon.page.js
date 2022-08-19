@@ -1,5 +1,5 @@
 const Config = require('./objects/config.cjs');
-const PageHeader = require('./objects/page-header.cjs');
+const CreatePageHeader = require('./objects/page-header.cjs');
 const LogonRequest = require('./objects/logon-request.cjs');
 const Cookie = require('./objects/cookie.cjs');
 
@@ -8,9 +8,8 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
-  new PageHeader(document.getElementById('page-header-container'),'logon')
-
   const page = document.getElementById('page')
+  page.appendChild(CreatePageHeader('logon'))
   page.appendChild(CreateLogonForm())
 
   document.getElementById("submit-logon").onclick = () => {

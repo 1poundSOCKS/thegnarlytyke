@@ -1,7 +1,7 @@
 const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
-const PageHeader = require('./objects/page-header.cjs');
+const CreatePageHeader = require('./objects/page-header.cjs');
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
@@ -31,9 +31,8 @@ let InitWindowStyle = () => {
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
 
-  new PageHeader(document.getElementById('page-header-container'),'edit',_cookie,Config)
-
   const page = document.getElementById('page')
+  page.appendChild(CreatePageHeader('edit',_cookie,Config))
   page.appendChild(CreateIconBarContainer())
   page.appendChild(CreateCragIndexContainer())
   page.appendChild(CreateCragViewContainer())

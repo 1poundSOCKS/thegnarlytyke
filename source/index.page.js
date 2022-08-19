@@ -1,10 +1,10 @@
-const Config = require('./objects/config.cjs');
-const DataStorage = require('./objects/data-storage.cjs');
-const ImageStorage = require('./objects/image-storage.cjs');
+const Config = require('./objects/config.cjs')
+const DataStorage = require('./objects/data-storage.cjs')
+const ImageStorage = require('./objects/image-storage.cjs')
 const Cookie = require('./objects/cookie.cjs')
-const PageHeader = require('./objects/page-header.cjs');
+const CreatePageHeader = require('./objects/page-header.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
-const CragViewContainer = require('./objects/crag-view-container.cjs');
+const CragViewContainer = require('./objects/crag-view-container.cjs')
 
 let _cragIndexContainer = null;
 let _cragViewContainer = null
@@ -26,9 +26,8 @@ let InitWindowStyle = () => {
 let OnConfigLoad = async () => {
   const cookie = new Cookie();
   
-  new PageHeader(document.getElementById('page-header-container'),'home',cookie,Config)
-
   const page = document.getElementById('page')
+  page.appendChild(CreatePageHeader('home',cookie,Config))
   page.appendChild(CreateCragIndexContainer())
   page.appendChild(CreateCragViewContainer())
   page.appendChild(CreateTopoImagesContainer())
