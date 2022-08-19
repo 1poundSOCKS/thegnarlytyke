@@ -52,13 +52,10 @@ let OnConfigLoad = async () => {
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
   _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
   _cragIndexContainer.topoMediaScroller = _topoMediaScroller
-  _cragIndexContainer.Load(SelectCragCoverContainer)
+  _cragIndexContainer.Load(()=> {})
 
   OnEditIndex()
   document.getElementById('icon-save').onclick = () => OnSave()
-}
-
-let SelectCragCoverContainer = cragCoverContainer => {
 }
 
 let OnEditIndex = () => {
