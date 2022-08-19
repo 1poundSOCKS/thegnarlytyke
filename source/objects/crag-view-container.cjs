@@ -1,43 +1,101 @@
-const TopoMediaScroller = require('./topo-media-scroller.cjs');
-const TopoImage = require('./topo-image.cjs');
-const TopoRouteTable2 = require('./topo-route-table-2.cjs');
+const TopoMediaScroller = require('./topo-media-scroller.cjs')
+const TopoImage = require('./topo-image.cjs')
+const TopoRouteTable2 = require('./topo-route-table-2.cjs')
 
-let CragViewContainer = function(parentElement,imageStorage) {
-  this.parentElement = parentElement
-  this.imageStorage = imageStorage
-
-  this.cragNameElement = document.getElementById("crag-name")
-  this.topoContainer = document.getElementById('main-topo-container')
-  this.topoImage = new TopoImage(document.getElementById('main-topo-image'), false);
-  this.topoRouteTable = new TopoRouteTable2(document.getElementById('topo-route-table-container'))
-  this.topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
-  this.topoMediaScroller.topoImage = this.topoImage
-  this.topoMediaScroller.topoRouteTable = this.topoRouteTable
-  this.topoMediaScroller.autoSelectOnRefresh = true
+let CreateCragViewContainer = function() {
+  container = {}
+  container.root = document.createElement('div')
+  container.root.id = 'crag-view-container'
+  container.root.style = 'display:none'
+  container.root.appendChild(CreateCragViewHeader(container))
+  container.root.appendChild(CreateTopoImagesContainer(container))
+  container.root.appendChild(CreateMainTopoContainer(container))
+  return container
 }
 
-CragViewContainer.prototype.Refresh = function(crag) {
+let CreateCragViewHeader = (container) => {
+  const element = document.createElement('div')
+  element.id = 'crag-view-header'
+  element.classList.add('crag-view-header')
+  const cragName = document.createElement('span')
+  cragName.id = 'crag-name'
+  cragName.classList.add('crag-name')
+  
+  container.cragNameElement = cragName
+  
+  element.appendChild(cragName)
+  const closeIcon = document.createElement('i')
+  closeIcon.id = 'close-crag-view'
+  closeIcon.classList.add('close-crag-view-icon','far','fa-window-close')
+  closeIcon.title = 'close'
+  element.appendChild(closeIcon)
+  return element
+}
+
+let CreateTopoImagesContainer = (container) => {
+  const element = document.createElement('div')
+  element.id = 'topo-images-container'
+  element.classList.add('topo-images-container')
+  
+  container.topoMediaScroller = new TopoMediaScroller(element)
+  
+  return element
+}
+
+let CreateMainTopoContainer = (container) => {
+  const element = document.createElement('div')
+  element.id = 'main-topo-container'
+  element.classList.add('main-topo-container')
+  
+  container.topoContainer = element
+  
+  const imageContainer = document.createElement('div')
+  imageContainer.classList.add('main-topo-image-container')
+  
+  const imageCanvas = document.createElement('canvas')
+  imageCanvas.id = 'main-topo-image'
+  imageCanvas.classList.add('main-topo-image')
+
+  container.topoImage = new TopoImage(imageCanvas, false);
+
+  imageContainer.appendChild(imageCanvas)
+  
+  element.appendChild(imageContainer)
+  
+  const tableContainer = document.createElement('div')
+  tableContainer.id = 'topo-route-table-container'
+  tableContainer.classList.add('topo-route-table-container')
+
+  container.topoRouteTable = new TopoRouteTable2(tableContainer)
+
+  element.appendChild(tableContainer)
+
+  return element
+}
+
+RefreshCragViewContainer = function(container,crag,imageStorage) {
   return new Promise( (accept) => {
-    this.crag = crag
-    if( this.cragNameElement ) {
-      if( this.cragNameElement.nodeName.toLowerCase() === 'input' ) {
-        this.cragNameElement.value = this.crag.name
-        this.cragNameElement.onchange = () => {
-          this.selectedContainer.cragDetails.name = this.cragNameElement.value
-          this.selectedContainer.crag.name = this.cragNameElement.value
+    container.crag = crag
+    if( container.cragNameElement ) {
+      if( container.cragNameElement.nodeName.toLowerCase() === 'input' ) {
+        container.cragNameElement.value = this.crag.name
+        container.cragNameElement.onchange = () => {
+          container.selectedContainer.cragDetails.name = container.cragNameElement.value
+          container.selectedContainer.crag.name = container.cragNameElement.value
         }
       }
       else {
-        this.cragNameElement.innerText = this.crag.name
+        container.cragNameElement.innerText = container.crag.name
       }
     }
-    this.topoMediaScroller.Refresh(this.crag,this.imageStorage,true)
+    container.topoMediaScroller.Refresh(container.crag,imageStorage,true)
     .then( () => {
-      if( this.crag.topos?.length == 0 ) this.topoContainer.style = 'display:none'
-      else this.topoContainer.style = ''
+      if( container.crag.topos?.length == 0 ) container.topoContainer.style = 'display:none'
+      else container.topoContainer.style = ''
       accept()
     })
   })
 }
 
-module.exports = CragViewContainer
+exports.Create = CreateCragViewContainer
+exports.Refresh = RefreshCragViewContainer

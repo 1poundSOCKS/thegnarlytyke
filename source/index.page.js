@@ -7,7 +7,6 @@ const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const CragViewContainer = require('./objects/crag-view-container.cjs')
 
 let _cragIndexContainer = null;
-let _cragViewContainer = null
 
 window.onload = () => {
   InitWindowStyle()
@@ -25,23 +24,22 @@ let InitWindowStyle = () => {
 
 let OnConfigLoad = async () => {
   const cookie = new Cookie();
-  
-  const page = document.getElementById('page')
-  page.appendChild(CreatePageHeader('home',cookie,Config))
-  page.appendChild(CreateCragIndexContainer())
-  page.appendChild(CreateCragViewContainer())
-  page.appendChild(CreateTopoImagesContainer())
-  
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
-  _cragViewContainer = new CragViewContainer(document.getElementById('main-topo-container'),ImageStorage)
+  const cragViewContainer = CragViewContainer.Create()
+
+  const page = document.getElementById('page')
+  page.appendChild(CreatePageHeader('home',cookie,Config))
+  page.appendChild(CreateCragIndexContainer(cragViewContainer,DataStorage,ImageStorage))
+  page.appendChild(cragViewContainer.root)
+
+  cragViewContainer.topoMediaScroller.topoImage = cragViewContainer.topoImage
+  cragViewContainer.topoMediaScroller.topoRouteTable = cragViewContainer.topoRouteTable
+  cragViewContainer.topoMediaScroller.autoSelectOnRefresh = true
 
   _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-index-container'),DataStorage,ImageStorage)
-  
-  _cragIndexContainer.Load(() => {
-    DisplayCragView()
-  })
+  _cragIndexContainer.Load(() => DisplayCragView(cragViewContainer))
 
   document.getElementById('close-crag-view').onclick = () => {
     DisplayIndexView()
@@ -55,74 +53,19 @@ let DisplayIndexView = () => {
   document.getElementById('crag-index-container').style = ''
 }
 
-let DisplayCragView = container => {
+let DisplayCragView = cragViewContainer => {
   document.getElementById('crag-index-container').style = 'display:none'
   _cragIndexContainer.selectedContainer.LoadCrag(DataStorage)
-  .then( crag => _cragViewContainer.Refresh(crag) )
+  .then( crag => CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage) )
   .then( () => {
     window.scrollTo( 0, 0 );  
     document.getElementById('crag-view-container').style = ''
   })
 }
 
-let CreateCragIndexContainer = () => {
-  const element = document.createElement('div')
-  element.id = 'crag-index-container'
-  return element
-}
-
-let CreateCragViewContainer = () => {
-  const element = document.createElement('div')
-  element.id = 'crag-view-container'
-  element.style = 'display:none'
-  element.appendChild(CreateCragViewHeader())
-  element.appendChild(CreateTopoImagesContainer())
-  element.appendChild(CreateMainTopoContainer())
-  return element
-}
-
-let CreateCragViewHeader = () => {
-  const element = document.createElement('div')
-  element.id = 'crag-view-header'
-  element.classList.add('crag-view-header')
-  const cragName = document.createElement('span')
-  cragName.id = 'crag-name'
-  cragName.classList.add('crag-name')
-  element.appendChild(cragName)
-  const closeIcon = document.createElement('i')
-  closeIcon.id = 'close-crag-view'
-  closeIcon.classList.add('close-crag-view-icon','far','fa-window-close')
-  closeIcon.title = 'close'
-  element.appendChild(closeIcon)
-  return element
-}
-
-let CreateTopoImagesContainer = () => {
-  const element = document.createElement('div')
-  element.id = 'topo-images-container'
-  element.classList.add('topo-images-container')
-  return element
-}
-
-let CreateMainTopoContainer = () => {
-  const element = document.createElement('div')
-  element.id = 'main-topo-container'
-  element.classList.add('main-topo-container')
-  
-  const imageContainer = document.createElement('div')
-  imageContainer.classList.add('main-topo-image-container')
-  
-  const imageCanvas = document.createElement('canvas')
-  imageCanvas.id = 'main-topo-image'
-  imageCanvas.classList.add('main-topo-image')
-  imageContainer.appendChild(imageCanvas)
-  
-  element.appendChild(imageContainer)
-  
-  const tableContainer = document.createElement('div')
-  tableContainer.id = 'topo-route-table-container'
-  tableContainer.classList.add('topo-route-table-container')
-  element.appendChild(tableContainer)
-
-  return element
+let CreateCragIndexContainer = (refreshContainer,dataStorage,imageStorage) => {
+  const div = document.createElement('div')
+  div.id = 'crag-index-container'
+  _cragIndexContainer = new CragIndexContainer(div,refreshContainer,dataStorage,imageStorage)
+  return div
 }
