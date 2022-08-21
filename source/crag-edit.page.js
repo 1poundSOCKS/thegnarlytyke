@@ -68,6 +68,7 @@ let OnEditIndex = () => {
   document.getElementById('icon-shift-right').onclick = () => _cragIndexContainer.ShiftCragRight()
   document.getElementById('icon-edit').onclick = () => OnEditCrag()
   document.getElementById('icon-publish').onclick = () => OnPublishUserUpdates()
+  document.getElementById('icon-discard').onclick = () => OnDiscardUserUpdates()
   document.getElementById('crag-index-container').style = ''
 }
 
@@ -114,6 +115,19 @@ let OnPublishUserUpdates = () => {
   .catch( err => console.log(err) )
 }
 
+let OnDiscardUserUpdates = () => {
+  fetch(`${Config.delete_user_updates_url}?user_id=${_cookie.GetValue("user-id")}&user_token=${_cookie.GetValue("user-token")}`)
+  .then( responseData => responseData.json() )
+  .then( response => {
+    if( response.error ) {
+      console.log(response.error)
+      return
+    }
+    console.log('Discarded!')
+  })
+  .catch( err => console.log(err) )
+}
+
 let CreateIconBarContainer = () => {
   const element = document.createElement('div')
   element.id = 'icon-bar-container'
@@ -127,6 +141,7 @@ let CreateIconBarContainer = () => {
   element.appendChild(CreateIcon('icon-edit','edit')).classList.add('fas','fa-edit')
   element.appendChild(CreateIcon('icon-save','save')).classList.add('fas','fa-save')
   element.appendChild(CreateIcon('icon-publish','publish')).innerText = 'publish'
+  element.appendChild(CreateIcon('icon-discard','discard')).innerText = 'discard'
   element.appendChild(CreateIcon('icon-close','close')).classList.add('far','fa-window-close')
 
   return element

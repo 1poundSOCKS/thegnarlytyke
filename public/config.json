@@ -7,5 +7,6 @@
   "save_data_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/save-data",
   "load_data_url" : "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/load-data",
   "publish_user_updates_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/publish-user-updates",
+  "delete_user_updates_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/delete-user-updates",
   "logon_url": "https://z4oiwf4tli.execute-api.eu-west-2.amazonaws.com/dev/logon"
 }
