@@ -31,28 +31,27 @@ let InitWindowStyle = () => {
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
 
+  const cragIndexContainer = CreateCragIndexContainer()
+  const cragViewContainer = CreateCragViewContainer()
+
   const page = document.getElementById('page')
   page.appendChild(CreatePageHeader('edit',_cookie,Config))
   page.appendChild(CreateIconBarContainer())
-  page.appendChild(CreateCragIndexContainer())
-  page.appendChild(CreateCragViewContainer())
+  page.appendChild(cragIndexContainer.root)
+  page.appendChild(cragViewContainer.root)
   page.appendChild(CreateTopoEditContainer())
 
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
 
-  document.getElementById('icon-bar-container').style = ''
-  
-  _cragCoverImage = document.getElementById('crag-cover-image')
-  _topoEditContainer = new TopoEditContainer(document.getElementById('topo-edit-container'))
+  cragIndexContainer.container.topoMediaScroller = cragViewContainer.topoIndexContainer
+  cragIndexContainer.container.Load(()=> {
+    cragViewContainer.cragName.value = cragIndexContainer.container.selectedContainer.cragDetails.name
+  })
 
-  _topoMediaScroller = new TopoMediaScroller(document.getElementById('topo-images-container'))
-  _topoMediaScroller.topoImage = _mainTopoImage
-
-  _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-covers-container'),DataStorage,ImageStorage)
-  _cragIndexContainer.cragNameElement = document.getElementById("crag-name")
-  _cragIndexContainer.topoMediaScroller = _topoMediaScroller
-  _cragIndexContainer.Load(()=> {})
+  cragViewContainer.cragName.onchange = () => {
+    cragIndexContainer.container.selectedContainer.cragDetails.name = cragIndexContainer.container.selectedCrag.name = cragViewContainer.cragName.value
+  }
 
   OnEditIndex()
   document.getElementById('icon-save').onclick = () => OnSave()
@@ -132,7 +131,6 @@ let CreateIconBarContainer = () => {
   const element = document.createElement('div')
   element.id = 'icon-bar-container'
   element.classList.add('icon-bar-container')
-  element.style = 'display:none'
 
   element.appendChild(CreateIcon('icon-add','add')).classList.add('far','fa-plus-square')
   element.appendChild(CreateIcon('icon-update-image','update image')).classList.add('fas','fa-file-upload')
@@ -158,19 +156,19 @@ let CreateCragIndexContainer = () => {
   const element = document.createElement('div')
   element.id = 'crag-index-container'
 
-    const statusBarContainer = document.createElement('div')
-    statusBarContainer.classList.add('crag-view-header')
-    statusBarContainer.style = 'display:none'
+  const statusBarContainer = document.createElement('div')
+  statusBarContainer.classList.add('crag-view-header')
+  statusBarContainer.style = 'display:none'
 
-      const status = document.createElement('input')
-      status.id = 'status'
-      status.classList.add('status-bar')
-      status.type = 'text'
-      status.name = 'name'
-      status.size = 20
-      status.readOnly = true
-  
-    statusBarContainer.appendChild(status)
+  const status = document.createElement('input')
+  status.id = 'status'
+  status.classList.add('status-bar')
+  status.type = 'text'
+  status.name = 'name'
+  status.size = 20
+  status.readOnly = true
+
+  statusBarContainer.appendChild(status)
 
   element.appendChild(statusBarContainer)
 
@@ -178,7 +176,9 @@ let CreateCragIndexContainer = () => {
   cragCoversContainer.id = 'crag-covers-container'
   element.appendChild(cragCoversContainer)
 
-  return element
+  _cragIndexContainer = new CragIndexContainer(cragCoversContainer,DataStorage,ImageStorage)
+
+  return {root:element,container:_cragIndexContainer}
 }
 
 let CreateCragViewContainer = () => {
@@ -186,15 +186,15 @@ let CreateCragViewContainer = () => {
   element.id = 'crag-view-container'
   element.style = 'display:none'
 
-    const cragViewHeader = document.createElement('div')
-    cragViewHeader.id = 'crag-view-header'
-    cragViewHeader.classList.add('crag-view-header')
+  const cragViewHeader = document.createElement('div')
+  cragViewHeader.id = 'crag-view-header'
+  cragViewHeader.classList.add('crag-view-header')
 
-      const cragName = document.createElement('input')
-      cragName.id = 'crag-name'
-      cragName.classList.add('crag-name')
-  
-    cragViewHeader.appendChild(cragName)
+  const cragName = document.createElement('input')
+  cragName.id = 'crag-name'
+  cragName.classList.add('crag-name')
+
+  cragViewHeader.appendChild(cragName)
 
   element.appendChild(cragViewHeader)
 
@@ -203,11 +203,14 @@ let CreateCragViewContainer = () => {
   topoImagesContainer.classList.add('topo-images-container-edit')
   element.appendChild(topoImagesContainer)
 
-  return element
+  _topoMediaScroller = new TopoMediaScroller(topoImagesContainer)
+
+  return {root:element,cragName:cragName,topoIndexContainer:_topoMediaScroller}
 }
 
 let CreateTopoEditContainer = () => {
   const element = document.createElement('div')
   element.id = 'topo-edit-container'
+  _topoEditContainer = new TopoEditContainer(element)
   return element
 }
