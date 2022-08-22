@@ -23,6 +23,8 @@ TopoOverlay.prototype.Draw = function(canvas) {
 }
 
 TopoOverlay.prototype.DrawRouteLines = function(ctx) {
+  if( !this.topo.routes ) return
+  
   ctx.lineWidth = "4";
   ctx.strokeStyle = routeLineStrokeStyle;
   ctx.setLineDash([10, 10]);
