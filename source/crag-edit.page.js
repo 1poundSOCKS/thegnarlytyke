@@ -8,8 +8,6 @@ const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 const TopoEditContainer = require('./objects/topo-edit-container.cjs');
 
 let _cookie = null;
-let _cragIndexContainer = null;
-let _mainTopoImage = null;
 let _topoEditContainer = null
 
 window.onload = () => {
@@ -53,52 +51,52 @@ let OnConfigLoad = async () => {
     cragIndexContainer.container.selectedContainer.cragDetails.name = cragIndexContainer.container.selectedCrag.name = cragViewContainer.cragName.value
   }
 
-  OnEditIndex()
-  document.getElementById('icon-save').onclick = () => OnSave()
+  OnEditIndex(cragIndexContainer,cragViewContainer)
+  document.getElementById('icon-save').onclick = () => OnSave(cragIndexContainer)
 }
 
-let OnEditIndex = () => {
-  document.getElementById('crag-view-container').style = 'display:none'
+let OnEditIndex = (cragIndexContainer, cragViewContainer) => {
+  cragViewContainer.root.style = 'display:none'
   _topoEditContainer.Hide()
-  _cragIndexContainer.RefreshSelectedContainer()
-  document.getElementById('icon-add').onclick = () => _cragIndexContainer.AddNewCrag()
-  document.getElementById('icon-update-image').onclick = () => _cragIndexContainer.UpdateSelectedImage()
-  document.getElementById('icon-shift-left').onclick = () => _cragIndexContainer.ShiftCragLeft()
-  document.getElementById('icon-shift-right').onclick = () => _cragIndexContainer.ShiftCragRight()
-  document.getElementById('icon-edit').onclick = () => OnEditCrag()
+  cragIndexContainer.container.RefreshSelectedContainer()
+  document.getElementById('icon-add').onclick = () => cragIndexContainer.container.AddNewCrag()
+  document.getElementById('icon-update-image').onclick = () => cragIndexContainer.container.UpdateSelectedImage()
+  document.getElementById('icon-shift-left').onclick = () => cragIndexContainer.container.ShiftCragLeft()
+  document.getElementById('icon-shift-right').onclick = () => cragIndexContainer.container.ShiftCragRight()
+  document.getElementById('icon-edit').onclick = () => OnEditCrag(cragIndexContainer, cragViewContainer)
   document.getElementById('icon-publish').onclick = () => OnPublishUserUpdates()
   document.getElementById('icon-discard').onclick = () => OnDiscardUserUpdates()
-  document.getElementById('crag-index-container').style = ''
+  cragIndexContainer.root.style = ''
 }
 
-let OnEditCrag = () => {
-  _cragIndexContainer.ShowSelectedCrag()
+let OnEditCrag = (cragIndexContainer, cragViewContainer) => {
+  cragIndexContainer.container.ShowSelectedCrag()
   .then( (crag) => {
     if( !crag ) return
-    document.getElementById('crag-index-container').style = 'display:none'
+    cragIndexContainer.root.style = 'display:none'
     _topoEditContainer.Hide()
-    document.getElementById('icon-add').onclick = () => _topoMediaScroller.AddNew()
-    document.getElementById('icon-update-image').onclick = () => _topoMediaScroller.UpdateSelectedImage()
-    document.getElementById('icon-shift-left').onclick = () => _topoMediaScroller.ShiftSelectedLeft()
-    document.getElementById('icon-shift-right').onclick = () => _topoMediaScroller.ShiftSelectedRight()
-    document.getElementById('icon-edit').onclick = () => OnEditTopo()
-    document.getElementById('icon-close').onclick = () => OnEditIndex()
+    document.getElementById('icon-add').onclick = () => cragViewContainer.topoIndexContainer.AddNew()
+    document.getElementById('icon-update-image').onclick = () => cragViewContainer.topoIndexContainer.UpdateSelectedImage()
+    document.getElementById('icon-shift-left').onclick = () => cragViewContainer.topoIndexContainer.ShiftSelectedLeft()
+    document.getElementById('icon-shift-right').onclick = () => cragViewContainer.topoIndexContainer.ShiftSelectedRight()
+    document.getElementById('icon-edit').onclick = () => OnEditTopo(cragIndexContainer, cragViewContainer)
+    document.getElementById('icon-close').onclick = () => OnEditIndex(cragIndexContainer, cragViewContainer)
     window.scrollTo( 0, 0 )
-    document.getElementById('crag-view-container').style = ''
+    cragViewContainer.root.style = ''
   })
 }
 
-let OnEditTopo = () => {
-  document.getElementById('crag-view-container').style = 'display:none'
-  document.getElementById('icon-close').onclick = () => OnEditCrag()
-  _topoEditContainer.Refresh(_cragIndexContainer.selectedCrag,_topoMediaScroller.selectedTopo)
+let OnEditTopo = (cragIndexContainer, cragViewContainer) => {
+  cragViewContainer.root.style = 'display:none'
+  document.getElementById('icon-close').onclick = () => OnEditCrag(cragIndexContainer, cragViewContainer)
+  _topoEditContainer.Refresh(cragIndexContainer.container.selectedCrag,cragViewContainer.topoIndexContainer.selectedTopo)
   window.scrollTo( 0, 0 )
   _topoEditContainer.Unhide()
   document.getElementById('topo-edit-container').style = ''
 }
 
-let OnSave = () => {
-  _cragIndexContainer.Save()
+let OnSave = (cragIndexContainer) => {
+  cragIndexContainer.container.Save()
 }
 
 let OnPublishUserUpdates = () => {
@@ -176,9 +174,9 @@ let CreateCragIndexContainer = () => {
   cragCoversContainer.id = 'crag-covers-container'
   element.appendChild(cragCoversContainer)
 
-  _cragIndexContainer = new CragIndexContainer(cragCoversContainer,DataStorage,ImageStorage)
+  const cragIndexContainer = new CragIndexContainer(cragCoversContainer,DataStorage,ImageStorage)
 
-  return {root:element,container:_cragIndexContainer}
+  return {root:element,container:cragIndexContainer}
 }
 
 let CreateCragViewContainer = () => {
