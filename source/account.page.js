@@ -84,7 +84,7 @@ let CreateFormInput = () => {
   const input = document.createElement('input')
   input.id = 'submit-logon'
   input.type = 'button'
-  input.value = 'submit'
+  input.value = 'logon'
   return input
 }
 

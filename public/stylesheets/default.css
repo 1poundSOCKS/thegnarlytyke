@@ -46,18 +46,6 @@ i {
   margin-bottom: 0.5rem;
 }
 
-.page-header-text > i {
-  position:fixed;
-  right:0;
-  color: var(--page-header-menu-text-not-selected);
-  font-size: 2rem;
-}
-
-.page-header-text > i:hover {
-  cursor: pointer;
-  color: var(--page-header-menu-text-selected);
-}
-
 /* topo images media scroller */
 .topo-images-container {
   display: grid;

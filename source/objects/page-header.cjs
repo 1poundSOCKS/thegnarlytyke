@@ -12,16 +12,6 @@ let CreatePageHeaderText = function(cookie) {
   const div = document.createElement('div')
   div.classList.add('page-header-text')
   div.innerText = 'the gnarly tyke'
-  if( cookie.IsUserLoggedOn() ) {
-    const logoff = document.createElement('i')
-    logoff.classList.add('fas','fa-user')
-    logoff.setAttribute('title','logoff')
-    logoff.onclick = () => {
-      cookie.Logoff()
-      window.location.href = 'index.html'
-    }
-    div.appendChild(logoff)
-  }
   return div
 }
 
