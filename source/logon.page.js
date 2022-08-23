@@ -8,9 +8,18 @@ window.onload = () => {
 }
 
 let OnConfigLoad = async () => {
+  const cookie = new Cookie()
+  if( cookie.IsUserLoggedOn() ) {
+    cookie.Logoff()
+    window.location.href = 'logon.html'
+  }
+
+  const pageHeader = CreatePageHeader('logon',cookie)
+  const logonForm = CreateLogonForm()
+
   const page = document.getElementById('page')
-  page.appendChild(CreatePageHeader('logon'))
-  page.appendChild(CreateLogonForm())
+  page.appendChild(pageHeader.root)
+  page.appendChild(logonForm.root)
 
   document.getElementById("submit-logon").onclick = () => {
     const email = document.getElementById("email").value;
@@ -34,7 +43,7 @@ let CreateLogonForm = () => {
   form.appendChild( CreateLogonDetail('email') )
   form.appendChild( CreateLogonDetail('password') )
   form.appendChild( CreateFormInput() )
-  return form
+  return {root:form}
 }
 
 let CreateLogonDetail = (name) => {

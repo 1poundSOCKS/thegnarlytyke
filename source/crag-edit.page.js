@@ -28,13 +28,14 @@ let InitWindowStyle = () => {
 let OnConfigLoad = async () => {
   _cookie = new Cookie();
 
+  const pageHeader = CreatePageHeader('edit',_cookie,Config)
   const iconBarContainer = CreateIconBarContainer()
   const cragIndexContainer = CreateCragIndexContainer()
   const cragViewContainer = CreateCragViewContainer()
   const topoEditContainer = CreateTopoEditContainer()
 
   const page = document.getElementById('page')
-  page.appendChild(CreatePageHeader('edit',_cookie,Config))
+  page.appendChild(pageHeader.root)
   page.appendChild(iconBarContainer.root)
   page.appendChild(cragIndexContainer.root)
   page.appendChild(cragViewContainer.root)

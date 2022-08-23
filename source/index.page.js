@@ -27,11 +27,13 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
+  const pageHeader = CreatePageHeader('home',cookie,Config)
   const cragViewContainer = CragViewContainer.Create()
+  const cragIndexContainer = CreateCragIndexContainer(cragViewContainer,DataStorage,ImageStorage)
 
   const page = document.getElementById('page')
-  page.appendChild(CreatePageHeader('home',cookie,Config))
-  page.appendChild(CreateCragIndexContainer(cragViewContainer,DataStorage,ImageStorage))
+  page.appendChild(pageHeader.root)
+  page.appendChild(cragIndexContainer.root)
   page.appendChild(cragViewContainer.root)
 
   cragViewContainer.topoMediaScroller.topoImage = cragViewContainer.topoImage
@@ -67,5 +69,5 @@ let CreateCragIndexContainer = (refreshContainer,dataStorage,imageStorage) => {
   const div = document.createElement('div')
   div.id = 'crag-index-container'
   _cragIndexContainer = new CragIndexContainer(div,refreshContainer,dataStorage,imageStorage)
-  return div
+  return {root:div}
 }
