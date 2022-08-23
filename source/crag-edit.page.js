@@ -68,6 +68,7 @@ let OnEditIndex = (iconBarContainer,cragIndexContainer, cragViewContainer, topoE
   iconBarContainer.icons.get('edit').onclick = () => OnEditCrag(iconBarContainer,cragIndexContainer, cragViewContainer, topoEditContainer)
   iconBarContainer.icons.get('publish').onclick = () => OnPublishUserUpdates()
   iconBarContainer.icons.get('discard').onclick = () => OnDiscardUserUpdates()
+  iconBarContainer.icons.get('close').style = 'display:none'
   cragIndexContainer.root.style = ''
 }
 
@@ -83,6 +84,12 @@ let OnEditCrag = (iconBarContainer, cragIndexContainer, cragViewContainer, topoE
     iconBarContainer.icons.get('shiftRight').onclick = () => cragViewContainer.topoIndexContainer.ShiftSelectedRight()
     iconBarContainer.icons.get('edit').onclick = () => OnEditTopo(iconBarContainer, cragIndexContainer, cragViewContainer, topoEditContainer)
     iconBarContainer.icons.get('close').onclick = () => OnEditIndex(iconBarContainer, cragIndexContainer, cragViewContainer, topoEditContainer)
+    iconBarContainer.icons.get('add').style = ''
+    iconBarContainer.icons.get('updateImage').style = ''
+    iconBarContainer.icons.get('shiftLeft').style = ''
+    iconBarContainer.icons.get('shiftRight').style = ''
+    iconBarContainer.icons.get('edit').style = ''
+    iconBarContainer.icons.get('close').style = ''
     window.scrollTo( 0, 0 )
     cragViewContainer.root.style = ''
   })
@@ -92,6 +99,11 @@ let OnEditTopo = (iconBarContainer, cragIndexContainer, cragViewContainer, topoE
   cragViewContainer.root.style = 'display:none'
   iconBarContainer.icons.get('close').onclick = () => OnEditCrag(iconBarContainer, cragIndexContainer, cragViewContainer, topoEditContainer)
   topoEditContainer.container.Refresh(cragIndexContainer.container.selectedCrag,cragViewContainer.topoIndexContainer.selectedTopo)
+  iconBarContainer.icons.get('add').style = 'display:none'
+  iconBarContainer.icons.get('updateImage').style = 'display:none'
+  iconBarContainer.icons.get('shiftLeft').style = 'display:none'
+  iconBarContainer.icons.get('shiftRight').style = 'display:none'
+  iconBarContainer.icons.get('edit').style = 'display:none'
   window.scrollTo( 0, 0 )
   topoEditContainer.root.style = ''
 }
@@ -133,18 +145,14 @@ let CreateIconBarContainer = () => {
 
   const icons = new Map()
 
-  icons.set('add',element.appendChild(CreateIcon('icon-add','add','far','fa-plus-square')))
-  icons.set('updateImage',element.appendChild(CreateIcon('icon-update-image','update image','fas','fa-file-upload')))
+  icons.set('add',element.appendChild(CreateIcon('icon-add','add','fa','fa-plus-square')))
+  icons.set('updateImage',element.appendChild(CreateIcon('icon-update-image','update image','fa','fa-file-upload')))
   icons.set('shiftLeft',element.appendChild(CreateIcon('icon-shift-left','shift left','fas','fa-arrow-left')))
   icons.set('shiftRight',element.appendChild(CreateIcon('icon-shift-right','shift right','fas','fa-arrow-right')))
   icons.set('edit',element.appendChild(CreateIcon('icon-edit','edit','fas','fa-edit')))
   icons.set('save',element.appendChild(CreateIcon('icon-save','save','fas','fa-save')))
-  const publish = CreateIcon('icon-publish','publish')
-  publish.innerText = 'publish'
-  icons.set('publish',element.appendChild(publish))
-  const discard = CreateIcon('icon-discard','discard')
-  discard.innerText = 'discard'
-  icons.set('discard',element.appendChild(discard))
+  icons.set('publish',element.appendChild(CreateIcon('icon-publish','publish','fa','fa-book')))
+  icons.set('discard',element.appendChild(CreateIcon('icon-discard','discard','fa','fa-trash')))
   icons.set('close',element.appendChild(CreateIcon('icon-close','close','far','fa-window-close')))
 
   return {root:element,icons:icons}
