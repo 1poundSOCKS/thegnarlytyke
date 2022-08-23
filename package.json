@@ -9,8 +9,8 @@
     "test": "jest --verbose",
     "build-index": "browserify source/index.page.js -o public/scripts/index.page.js",
     "build-crag-edit": "browserify source/crag-edit.page.js -o public/scripts/crag-edit.page.js",
-    "build-logon": "browserify source/logon.page.js -o public/scripts/logon.page.js",
-    "build": "npm run build-index && npm run build-crag-edit && npm run build-logon",
+    "build-account": "browserify source/account.page.js -o public/scripts/account.page.js",
+    "build": "npm run build-index && npm run build-crag-edit && npm run build-account",
     "watch": "watchify source/bundle.js -o public/bundle.js -v"
   },
   "keywords": [],

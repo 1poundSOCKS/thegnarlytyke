@@ -14,22 +14,13 @@ let CreatePageHeaderText = function(cookie) {
   div.innerText = 'the gnarly tyke'
   if( cookie.IsUserLoggedOn() ) {
     const logoff = document.createElement('i')
-    logoff.classList.add('fa','fa-sign-out')
+    logoff.classList.add('fas','fa-user')
     logoff.setAttribute('title','logoff')
     logoff.onclick = () => {
       cookie.Logoff()
       window.location.href = 'index.html'
     }
     div.appendChild(logoff)
-  }
-  else {
-    const logon = document.createElement('i')
-    logon.classList.add('fa','fa-sign-in')
-    logon.setAttribute('title','logon')
-    logon.onclick = () => {
-      window.location.href = 'logon.html'
-    }
-    div.appendChild(logon)
   }
   return div
 }

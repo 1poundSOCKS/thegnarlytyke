@@ -3,10 +3,10 @@ let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.activeItem = activeItem
   this.cookie = cookie
   this.AddItem('home','index.html')
-
   if( this.cookie?.IsUserLoggedOn() ) {
     if( allowEdit ) this.AddItem('edit', 'crag-edit.html')
   }
+  this.AddItem('account','account.html')
 }
 
 PageHeaderNav.prototype.AddItem = function(text, link, callback) {

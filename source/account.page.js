@@ -9,31 +9,38 @@ window.onload = () => {
 
 let OnConfigLoad = async () => {
   const cookie = new Cookie()
-  if( cookie.IsUserLoggedOn() ) {
-    cookie.Logoff()
-    window.location.href = 'logon.html'
-  }
 
-  const pageHeader = CreatePageHeader('logon',cookie)
-  const logonForm = CreateLogonForm()
+  const pageHeader = CreatePageHeader('account',cookie,Config)
 
   const page = document.getElementById('page')
   page.appendChild(pageHeader.root)
-  page.appendChild(logonForm.root)
 
-  document.getElementById("submit-logon").onclick = () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const logonRequest = new LogonRequest(Config.logon_url, email, password);
-    logonRequest.Send()
-    .then( logonResponse => {
-      if( logonResponse.user_id?.length > 0 && logonResponse.user_token?.length > 0 ) {
-        const cookie = new Cookie();
-        cookie.SetValue("user-id",logonResponse.user_id)
-        cookie.SetValue("user-token",logonResponse.user_token)
-        window.location.href = "index.html";
-      }
-    })
+  if( cookie.IsUserLoggedOn() ) {
+    const logoffForm = CreateLogoffForm()
+    page.appendChild(logoffForm.root)
+    logoffForm.submit.onclick = () => {
+      console.log('logoff')
+      cookie.Logoff()
+      location.reload()
+    }
+  }
+  else {
+    const logonForm = CreateLogonForm()
+    page.appendChild(logonForm.root)
+    logonForm.submit.onclick = () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const logonRequest = new LogonRequest(Config.logon_url, email, password);
+      logonRequest.Send()
+      .then( logonResponse => {
+        if( logonResponse.user_id?.length > 0 && logonResponse.user_token?.length > 0 ) {
+          const cookie = new Cookie();
+          cookie.SetValue("user-id",logonResponse.user_id)
+          cookie.SetValue("user-token",logonResponse.user_token)
+          window.location.href = "index.html";
+        }
+      })
+    }
   }
 }
 
@@ -42,8 +49,9 @@ let CreateLogonForm = () => {
   form.classList.add('centered')
   form.appendChild( CreateLogonDetail('email') )
   form.appendChild( CreateLogonDetail('password') )
-  form.appendChild( CreateFormInput() )
-  return {root:form}
+  const formInput = CreateFormInput()
+  form.appendChild( formInput )
+  return {root:form, submit: formInput }
 }
 
 let CreateLogonDetail = (name) => {
@@ -78,4 +86,15 @@ let CreateFormInput = () => {
   input.type = 'button'
   input.value = 'submit'
   return input
+}
+
+let CreateLogoffForm = () => {
+  const form = document.createElement('form')
+  form.classList.add('centered')
+  const formInput = document.createElement('input')
+  formInput.id = 'submit-logoff'
+  formInput.type = 'button'
+  formInput.value = 'logoff'
+  form.appendChild( formInput )
+  return {root:form, submit: formInput }
 }

@@ -50,6 +50,7 @@ i {
   position:fixed;
   right:0;
   color: var(--page-header-menu-text-not-selected);
+  font-size: 2rem;
 }
 
 .page-header-text > i:hover {
