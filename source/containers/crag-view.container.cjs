@@ -1,8 +1,8 @@
-const TopoMediaScroller = require('./topo-media-scroller.cjs')
-const TopoImage = require('./topo-image.cjs')
-const TopoRouteTable2 = require('./topo-route-table-2.cjs')
+const TopoMediaScroller = require('../objects/topo-media-scroller.cjs')
+const TopoImage = require('../objects/topo-image.cjs')
+const TopoRouteTable2 = require('../objects/topo-route-table-2.cjs')
 
-let CreateCragViewContainer = function() {
+let CreateCragViewContainer = () => {
   container = {}
   container.root = document.createElement('div')
   container.root.id = 'crag-view-container'
@@ -77,7 +77,7 @@ let CreateMainTopoContainer = (container) => {
   return element
 }
 
-RefreshCragViewContainer = function(container,crag,imageStorage) {
+let RefreshCragViewContainer = (container,crag,imageStorage) => {
   return new Promise( (accept) => {
     container.crag = crag
     if( container.cragNameElement ) {

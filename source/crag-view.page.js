@@ -5,7 +5,7 @@ const Cookie = require('./objects/cookie.cjs')
 const CreatePageHeader = require('./objects/page-header.cjs')
 const ViewContainer = require('./containers/view.container.cjs')
 const CragIndexContainer = require('./containers/crag-index.container.cjs')
-const CragViewContainer = require('./objects/crag-view-container.cjs')
+const CragViewContainer = require('./containers/crag-view.container.cjs')
 const LoadingContainer = require('./containers/loading.container.cjs')
 
 window.onload = () => {
