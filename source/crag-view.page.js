@@ -6,8 +6,6 @@ const CreatePageHeader = require('./objects/page-header.cjs')
 const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const CragViewContainer = require('./objects/crag-view-container.cjs')
 
-let _cragIndexContainer = null;
-
 window.onload = () => {
   InitWindowStyle()
   Config.Load().then( () => OnConfigLoad() );
@@ -24,50 +22,66 @@ let InitWindowStyle = () => {
 
 let OnConfigLoad = async () => {
   const cookie = new Cookie();
+
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
   const pageHeader = CreatePageHeader('home',cookie,Config)
+
+  const viewContainer = CreateViewContainer()
+
   const cragViewContainer = CragViewContainer.Create()
-  const cragIndexContainer = CreateCragIndexContainer(cragViewContainer,DataStorage,ImageStorage)
+  const cragIndexContainer = CreateCragIndexContainer(DataStorage,ImageStorage)
+
+  AddViewToContainer(viewContainer,cragIndexContainer,'crag-index')
+  AddViewToContainer(viewContainer,cragViewContainer,'crag-view')
 
   const page = document.getElementById('page')
   page.appendChild(pageHeader.root)
-  page.appendChild(cragIndexContainer.root)
-  page.appendChild(cragViewContainer.root)
+  page.appendChild(viewContainer.root)
 
-  cragViewContainer.topoMediaScroller.topoImage = cragViewContainer.topoImage
-  cragViewContainer.topoMediaScroller.topoRouteTable = cragViewContainer.topoRouteTable
-  cragViewContainer.topoMediaScroller.autoSelectOnRefresh = true
+  cragIndexContainer.container.Load()
+  .then( () => {
+    DisplayView(viewContainer,'crag-index')
+    AddCragIndexContainerSelectionHandler( cragIndexContainer, async (container) => {
+      const crag = await container.LoadCrag(DataStorage)
+      await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
+      DisplayView(viewContainer,'crag-view')
+    })
+  })
 
-  _cragIndexContainer = new CragIndexContainer(document.getElementById('crag-index-container'),DataStorage,ImageStorage)
-  _cragIndexContainer.Load(() => DisplayCragView(cragViewContainer))
-
-  document.getElementById('close-crag-view').onclick = () => {
-    DisplayIndexView()
+  cragViewContainer.header.close.onclick = () => {
+    DisplayView(viewContainer,'crag-index')
   }
 }
 
-let DisplayIndexView = () => {
-  document.getElementById('crag-view-container').style = 'display:none'
-  window.scrollTo( 0, 0 );
-  _cragIndexContainer.Unselect();
-  document.getElementById('crag-index-container').style = ''
-}
-
-let DisplayCragView = cragViewContainer => {
-  document.getElementById('crag-index-container').style = 'display:none'
-  _cragIndexContainer.selectedContainer.LoadCrag(DataStorage)
-  .then( crag => CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage) )
-  .then( () => {
-    window.scrollTo( 0, 0 );  
-    document.getElementById('crag-view-container').style = ''
-  })
-}
-
-let CreateCragIndexContainer = (refreshContainer,dataStorage,imageStorage) => {
+let CreateCragIndexContainer = (dataStorage,imageStorage) => {
   const div = document.createElement('div')
   div.id = 'crag-index-container'
-  _cragIndexContainer = new CragIndexContainer(div,refreshContainer,dataStorage,imageStorage)
-  return {root:div}
+  const cragIndexContainer = new CragIndexContainer(div,dataStorage,imageStorage)
+  return {root:div,container:cragIndexContainer}
+}
+
+let AddCragIndexContainerSelectionHandler = (container,handler) => {
+  container.container.AddUserSelectionHandler(handler)
+}
+
+let CreateViewContainer = () => {
+  const div = document.createElement('div')
+  return {root:div,views:new Map()}
+}
+
+let AddViewToContainer = (container,view,name) => {
+  container.views.set(name,view)
+}
+
+let DisplayView = (container,name) => {
+  container.views.forEach( (mappedContainer, mappedName) => {
+    if( mappedName == name ) {
+      container.root.appendChild(mappedContainer.root)
+    }
+    else {
+      mappedContainer.root.remove()
+    }
+  })
 }

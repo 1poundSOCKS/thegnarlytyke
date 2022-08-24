@@ -15,14 +15,16 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
 }
 
 CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
-  this.cragIndex.Load(this.dataStorage,this.imageStorage)
-  .then( () => {
-    this.data = this.cragIndex.data.crags
-    this.cragIndex.data.crags?.forEach( cragDetails => {
-      this.AppendCrag(cragDetails,OnCragSelectedHandler);
+  return new Promise( accept => {
+    this.cragIndex.Load(this.dataStorage,this.imageStorage)
+    .then( () => {
+      this.data = this.cragIndex.data.crags
+      this.cragIndex.data.crags?.forEach( cragDetails => {
+        this.AppendCrag(cragDetails,OnCragSelectedHandler);
+      })
+      accept()
     })
   })
-  .catch( err => console.log(err) )
 }
 
 CragIndexContainer.prototype.Save = function() {
@@ -38,6 +40,10 @@ CragIndexContainer.prototype.Save = function() {
     .catch( err => console.error(err) )
   })
   .catch( err => console.error(err) )
+}
+
+CragIndexContainer.prototype.AddUserSelectionHandler = function(userSelectionHandler) {
+  this.userSelectionHandler = userSelectionHandler
 }
 
 CragIndexContainer.prototype.UpdateImage = function(cragCovercontainer) {
@@ -69,6 +75,7 @@ CragIndexContainer.prototype.SelectContainer = function(cragCoverContainer,OnCra
   cragCoverContainer.element.classList.add('selected')
   this.selectedContainer = cragCoverContainer;
   if( OnCragSelectedHandler ) OnCragSelectedHandler();
+  if( this.userSelectionHandler ) this.userSelectionHandler(cragCoverContainer)
 }
 
 CragIndexContainer.prototype.RefreshSelectedContainer = function() {

@@ -6,14 +6,19 @@ let CreateCragViewContainer = function() {
   container = {}
   container.root = document.createElement('div')
   container.root.id = 'crag-view-container'
-  container.root.style = 'display:none'
-  container.root.appendChild(CreateCragViewHeader(container))
+  container.header = CreateCragViewHeader()
+  container.root.appendChild(container.header.root)
   container.root.appendChild(CreateTopoImagesContainer(container))
   container.root.appendChild(CreateMainTopoContainer(container))
+
+  container.topoMediaScroller.topoImage = container.topoImage
+  container.topoMediaScroller.topoRouteTable = container.topoRouteTable
+  container.topoMediaScroller.autoSelectOnRefresh = true
+
   return container
 }
 
-let CreateCragViewHeader = (container) => {
+let CreateCragViewHeader = () => {
   const element = document.createElement('div')
   element.id = 'crag-view-header'
   element.classList.add('crag-view-header')
@@ -21,15 +26,14 @@ let CreateCragViewHeader = (container) => {
   cragName.id = 'crag-name'
   cragName.classList.add('crag-name')
   
-  container.cragNameElement = cragName
-  
   element.appendChild(cragName)
   const closeIcon = document.createElement('i')
   closeIcon.id = 'close-crag-view'
   closeIcon.classList.add('close-crag-view-icon','far','fa-window-close')
   closeIcon.title = 'close'
   element.appendChild(closeIcon)
-  return element
+
+  return {root:element,name:cragName,close:closeIcon}
 }
 
 let CreateTopoImagesContainer = (container) => {
@@ -88,6 +92,7 @@ RefreshCragViewContainer = function(container,crag,imageStorage) {
         container.cragNameElement.innerText = container.crag.name
       }
     }
+    if( container.header?.name ) container.header.name.innerText = crag.name
     container.topoMediaScroller.Refresh(container.crag,imageStorage,true)
     .then( () => {
       if( container.crag.topos?.length == 0 ) container.topoContainer.style = 'display:none'
