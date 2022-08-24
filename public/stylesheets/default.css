@@ -1,3 +1,5 @@
+@import "../fontawesome-free/css/all.css";
+
 :root {
   --tgt-font: six caps;
   --tgt-header-background-color: #175707;

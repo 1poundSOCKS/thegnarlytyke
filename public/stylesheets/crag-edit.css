@@ -1,0 +1,87 @@
+@import "default.css";
+
+.route-tables-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+}
+
+.topo-edit-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+}
+
+table {
+  align-items: center;
+  border-collapse: collapse;
+  font-size: 1.5rem;
+  width: 90%;
+}
+
+tr {
+  border-top: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+  background-color: darkgray;
+  height: 2rem;
+}
+
+td {
+  text-align: left;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+td:nth-child(1) {
+  display: none;
+}
+
+.route-tables-container td:nth-child(5):hover {
+  color: white;
+}
+
+.crag-details-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.topo-image-container {
+  display: flex;  
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.topo-images-container-edit {
+  display: grid;
+  grid-template-columns: repeat(var(--crag-topos-column-count),1fr);
+  grid-gap: 1rem;
+  width: 100%;
+  background-color: lightgrey;
+}
+
+.topo-images-container-edit canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.selected-crag-cover-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  border-bottom: 0.2rem solid var(--default-border-color);
+}
+
+.selected-crag-cover-image {
+  height: 30rem;
+  margin-bottom: 1rem;
+}
+
+.crag-view-header {
+  display: flex;
+}
+
+.crag-name {
+  color: var(--crag-name-color);
+  background-color: var(--tgt-std-background-color);
+}
