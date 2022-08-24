@@ -19,6 +19,7 @@
   --crag-topos-column-count: 4;
   --unselected-border-color: darkgray;
   --selected-border-color: black;
+  --message-text-color: darkgray;
 }
 
 label, input {
@@ -290,6 +291,14 @@ i {
   font-weight: bold;
   text-align: center;
   margin-bottom: 1rem;
+}
+
+/* standard containers */
+.load-container {
+  text-align: center;
+  font-size: 3rem;
+  color: var(--message-text-color);
+  margin-top: 5rem;
 }
 
 /* keep at the bottom */

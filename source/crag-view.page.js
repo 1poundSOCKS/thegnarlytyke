@@ -3,8 +3,10 @@ const DataStorage = require('./objects/data-storage.cjs')
 const ImageStorage = require('./objects/image-storage.cjs')
 const Cookie = require('./objects/cookie.cjs')
 const CreatePageHeader = require('./objects/page-header.cjs')
-const CragIndexContainer = require('./objects/crag-index-container.cjs')
+const ViewContainer = require('./containers/view.container.cjs')
+const CragIndexContainer = require('./containers/crag-index.container.cjs')
 const CragViewContainer = require('./objects/crag-view-container.cjs')
+const LoadingContainer = require('./containers/loading.container.cjs')
 
 window.onload = () => {
   InitWindowStyle()
@@ -28,13 +30,16 @@ let OnConfigLoad = async () => {
 
   const pageHeader = CreatePageHeader('home',cookie,Config)
 
-  const viewContainer = CreateViewContainer()
+  const viewContainer = ViewContainer.Create()
 
   const cragViewContainer = CragViewContainer.Create()
-  const cragIndexContainer = CreateCragIndexContainer(DataStorage,ImageStorage)
+  const cragIndexContainer = CragIndexContainer.Create(DataStorage,ImageStorage)
 
-  AddViewToContainer(viewContainer,cragIndexContainer,'crag-index')
-  AddViewToContainer(viewContainer,cragViewContainer,'crag-view')
+  const loadingContainer = LoadingContainer.Create()
+
+  ViewContainer.AddView(viewContainer,cragIndexContainer,'crag-index')
+  ViewContainer.AddView(viewContainer,cragViewContainer,'crag')
+  ViewContainer.AddView(viewContainer,loadingContainer,'loading')
 
   const page = document.getElementById('page')
   page.appendChild(pageHeader.root)
@@ -42,46 +47,16 @@ let OnConfigLoad = async () => {
 
   cragIndexContainer.container.Load()
   .then( () => {
-    DisplayView(viewContainer,'crag-index')
-    AddCragIndexContainerSelectionHandler( cragIndexContainer, async (container) => {
+    ViewContainer.DisplayView(viewContainer,'crag-index')
+    CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (container) => {
+      ViewContainer.DisplayView(viewContainer,'loading')
       const crag = await container.LoadCrag(DataStorage)
       await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
-      DisplayView(viewContainer,'crag-view')
+      ViewContainer.DisplayView(viewContainer,'crag')
     })
   })
 
   cragViewContainer.header.close.onclick = () => {
-    DisplayView(viewContainer,'crag-index')
+    ViewContainer.DisplayView(viewContainer,'crag-index')
   }
-}
-
-let CreateCragIndexContainer = (dataStorage,imageStorage) => {
-  const div = document.createElement('div')
-  div.id = 'crag-index-container'
-  const cragIndexContainer = new CragIndexContainer(div,dataStorage,imageStorage)
-  return {root:div,container:cragIndexContainer}
-}
-
-let AddCragIndexContainerSelectionHandler = (container,handler) => {
-  container.container.AddUserSelectionHandler(handler)
-}
-
-let CreateViewContainer = () => {
-  const div = document.createElement('div')
-  return {root:div,views:new Map()}
-}
-
-let AddViewToContainer = (container,view,name) => {
-  container.views.set(name,view)
-}
-
-let DisplayView = (container,name) => {
-  container.views.forEach( (mappedContainer, mappedName) => {
-    if( mappedName == name ) {
-      container.root.appendChild(mappedContainer.root)
-    }
-    else {
-      mappedContainer.root.remove()
-    }
-  })
 }
