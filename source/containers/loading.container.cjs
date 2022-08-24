@@ -1,6 +1,6 @@
 let Create = () => {
   const div = document.createElement('div')
-  div.classList.add('load-container')
+  div.classList.add('loading-container')
   div.innerText = 'loading...'
   return {root:div}
 }

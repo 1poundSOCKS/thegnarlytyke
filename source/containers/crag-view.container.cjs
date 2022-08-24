@@ -1,21 +1,21 @@
-const TopoMediaScroller = require('../objects/topo-media-scroller.cjs')
 const TopoImage = require('../objects/topo-image.cjs')
 const TopoRouteTable2 = require('../objects/topo-route-table-2.cjs')
+const TopoImagesContainer = require('./topo-images.container.cjs')
 
 let CreateCragViewContainer = () => {
-  container = {}
-  container.root = document.createElement('div')
-  container.root.id = 'crag-view-container'
-  container.header = CreateCragViewHeader()
-  container.root.appendChild(container.header.root)
-  container.root.appendChild(CreateTopoImagesContainer(container))
-  container.root.appendChild(CreateMainTopoContainer(container))
+  const element = document.createElement('div')
+  const header = CreateCragViewHeader()
+  const topoImagesContainer = TopoImagesContainer.Create()
+  const topoView = CreateTopoViewContainer()
 
-  container.topoMediaScroller.topoImage = container.topoImage
-  container.topoMediaScroller.topoRouteTable = container.topoRouteTable
-  container.topoMediaScroller.autoSelectOnRefresh = true
+  topoImagesContainer.container.topoImage = topoView.topoImage
+  topoImagesContainer.container.topoRouteTable = topoView.routeTable
 
-  return container
+  element.appendChild(header.root)
+  element.appendChild(topoImagesContainer.root)
+  element.appendChild(topoView.root)
+
+  return {root:element,header:header,topoImages:topoImagesContainer,topoView:topoView}
 }
 
 let CreateCragViewHeader = () => {
@@ -23,12 +23,10 @@ let CreateCragViewHeader = () => {
   element.id = 'crag-view-header'
   element.classList.add('crag-view-header')
   const cragName = document.createElement('span')
-  cragName.id = 'crag-name'
   cragName.classList.add('crag-name')
   
   element.appendChild(cragName)
   const closeIcon = document.createElement('i')
-  closeIcon.id = 'close-crag-view'
   closeIcon.classList.add('close-crag-view-icon','far','fa-window-close')
   closeIcon.title = 'close'
   element.appendChild(closeIcon)
@@ -36,50 +34,30 @@ let CreateCragViewHeader = () => {
   return {root:element,name:cragName,close:closeIcon}
 }
 
-let CreateTopoImagesContainer = (container) => {
+let CreateTopoViewContainer = () => {
   const element = document.createElement('div')
-  element.id = 'topo-images-container'
-  element.classList.add('topo-images-container')
-  
-  container.topoMediaScroller = new TopoMediaScroller(element)
-  
-  return element
-}
-
-let CreateMainTopoContainer = (container) => {
-  const element = document.createElement('div')
-  element.id = 'main-topo-container'
   element.classList.add('main-topo-container')
-  
-  container.topoContainer = element
   
   const imageContainer = document.createElement('div')
   imageContainer.classList.add('main-topo-image-container')
   
   const imageCanvas = document.createElement('canvas')
-  imageCanvas.id = 'main-topo-image'
   imageCanvas.classList.add('main-topo-image')
-
-  container.topoImage = new TopoImage(imageCanvas, false);
-
+  const topoImage = new TopoImage(imageCanvas, false);
   imageContainer.appendChild(imageCanvas)
   
-  element.appendChild(imageContainer)
-  
   const tableContainer = document.createElement('div')
-  tableContainer.id = 'topo-route-table-container'
   tableContainer.classList.add('topo-route-table-container')
+  const topoRouteTable = new TopoRouteTable2(tableContainer)
 
-  container.topoRouteTable = new TopoRouteTable2(tableContainer)
-
+  element.appendChild(imageContainer)
   element.appendChild(tableContainer)
 
-  return element
+  return {root:element,topoImage:topoImage,routeTable:topoRouteTable}
 }
 
 let RefreshCragViewContainer = (container,crag,imageStorage) => {
   return new Promise( (accept) => {
-    container.crag = crag
     if( container.cragNameElement ) {
       if( container.cragNameElement.nodeName.toLowerCase() === 'input' ) {
         container.cragNameElement.value = this.crag.name
@@ -93,10 +71,10 @@ let RefreshCragViewContainer = (container,crag,imageStorage) => {
       }
     }
     if( container.header?.name ) container.header.name.innerText = crag.name
-    container.topoMediaScroller.Refresh(container.crag,imageStorage,true)
+    container.topoImages.container.Refresh(crag,imageStorage)
     .then( () => {
-      if( container.crag.topos?.length == 0 ) container.topoContainer.style = 'display:none'
-      else container.topoContainer.style = ''
+      if( crag.topos?.length == 0 ) container.topoView.root.style = 'display:none'
+      else container.topoView.root.style = ''
       accept()
     })
   })

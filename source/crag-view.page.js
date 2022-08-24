@@ -34,7 +34,6 @@ let OnConfigLoad = async () => {
 
   const cragViewContainer = CragViewContainer.Create()
   const cragIndexContainer = CragIndexContainer.Create(DataStorage,ImageStorage)
-
   const loadingContainer = LoadingContainer.Create()
 
   ViewContainer.AddView(viewContainer,cragIndexContainer,'crag-index')
@@ -45,7 +44,7 @@ let OnConfigLoad = async () => {
   page.appendChild(pageHeader.root)
   page.appendChild(viewContainer.root)
 
-  cragIndexContainer.container.Load()
+  CragIndexContainer.Load(cragIndexContainer)
   .then( () => {
     ViewContainer.DisplayView(viewContainer,'crag-index')
     CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (container) => {

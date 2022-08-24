@@ -294,7 +294,8 @@ i {
 }
 
 /* standard containers */
-.load-container {
+/* loading */
+.loading-container {
   text-align: center;
   font-size: 3rem;
   color: var(--message-text-color);

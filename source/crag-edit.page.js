@@ -2,7 +2,10 @@ const Config = require('./objects/config.cjs');
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CreatePageHeader = require('./objects/page-header.cjs');
-const CragIndexContainer = require('./objects/crag-index-container.cjs')
+const ViewContainer = require('./containers/view.container.cjs')
+const CragIndexContainer = require('./containers/crag-index.container.cjs')
+const LoadingContainer = require('./containers/loading.container.cjs')
+// const CragIndexContainer = require('./objects/crag-index-container.cjs')
 const Cookie = require('./objects/cookie.cjs')
 const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 const TopoEditContainer = require('./objects/topo-edit-container.cjs')
@@ -30,31 +33,45 @@ let OnConfigLoad = async () => {
 
   const pageHeader = CreatePageHeader('edit',_cookie,Config)
   const iconBarContainer = CreateIconBarContainer()
-  const cragIndexContainer = CreateCragIndexContainer()
-  const cragViewContainer = CreateCragViewContainer()
-  const topoEditContainer = CreateTopoEditContainer()
+  const viewContainer = ViewContainer.Create()
+  const cragIndexContainer = CragIndexContainer.Create(DataStorage,ImageStorage)
+  const loadingContainer = LoadingContainer.Create()
+  // const cragIndexContainer = CreateCragIndexContainer()
+  // const cragViewContainer = CreateCragViewContainer()
+  // const topoEditContainer = CreateTopoEditContainer()
+
+  ViewContainer.AddView(viewContainer,cragIndexContainer,'crag-index')
+  ViewContainer.AddView(viewContainer,loadingContainer,'loading')
 
   const page = document.getElementById('page')
   page.appendChild(pageHeader.root)
   page.appendChild(iconBarContainer.root)
-  page.appendChild(cragIndexContainer.root)
-  page.appendChild(cragViewContainer.root)
-  page.appendChild(topoEditContainer.root)
+  // page.appendChild(cragIndexContainer.root)
+  // page.appendChild(cragViewContainer.root)
+  // page.appendChild(topoEditContainer.root)
+  page.appendChild(viewContainer.root)
 
   DataStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, _cookie.GetValue("user-id"), _cookie.GetValue("user-token"));
 
-  cragIndexContainer.container.topoMediaScroller = cragViewContainer.topoIndexContainer
-  cragIndexContainer.container.Load(()=> {
-    cragViewContainer.cragName.value = cragIndexContainer.container.selectedContainer.cragDetails.name
+  // cragIndexContainer.container.topoMediaScroller = cragViewContainer.topoIndexContainer
+  // cragIndexContainer.container.Load(()=> {
+  //   cragViewContainer.cragName.value = cragIndexContainer.container.selectedContainer.cragDetails.name
+  // })
+
+  // cragViewContainer.cragName.onchange = () => {
+  //   cragIndexContainer.container.selectedContainer.cragDetails.name = cragIndexContainer.container.selectedCrag.name = cragViewContainer.cragName.value
+  // }
+
+  // OnEditIndex(iconBarContainer,cragIndexContainer,cragViewContainer,topoEditContainer)
+  // iconBarContainer.icons.get('save').onclick = () => OnSave(cragIndexContainer)
+
+  ViewContainer.DisplayView(viewContainer,'loading')
+
+  CragIndexContainer.Load(cragIndexContainer)
+  .then( () => {
+    ViewContainer.DisplayView(viewContainer,'crag-index')
   })
-
-  cragViewContainer.cragName.onchange = () => {
-    cragIndexContainer.container.selectedContainer.cragDetails.name = cragIndexContainer.container.selectedCrag.name = cragViewContainer.cragName.value
-  }
-
-  OnEditIndex(iconBarContainer,cragIndexContainer,cragViewContainer,topoEditContainer)
-  iconBarContainer.icons.get('save').onclick = () => OnSave(cragIndexContainer)
 }
 
 let OnEditIndex = (iconBarContainer,cragIndexContainer, cragViewContainer, topoEditContainer) => {

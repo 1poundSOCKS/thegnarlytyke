@@ -8,9 +8,14 @@ let Create = (dataStorage,imageStorage) => {
   return {root:div,container:cragIndexContainer}
 }
 
+let LoadCragIndex = async (container) => {
+  return container.container.Load()
+}
+
 let AddCragSelectionHandler = (container,handler) => {
   container.container.AddUserSelectionHandler(handler)
 }
 
 exports.Create = Create
+exports.Load = LoadCragIndex
 exports.AddCragSelectionHandler = AddCragSelectionHandler
