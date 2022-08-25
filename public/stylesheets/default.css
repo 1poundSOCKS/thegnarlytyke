@@ -49,16 +49,6 @@ i {
   margin-bottom: 0.5rem;
 }
 
-/* topo images media scroller */
-.topo-images-container {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 10rem;
-  overflow-x: auto;
-  grid-gap: 0.5rem;
-  justify-content: safe center;
-}
-
 .topo-container {
   display: flex;
   border-style: solid;

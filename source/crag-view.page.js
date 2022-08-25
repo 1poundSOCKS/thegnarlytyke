@@ -47,9 +47,9 @@ let OnConfigLoad = async () => {
   CragIndexContainer.Load(cragIndexContainer)
   .then( () => {
     ViewContainer.DisplayView(viewContainer,'crag-index')
-    CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (container) => {
+    CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (cragContainer) => {
       ViewContainer.DisplayView(viewContainer,'loading')
-      const crag = await container.LoadCrag(DataStorage)
+      const crag = await cragContainer.LoadCrag(DataStorage)
       await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
       ViewContainer.DisplayView(viewContainer,'crag')
     })

@@ -8,8 +8,9 @@ let CreateCragViewContainer = () => {
   const topoImagesContainer = TopoImagesContainer.Create()
   const topoView = CreateTopoViewContainer()
 
-  topoImagesContainer.container.topoImage = topoView.topoImage
-  topoImagesContainer.container.topoRouteTable = topoView.routeTable
+  topoImagesContainer.topoMediaScroller.autoSelectOnRefresh = true
+  topoImagesContainer.topoMediaScroller.topoImage = topoView.topoImage
+  topoImagesContainer.topoMediaScroller.topoRouteTable = topoView.routeTable
 
   element.appendChild(header.root)
   element.appendChild(topoImagesContainer.root)
@@ -71,7 +72,7 @@ let RefreshCragViewContainer = (container,crag,imageStorage) => {
       }
     }
     if( container.header?.name ) container.header.name.innerText = crag.name
-    container.topoImages.container.Refresh(crag,imageStorage)
+    container.topoImages.topoMediaScroller.Refresh(crag,imageStorage)
     .then( () => {
       if( crag.topos?.length == 0 ) container.topoView.root.style = 'display:none'
       else container.topoView.root.style = ''

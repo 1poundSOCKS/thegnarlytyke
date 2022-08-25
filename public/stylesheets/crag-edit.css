@@ -52,7 +52,7 @@ td:nth-child(1) {
   margin-bottom: 1rem;
 }
 
-.topo-images-container-edit {
+.topo-images-container {
   display: grid;
   grid-template-columns: repeat(var(--crag-topos-column-count),1fr);
   grid-gap: 1rem;
@@ -60,7 +60,7 @@ td:nth-child(1) {
   background-color: lightgrey;
 }
 
-.topo-images-container-edit canvas {
+.topo-images-container canvas {
   width: 100%;
   height: 100%;
 }

@@ -1,11 +1,15 @@
 const TopoMediaScroller = require('../objects/topo-media-scroller.cjs')
 
-let CreateTopoImagesContainer = () => {
+let Create = () => {
   const element = document.createElement('div')
   element.classList.add('topo-images-container')
   const topoMediaScroller = new TopoMediaScroller(element)
-  topoMediaScroller.autoSelectOnRefresh = true
-  return {root:element,container:topoMediaScroller}
+  return {root:element,topoMediaScroller:topoMediaScroller}
 }
 
-exports.Create = CreateTopoImagesContainer
+let Refresh = (container,crag,imageStorage) => {
+  container.topoMediaScroller.Refresh(crag,imageStorage)
+}
+
+exports.Create = Create
+exports.Refresh = Refresh

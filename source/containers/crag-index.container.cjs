@@ -3,19 +3,23 @@ const CragIndexContainer = require('../objects/crag-index-container.cjs')
 
 let Create = (dataStorage,imageStorage) => {
   const div = document.createElement('div')
-  div.id = 'crag-index-container'
   const cragIndexContainer = new CragIndexContainer(div,dataStorage,imageStorage)
-  return {root:div,container:cragIndexContainer}
+  return {root:div,cragIndex:cragIndexContainer}
 }
 
-let LoadCragIndex = async (container) => {
-  return container.container.Load()
+let Load = async (container) => {
+  return container.cragIndex.Load()
 }
 
 let AddCragSelectionHandler = (container,handler) => {
-  container.container.AddUserSelectionHandler(handler)
+  container.cragIndex.AddUserSelectionHandler(handler)
+}
+
+let LoadSelectedCrag = async (container) => {
+  return container.cragIndex.LoadSelectedCrag()
 }
 
 exports.Create = Create
-exports.Load = LoadCragIndex
+exports.Load = Load
 exports.AddCragSelectionHandler = AddCragSelectionHandler
+exports.LoadSelectedCrag = LoadSelectedCrag

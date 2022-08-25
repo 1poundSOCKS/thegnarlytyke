@@ -104,7 +104,7 @@ CragIndexContainer.prototype.ShowSelectedCrag = function() {
       accept(null)
       return
     }
-    this.selectedContainer.LoadCrag(this.dataStorage)
+    this.LoadSelectedCrag()
     .then( crag => {
       this.selectedCrag = crag
       if( this.cragNameElement ) {
@@ -124,6 +124,11 @@ CragIndexContainer.prototype.ShowSelectedCrag = function() {
     })
     .catch( () => reject() )
   })
+}
+
+CragIndexContainer.prototype.LoadSelectedCrag = async function() {
+  this.selectedCrag = await this.selectedContainer.LoadCrag(this.dataStorage)
+  return this.selectedCrag
 }
 
 CragIndexContainer.prototype.ShiftCragLeft = function() {
