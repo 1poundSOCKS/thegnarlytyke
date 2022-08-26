@@ -1,12 +1,11 @@
-const TopoImage = require('../objects/topo-image.cjs')
-const TopoRouteTable2 = require('../objects/topo-route-table-2.cjs')
 const TopoImagesContainer = require('./topo-images.container.cjs')
+const TopoViewContainer = require('./topo-view.container.cjs')
 
-let CreateCragViewContainer = () => {
+let Create = () => {
   const element = document.createElement('div')
-  const header = CreateCragViewHeader()
+  const header = CreateHeader()
   const topoImagesContainer = TopoImagesContainer.Create()
-  const topoView = CreateTopoViewContainer()
+  const topoView = TopoViewContainer.Create()
 
   topoImagesContainer.topoMediaScroller.autoSelectOnRefresh = true
   topoImagesContainer.topoMediaScroller.topoImage = topoView.topoImage
@@ -19,7 +18,7 @@ let CreateCragViewContainer = () => {
   return {root:element,header:header,topoImages:topoImagesContainer,topoView:topoView}
 }
 
-let CreateCragViewHeader = () => {
+let CreateHeader = () => {
   const element = document.createElement('div')
   element.id = 'crag-view-header'
   element.classList.add('crag-view-header')
@@ -35,29 +34,7 @@ let CreateCragViewHeader = () => {
   return {root:element,name:cragName,close:closeIcon}
 }
 
-let CreateTopoViewContainer = () => {
-  const element = document.createElement('div')
-  element.classList.add('main-topo-container')
-  
-  const imageContainer = document.createElement('div')
-  imageContainer.classList.add('main-topo-image-container')
-  
-  const imageCanvas = document.createElement('canvas')
-  imageCanvas.classList.add('main-topo-image')
-  const topoImage = new TopoImage(imageCanvas, false);
-  imageContainer.appendChild(imageCanvas)
-  
-  const tableContainer = document.createElement('div')
-  tableContainer.classList.add('topo-route-table-container')
-  const topoRouteTable = new TopoRouteTable2(tableContainer)
-
-  element.appendChild(imageContainer)
-  element.appendChild(tableContainer)
-
-  return {root:element,topoImage:topoImage,routeTable:topoRouteTable}
-}
-
-let RefreshCragViewContainer = (container,crag,imageStorage) => {
+let Refresh = (container,crag,imageStorage) => {
   return new Promise( (accept) => {
     if( container.cragNameElement ) {
       if( container.cragNameElement.nodeName.toLowerCase() === 'input' ) {
@@ -81,5 +58,5 @@ let RefreshCragViewContainer = (container,crag,imageStorage) => {
   })
 }
 
-exports.Create = CreateCragViewContainer
-exports.Refresh = RefreshCragViewContainer
+exports.Create = Create
+exports.Refresh = Refresh

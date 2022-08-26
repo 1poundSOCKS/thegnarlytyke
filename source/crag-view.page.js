@@ -30,12 +30,11 @@ let OnConfigLoad = async () => {
 
   const pageHeader = CreatePageHeader('home',cookie,Config)
 
-  const viewContainer = ViewContainer.Create()
-
-  const cragViewContainer = CragViewContainer.Create()
   const cragIndexContainer = CragIndexContainer.Create(DataStorage,ImageStorage)
+  const cragViewContainer = CragViewContainer.Create()
   const loadingContainer = LoadingContainer.Create()
 
+  const viewContainer = ViewContainer.Create()
   ViewContainer.AddView(viewContainer,cragIndexContainer,'crag-index')
   ViewContainer.AddView(viewContainer,cragViewContainer,'crag')
   ViewContainer.AddView(viewContainer,loadingContainer,'loading')

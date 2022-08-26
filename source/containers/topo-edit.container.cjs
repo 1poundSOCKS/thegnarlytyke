@@ -1,4 +1,5 @@
 const IconBarContainer = require('./icon-bar.container.cjs')
+const TopoViewContainer = require('./topo-view.container.cjs')
 
 let Create = () => {
   const div = document.createElement('div')
@@ -6,9 +7,17 @@ let Create = () => {
   const iconBarContainer = IconBarContainer.Create()
   IconBarContainer.AddIcon(iconBarContainer,'close','close','fas','fa-close')
 
-  div.appendChild(iconBarContainer.root)
+  const topoView = TopoViewContainer.Create()
 
-  return {root:div,iconBar:iconBarContainer}
+  div.appendChild(iconBarContainer.root)
+  div.appendChild(topoView.root)
+
+  return {root:div,iconBar:iconBarContainer,topoView:topoView}
+}
+
+let Refresh = (container,topo,image) => {
+  TopoViewContainer.Refresh(container.topoView,topo,image)
 }
 
 exports.Create = Create
+exports.Refresh = Refresh

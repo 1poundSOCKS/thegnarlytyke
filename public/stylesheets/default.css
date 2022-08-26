@@ -106,6 +106,29 @@ i {
   font-size: 2rem;
 }
 
+.topo-route-table-container {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.topo-route-table-container table {
+  margin: auto;
+  border-collapse: collapse;
+  font-size: 2.5rem;
+  width: min(100% - 2rem, 60rem);
+  text-align: left;
+}
+
+.topo-route-table-container tr {
+  border-top: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+  background-color: darkgray;
+}
+
+.topo-route-table-container td:nth-child(1) {
+  display: none;
+}
+
 .topo-route-table-edit {
   margin-top: 1rem;
   border-collapse: collapse;

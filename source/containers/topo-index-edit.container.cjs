@@ -40,5 +40,15 @@ let Refresh = (container,crag,imageStorage) => {
   TopoImagesContainer.Refresh(container.topoImages,crag,imageStorage)
 }
 
+let GetSelectedTopo = (container) => {
+  return container.topoImages.topoMediaScroller.selectedTopo
+}
+
+let GetSelectedTopoImage = (container) => {
+  return container.topoImages.topoMediaScroller.selectedTopo.image
+}
+
 exports.Create = Create
 exports.Refresh = Refresh
+exports.GetSelectedTopo = GetSelectedTopo
+exports.GetSelectedTopoImage = GetSelectedTopoImage

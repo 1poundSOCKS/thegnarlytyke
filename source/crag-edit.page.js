@@ -42,17 +42,17 @@ let OnConfigLoad = async () => {
   const iconBar = IconBarContainer.Create()
 
   // const iconBarContainer = CreateIconBarContainer()
-  const viewContainer = ViewContainer.Create()
   const cragIndexEditContainer = CragIndexEditContainer.Create(DataStorage,ImageStorage)
   const topoIndexEditContainer = TopoIndexEditContainer.Create()
   const topoEditContainer = TopoEditContainer.Create()
+  const loadingContainer = LoadingContainer.Create()
 
   // const cragIndexContainer = CragIndexContainer.Create(DataStorage,ImageStorage)
-  const loadingContainer = LoadingContainer.Create()
   // const cragIndexContainer = CreateCragIndexContainer()
   // const cragViewContainer = CreateCragViewContainer()
   // const topoEditContainer = CreateTopoEditContainer()
 
+  const viewContainer = ViewContainer.Create()
   ViewContainer.AddView(viewContainer,cragIndexEditContainer,'crag-index')
   ViewContainer.AddView(viewContainer,topoIndexEditContainer,'topo-index')
   ViewContainer.AddView(viewContainer,topoEditContainer,'topo-edit')
@@ -85,19 +85,27 @@ let OnConfigLoad = async () => {
     TopoIndexEditContainer.Refresh(topoIndexEditContainer,crag,ImageStorage)
     ViewContainer.DisplayView(viewContainer,'topo-index')
   }
+
   IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = () => {
   }
+
   IconBarContainer.AddIcon(iconBar,'publish','publish','fa','fa-book').onclick = () => {
   }
+
   IconBarContainer.AddIcon(iconBar,'discard','discard','fa','fa-trash').onclick = () => {
   }
 
   topoIndexEditContainer.iconBar.icons.get('edit').onclick = () => {
+    const topo = TopoIndexEditContainer.GetSelectedTopo(topoIndexEditContainer)
+    const image = TopoIndexEditContainer.GetSelectedTopoImage(topoIndexEditContainer)
+    TopoEditContainer.Refresh(topoEditContainer,topo,image)
     ViewContainer.DisplayView(viewContainer,'topo-edit')
   }
+
   topoIndexEditContainer.iconBar.icons.get('close').onclick = () => {
     ViewContainer.DisplayView(viewContainer,'crag-index')
   }
+  
   topoEditContainer.iconBar.icons.get('close').onclick = () => {
     ViewContainer.DisplayView(viewContainer,'topo-index')
   }
