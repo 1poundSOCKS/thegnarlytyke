@@ -11,6 +11,10 @@ let Load = async (container) => {
   return container.cragIndex.Load()
 }
 
+let Save = async (container) => {
+  return container.cragIndex.Save()
+}
+
 let AddCragSelectionHandler = (container,handler) => {
   container.cragIndex.AddUserSelectionHandler(handler)
 }
@@ -21,5 +25,6 @@ let LoadSelectedCrag = async (container) => {
 
 exports.Create = Create
 exports.Load = Load
+exports.Save = Save
 exports.AddCragSelectionHandler = AddCragSelectionHandler
 exports.LoadSelectedCrag = LoadSelectedCrag

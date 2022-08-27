@@ -43,4 +43,8 @@ TopoRouteTable2.prototype.OnRowClick = function(rowElement) {
   if( this.callbackObject ) this.callbackObject.OnTopoRouteSelected(this.selectedRoute);
 }
 
+TopoRouteTable2.prototype.OnCragRouteToggled = function(crag,cragRoute) {
+  this.Refresh()
+}
+
 module.exports = TopoRouteTable2;

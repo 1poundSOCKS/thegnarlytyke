@@ -9,7 +9,8 @@ const CragIndexEditContainer = require('./containers/crag-index-edit.container.c
 const TopoIndexEditContainer = require('./containers/topo-index-edit.container.cjs')
 const TopoEditContainer = require('./containers/topo-edit.container.cjs')
 const IconBarContainer = require('./containers/icon-bar.container.cjs')
-const LoadingContainer = require('./containers/loading.container.cjs')
+const LoadingContainer = require('./containers/loading.container.cjs');
+const CragIndex = require('./objects/crag-index.cjs');
 // const CragIndexContainer = require('./objects/crag-index-container.cjs')
 // const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 // const TopoEditContainer = require('./objects/topo-edit-container.cjs');
@@ -86,19 +87,38 @@ let OnConfigLoad = async () => {
     ViewContainer.DisplayView(viewContainer,'topo-index')
   }
 
-  IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = () => {
+  IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = async () => {
+    ViewContainer.DisplayView(viewContainer,'loading')
+    try {
+      await CragIndexContainer.Save(cragIndexEditContainer.cragIndex)
+    }
+    catch( e ) { console.log(e) }
+    ViewContainer.DisplayView(viewContainer,'crag-index')
   }
 
-  IconBarContainer.AddIcon(iconBar,'publish','publish','fa','fa-book').onclick = () => {
+  IconBarContainer.AddIcon(iconBar,'publish','publish','fa','fa-book').onclick = async () => {
+    ViewContainer.DisplayView(viewContainer,'loading')
+    try {
+      await OnPublishUserUpdates()
+    }
+    catch( e ) {}
+    ViewContainer.DisplayView(viewContainer,'crag-index')
   }
 
-  IconBarContainer.AddIcon(iconBar,'discard','discard','fa','fa-trash').onclick = () => {
+  IconBarContainer.AddIcon(iconBar,'discard','discard','fa','fa-trash').onclick = async () => {
+    ViewContainer.DisplayView(viewContainer,'loading')
+    try {
+      await OnDiscardUserUpdates()
+    }
+    catch( e ) {}
+    ViewContainer.DisplayView(viewContainer,'crag-index')
   }
 
   topoIndexEditContainer.iconBar.icons.get('edit').onclick = () => {
+    const crag = topoIndexEditContainer.topoImages.topoMediaScroller.crag
     const topo = TopoIndexEditContainer.GetSelectedTopo(topoIndexEditContainer)
     const image = TopoIndexEditContainer.GetSelectedTopoImage(topoIndexEditContainer)
-    TopoEditContainer.Refresh(topoEditContainer,topo,image)
+    TopoEditContainer.Refresh(topoEditContainer,crag,topo,image)
     ViewContainer.DisplayView(viewContainer,'topo-edit')
   }
 
@@ -170,33 +190,29 @@ let OnConfigLoad = async () => {
 // }
 
 let OnSave = (cragIndexContainer) => {
-  cragIndexContainer.container.Save()
+  CragIndexContainer.Save(cragIndexContainer)
 }
 
-let OnPublishUserUpdates = () => {
-  fetch(`${Config.publish_user_updates_url}?user_id=${_cookie.GetValue("user-id")}&user_token=${_cookie.GetValue("user-token")}`)
-  .then( responseData => responseData.json() )
-  .then( response => {
-    if( response.error ) {
-      console.log(response.error)
-      return
-    }
-    console.log('published!')
-  })
-  .catch( err => console.log(err) )
+let OnPublishUserUpdates = async () => {
+  const responseData = await fetch(`${Config.publish_user_updates_url}?user_id=${_cookie.GetValue("user-id")}&user_token=${_cookie.GetValue("user-token")}`)
+  const response = await responseData.json()
+  console.log(response)
+  if( response.error ) {
+    console.log(response.error)
+    throw response.error
+  }
+  return response
 }
 
-let OnDiscardUserUpdates = () => {
-  fetch(`${Config.delete_user_updates_url}?user_id=${_cookie.GetValue("user-id")}&user_token=${_cookie.GetValue("user-token")}`)
-  .then( responseData => responseData.json() )
-  .then( response => {
-    if( response.error ) {
-      console.log(response.error)
-      return
-    }
-    console.log('Discarded!')
-  })
-  .catch( err => console.log(err) )
+let OnDiscardUserUpdates = async () => {
+  const responseData = await fetch(`${Config.delete_user_updates_url}?user_id=${_cookie.GetValue("user-id")}&user_token=${_cookie.GetValue("user-token")}`)
+  const response = await responseData.json()
+  console.log(response)
+  if( response.error ) {
+    console.log(response.error)
+    throw response.error
+  }
+  return response
 }
 
 // let CreateIconBarContainer = () => {

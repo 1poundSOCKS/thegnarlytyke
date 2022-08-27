@@ -11,14 +11,15 @@ let CragRouteTable = function(parent,callbackObject) {
   this.callbackObject = callbackObject
 }
 
-CragRouteTable.prototype.SetTopoID = function(topoID) {
-  this.topo = new Topo(this.crag.GetMatchingTopo(topoID));
-  this.Refresh();
-}
+// CragRouteTable.prototype.SetTopoID = function(topoID) {
+//   this.topo = new Topo(this.crag.GetMatchingTopo(topoID));
+//   this.Refresh();
+// }
 
 CragRouteTable.prototype.Refresh = function(crag, topoData, OnRouteToggled) {
   if( crag ) this.crag = crag
   if( topoData ) this.topo = topoData ? new Topo(topoData) : null;
+  console.log(this.topo)
   this.table = new RouteTable(this.element, this.crag.routes, true, this);
   this.OnRouteToggled = OnRouteToggled;
 
