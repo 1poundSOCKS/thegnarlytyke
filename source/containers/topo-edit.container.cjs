@@ -8,6 +8,9 @@ let Create = () => {
   IconBarContainer.AddIcon(iconBarContainer,'close','close','fas','fa-close')
 
   const topoView = TopoViewContainer.Create()
+  topoView.topoImage.contentEditable = true
+  topoView.topoImage.AddMouseHandler()
+  topoView.routeTable.callbackObject = topoView.topoImage
 
   div.appendChild(iconBarContainer.root)
   div.appendChild(topoView.root)

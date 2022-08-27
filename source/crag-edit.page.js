@@ -1,4 +1,5 @@
 const Config = require('./objects/config.cjs');
+const Cookie = require('./objects/cookie.cjs')
 const DataStorage = require('./objects/data-storage.cjs');
 const ImageStorage = require('./objects/image-storage.cjs');
 const CreatePageHeader = require('./objects/page-header.cjs');
@@ -10,8 +11,7 @@ const TopoEditContainer = require('./containers/topo-edit.container.cjs')
 const IconBarContainer = require('./containers/icon-bar.container.cjs')
 const LoadingContainer = require('./containers/loading.container.cjs')
 // const CragIndexContainer = require('./objects/crag-index-container.cjs')
-const Cookie = require('./objects/cookie.cjs')
-const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
+// const TopoMediaScroller = require('./objects/topo-media-scroller.cjs')
 // const TopoEditContainer = require('./objects/topo-edit-container.cjs');
 // const CragIndexContainer = require('./objects/crag-index-container.cjs');
 

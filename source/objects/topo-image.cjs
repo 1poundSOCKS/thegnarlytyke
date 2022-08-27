@@ -126,4 +126,9 @@ TopoImage.prototype.GetMousePositionFromEvent = function(event) {
   return { x: mousePercentX, y: mousePercentY };
 }
 
+TopoImage.prototype.OnTopoRouteSelected = function(route) {
+  console.log(route)
+  this.routeID = route.id
+}
+
 module.exports = TopoImage;
