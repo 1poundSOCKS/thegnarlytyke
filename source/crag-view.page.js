@@ -28,33 +28,35 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config);
   ImageStorage.Init(Config);
 
-  const pageHeader = CreatePageHeader('home',cookie,Config)
-
+  const viewContainer = ViewContainer.Create()
   const cragIndexContainer = CragIndexContainer.Create(DataStorage,ImageStorage)
   const cragViewContainer = CragViewContainer.Create()
-  const loadingContainer = LoadingContainer.Create()
-
-  const viewContainer = ViewContainer.Create()
   ViewContainer.AddView(viewContainer,cragIndexContainer,'crag-index')
   ViewContainer.AddView(viewContainer,cragViewContainer,'crag')
-  ViewContainer.AddView(viewContainer,loadingContainer,'loading')
+  ViewContainer.DisplayView(viewContainer,'crag-index')
 
-  const page = document.getElementById('page')
-  page.appendChild(pageHeader.root)
-  page.appendChild(viewContainer.root)
-
-  CragIndexContainer.Load(cragIndexContainer)
-  .then( () => {
-    ViewContainer.DisplayView(viewContainer,'crag-index')
-    CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (cragContainer) => {
-      ViewContainer.DisplayView(viewContainer,'loading')
-      const crag = await cragContainer.LoadCrag(DataStorage)
-      await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
-      ViewContainer.DisplayView(viewContainer,'crag')
-    })
+  CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (cragContainer) => {
+    const crag = await cragContainer.LoadCrag(DataStorage)
+    await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
+    ViewContainer.DisplayView(viewContainer,'crag')
   })
+
+  // create the main page view and add the views
+  const pageViewContainer = ViewContainer.Create()
+  const loadingContainer = LoadingContainer.Create()
+  ViewContainer.AddView(pageViewContainer,viewContainer,'view')
+  ViewContainer.AddView(pageViewContainer,loadingContainer,'loading')
+  
+  const page = document.getElementById('page')
+  const pageHeader = CreatePageHeader('home',cookie,Config)
+  page.appendChild(pageHeader.root)
+  page.appendChild(pageViewContainer.root)
 
   cragViewContainer.header.close.onclick = () => {
     ViewContainer.DisplayView(viewContainer,'crag-index')
   }
+
+  ViewContainer.DisplayTemporaryView(pageViewContainer,'loading','view', async () => {
+    return CragIndexContainer.Load(cragIndexContainer)
+  })
 }

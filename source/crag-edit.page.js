@@ -55,8 +55,8 @@ let OnConfigLoad = async () => {
   ViewContainer.AddView(mainViewContainer, mainLoadingContainer,'loading')
 
   // setup the page and display the edit view
-  const pageHeader = CreatePageHeader('edit',cookie,Config)
   const page = document.getElementById('page')
+  const pageHeader = CreatePageHeader('edit',cookie,Config)
   page.appendChild(pageHeader.root)
   page.appendChild(mainViewContainer.root)
   ViewContainer.DisplayView(mainViewContainer,'edit')
