@@ -248,16 +248,16 @@ i {
 .icon-bar-container {
   text-align:center;
   margin-bottom: 1rem;
-  border-left: 0;
-  border-right: 0;
-  border-style: solid;
+  border-bottom-style: solid;
   border-color: var(--tgt-std-dark-color);
 }
+
 .icon-bar-container > i {
   font-size: 4rem;
   color: var(--tgt-std-dark-color);
   background-color: var(--tgt-std-background-color);
 }
+
 .icon-bar-container > i:hover {
   cursor: pointer;
   color: var(--tgt-std-light-color);

@@ -32,63 +32,74 @@ let OnConfigLoad = async () => {
   DataStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"),true);
   ImageStorage.Init(Config, cookie.GetValue("user-id"), cookie.GetValue("user-token"));
 
-  const pageHeader = CreatePageHeader('edit',cookie,Config)
-  const iconBar = IconBarContainer.Create()
-
+  // create the containers for the edit view
   const cragIndexEditContainer = CragIndexEditContainer.Create(DataStorage,ImageStorage)
   const topoIndexEditContainer = TopoIndexEditContainer.Create()
   const topoEditContainer = TopoEditContainer.Create()
-  const loadingContainer = LoadingContainer.Create()
+  const editLoadingContainer = LoadingContainer.Create()
 
-  const viewContainer = ViewContainer.Create()
-  ViewContainer.AddView(viewContainer,cragIndexEditContainer,'crag-index')
-  ViewContainer.AddView(viewContainer,topoIndexEditContainer,'topo-index')
-  ViewContainer.AddView(viewContainer,topoEditContainer,'topo-edit')
-  ViewContainer.AddView(viewContainer,loadingContainer,'loading')
+  // create the edit view with icon bar and add the views
+  const editViewContainer = ViewContainer.Create()
+  const iconBar = IconBarContainer.Create()
+  editViewContainer.root.appendChild(iconBar.root)
+  ViewContainer.AddView(editViewContainer,cragIndexEditContainer,'crag-index')
+  ViewContainer.AddView(editViewContainer,topoIndexEditContainer,'topo-index')
+  ViewContainer.AddView(editViewContainer,topoEditContainer,'topo-edit')
+  ViewContainer.AddView(editViewContainer,editLoadingContainer,'loading')
+  ViewContainer.DisplayView(editViewContainer,'crag-index')
 
+  // create the main page view and add the views
+  const mainViewContainer = ViewContainer.Create()
+  const mainLoadingContainer = LoadingContainer.Create()
+  ViewContainer.AddView(mainViewContainer, editViewContainer,'edit')
+  ViewContainer.AddView(mainViewContainer, mainLoadingContainer,'loading')
+
+  // setup the page and display the edit view
+  const pageHeader = CreatePageHeader('edit',cookie,Config)
   const page = document.getElementById('page')
   page.appendChild(pageHeader.root)
-  page.appendChild(iconBar.root)
-  page.appendChild(viewContainer.root)
+  page.appendChild(mainViewContainer.root)
+  ViewContainer.DisplayView(mainViewContainer,'edit')
 
+  // setup the command handlers
   cragIndexEditContainer.iconBar.icons.get('edit').onclick = async () => {
-    loadingContainer.root.innerText = 'loading...'
-    ViewContainer.DisplayView(viewContainer,'loading')
+    editLoadingContainer.root.innerText = 'loading...'
+    ViewContainer.DisplayView(editViewContainer,'loading')
     const crag = await CragIndexEditContainer.LoadSelectedCrag(cragIndexEditContainer)
     TopoIndexEditContainer.Refresh(topoIndexEditContainer,crag,ImageStorage)
-    ViewContainer.DisplayView(viewContainer,'topo-index')
+    ViewContainer.DisplayView(editViewContainer,'topo-index')
   }
 
   IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = async () => {
-    loadingContainer.root.innerText = 'saving...'
-    ViewContainer.DisplayView(viewContainer,'loading')
+    mainLoadingContainer.root.innerText = 'saving...'
+    ViewContainer.DisplayView(mainViewContainer,'loading')
     try {
       await CragIndexContainer.Save(cragIndexEditContainer.cragIndex)
     }
     catch( e ) {
       console.log(e)
     }
-    ViewContainer.DisplayView(viewContainer,'crag-index')
+    ViewContainer.DisplayView(mainViewContainer,'edit')
   }
 
   IconBarContainer.AddIcon(iconBar,'publish','publish','fa','fa-book').onclick = async () => {
-    loadingContainer.root.innerText = 'publishing user updates...'
-    ViewContainer.DisplayView(viewContainer,'loading')
+    mainLoadingContainer.root.innerText = 'publishing user updates...'
+    ViewContainer.DisplayView(mainViewContainer,'loading')
     try {
       await OnPublishUserUpdates(cookie)
     }
     catch( e ) {}
-    ViewContainer.DisplayView(viewContainer,'crag-index')
+    ViewContainer.DisplayView(mainViewContainer,'edit')
   }
 
   IconBarContainer.AddIcon(iconBar,'discard','discard','fa','fa-trash').onclick = async () => {
-    loadingContainer.root.innerText = 'discarding user updates...'
-    ViewContainer.DisplayView(viewContainer,'loading')
+    mainLoadingContainer.root.innerText = 'discarding user updates...'
+    ViewContainer.DisplayView(mainViewContainer,'loading')
     try {
       await OnDiscardUserUpdates(cookie)
     }
     catch( e ) {}
-    ViewContainer.DisplayView(viewContainer,'crag-index')
+    ViewContainer.DisplayView(mainViewContainer,'edit')
   }
 
   topoIndexEditContainer.iconBar.icons.get('edit').onclick = () => {
@@ -96,23 +107,24 @@ let OnConfigLoad = async () => {
     const topo = TopoIndexEditContainer.GetSelectedTopo(topoIndexEditContainer)
     const image = TopoIndexEditContainer.GetSelectedTopoImage(topoIndexEditContainer)
     TopoEditContainer.Refresh(topoEditContainer,crag,topo,image)
-    ViewContainer.DisplayView(viewContainer,'topo-edit')
+    ViewContainer.DisplayView(editViewContainer,'topo-edit')
   }
 
   topoIndexEditContainer.iconBar.icons.get('close').onclick = () => {
-    ViewContainer.DisplayView(viewContainer,'crag-index')
+    ViewContainer.DisplayView(editViewContainer,'crag-index')
   }
   
   topoEditContainer.iconBar.icons.get('close').onclick = () => {
-    ViewContainer.DisplayView(viewContainer,'topo-index')
+    ViewContainer.DisplayView(editViewContainer,'topo-index')
   }
 
-  loadingContainer.root.innerText = 'loading...'
-  ViewContainer.DisplayView(viewContainer,'loading')
+  mainLoadingContainer.root.innerText = 'loading...'
+  ViewContainer.DisplayView(mainViewContainer,'loading')
 
+  // finally load the crag index and display the edit view
   CragIndexContainer.Load(cragIndexEditContainer.cragIndex)
   .then( () => {
-    ViewContainer.DisplayView(viewContainer,'crag-index')
+    ViewContainer.DisplayView(mainViewContainer,'edit')
   })
 }
 
