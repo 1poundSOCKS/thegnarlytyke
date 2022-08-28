@@ -4,10 +4,6 @@ let Create = () => {
 
   const header = document.createElement('div')
 
-  // div.innerText = 'loading...'
-
-  // <i class="fa fa-spinner" aria-hidden="true"></i>
-
   const spinner = document.createElement('i')
   spinner.classList.add('fa','fa-spinner','fa-spin')
 
@@ -18,4 +14,3 @@ let Create = () => {
 }
 
 exports.Create = Create
-exports.DisplayTemporaryView = DisplayTemporaryView
