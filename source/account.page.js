@@ -48,17 +48,17 @@ let CreateLogonForm = () => {
   const form = document.createElement('form')
   form.classList.add('centered')
   form.appendChild( CreateLogonDetail('email') )
-  form.appendChild( CreateLogonDetail('password') )
+  form.appendChild( CreateLogonDetail('password','password') )
   const formInput = CreateFormInput()
   form.appendChild( formInput )
   return {root:form, submit: formInput }
 }
 
-let CreateLogonDetail = (name) => {
+let CreateLogonDetail = (name,type) => {
   const div = document.createElement('div')
   div.classList.add('logon-detail')
   div.appendChild( CreateLabel(name) )
-  div.appendChild( CreateInput(name) )
+  div.appendChild( CreateInput(name,type) )
   return div
 }
 
@@ -71,11 +71,12 @@ let CreateLabel = (name) => {
   return div
 }
 
-let CreateInput = (name) => {
+let CreateInput = (name,type) => {
   const div = document.createElement('div')
   const input = document.createElement('input')
   input.id = name
-  input.type = 'text'
+  if( type ) input.type = type
+  else input.type = 'text'
   div.appendChild(input)
   return div
 }
