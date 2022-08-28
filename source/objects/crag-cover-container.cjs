@@ -63,13 +63,11 @@ CragCoverContainer.prototype.UpdateImage = async function(imageFile) {
   this.Refresh()
 }
 
-CragCoverContainer.prototype.LoadImage = function(imageStorage) {
+CragCoverContainer.prototype.LoadImage = async function(imageStorage) {
   if( !this.cragDetails.imageFile ) return
-  imageStorage.LoadImageFromFile(this.cragDetails.imageFile)
-  .then( image => {
-    this.image = image
-    this.Refresh()
-  })
+  this.image = await imageStorage.LoadImageFromFile(this.cragDetails.imageFile)
+  this.Refresh()
+  return this.image
 }
 
 CragCoverContainer.prototype.SaveImage = async function(imageStorage) {

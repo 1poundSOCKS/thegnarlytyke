@@ -35,12 +35,6 @@ let OnConfigLoad = async () => {
   ViewContainer.AddView(viewContainer,cragViewContainer,'crag')
   ViewContainer.DisplayView(viewContainer,'crag-index')
 
-  CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, async (cragContainer) => {
-    const crag = await cragContainer.LoadCrag(DataStorage)
-    await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
-    ViewContainer.DisplayView(viewContainer,'crag')
-  })
-
   // create the main page view and add the views
   const pageViewContainer = ViewContainer.Create()
   const loadingContainer = LoadingContainer.Create()
@@ -51,6 +45,15 @@ let OnConfigLoad = async () => {
   const pageHeader = CreatePageHeader('home',cookie,Config)
   page.appendChild(pageHeader.root)
   page.appendChild(pageViewContainer.root)
+
+  // setup the command handlers
+  CragIndexContainer.AddCragSelectionHandler( cragIndexContainer, (cragContainer) => {
+    ViewContainer.DisplayTemporaryView(pageViewContainer,'loading','view', async () => {
+      const crag = await cragContainer.LoadCrag(DataStorage)
+      await CragViewContainer.Refresh(cragViewContainer,crag,ImageStorage)
+      ViewContainer.DisplayView(viewContainer,'crag')
+    })
+  })
 
   cragViewContainer.header.close.onclick = () => {
     ViewContainer.DisplayView(viewContainer,'crag-index')

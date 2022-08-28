@@ -17,11 +17,12 @@ let CragIndexContainer = function(parentElement,dataStorage,imageStorage) {
 CragIndexContainer.prototype.Load = function(OnCragSelectedHandler) {
   return new Promise( accept => {
     this.cragIndex.Load(this.dataStorage,this.imageStorage)
-    .then( () => {
+    .then( async () => {
       this.data = this.cragIndex.data.crags
-      this.cragIndex.data.crags?.forEach( cragDetails => {
-        this.AppendCrag(cragDetails,OnCragSelectedHandler);
+      const containers = this.cragIndex.data.crags?.map( cragDetails => {
+        return this.AppendCrag(cragDetails,OnCragSelectedHandler);
       })
+      await Promise.all(containers)
       accept()
     })
   })
@@ -51,12 +52,12 @@ CragIndexContainer.prototype.UpdateSelectedImage = function() {
   this.UpdateImage(this.selectedContainer)
 }
 
-CragIndexContainer.prototype.AppendCrag = function(cragDetails,OnCragSelectedHandler) {
+CragIndexContainer.prototype.AppendCrag = async function(cragDetails,OnCragSelectedHandler) {
   const cragCoverContainer = new CragCoverContainer(cragDetails);
   this.element.appendChild(cragCoverContainer.element);
   this.cragCoverContainers.set(cragCoverContainer.id,cragCoverContainer)
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
-  cragCoverContainer.LoadImage(this.imageStorage)
+  await cragCoverContainer.LoadImage(this.imageStorage)
   return cragCoverContainer
 }
 
