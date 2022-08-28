@@ -18,6 +18,13 @@ let DisplayView = (container,name) => {
   })
 }
 
+let DisplayTemporaryView = async (viewContainer,tempView,finalView,workFunction) => {
+  DisplayView(viewContainer,tempView)
+  await workFunction()
+  DisplayView(viewContainer,finalView)
+}
+
 exports.Create = CreateViewContainer
 exports.AddView = AddViewToContainer
 exports.DisplayView = DisplayView
+exports.DisplayTemporaryView = DisplayTemporaryView

@@ -315,6 +315,10 @@ i {
   margin-top: 5rem;
 }
 
+.loading-container > i {
+  font-size: 5rem;
+}
+
 /* keep at the bottom */
 .do-not-display {
   display: none;

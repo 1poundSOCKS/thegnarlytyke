@@ -63,7 +63,7 @@ let OnConfigLoad = async () => {
 
   // setup the command handlers
   cragIndexEditContainer.iconBar.icons.get('edit').onclick = async () => {
-    editLoadingContainer.root.innerText = 'loading...'
+    editLoadingContainer.header.innerText = 'loading'
     ViewContainer.DisplayView(editViewContainer,'loading')
     const crag = await CragIndexEditContainer.LoadSelectedCrag(cragIndexEditContainer)
     TopoIndexEditContainer.Refresh(topoIndexEditContainer,crag,ImageStorage)
@@ -71,7 +71,7 @@ let OnConfigLoad = async () => {
   }
 
   IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = async () => {
-    mainLoadingContainer.root.innerText = 'saving...'
+    mainLoadingContainer.header.innerText = 'saving'
     ViewContainer.DisplayView(mainViewContainer,'loading')
     try {
       await CragIndexContainer.Save(cragIndexEditContainer.cragIndex)
@@ -83,7 +83,7 @@ let OnConfigLoad = async () => {
   }
 
   IconBarContainer.AddIcon(iconBar,'publish','publish','fa','fa-book').onclick = async () => {
-    mainLoadingContainer.root.innerText = 'publishing user updates...'
+    mainLoadingContainer.header.innerText = 'publishing updates'
     ViewContainer.DisplayView(mainViewContainer,'loading')
     try {
       await OnPublishUserUpdates(cookie)
@@ -93,7 +93,7 @@ let OnConfigLoad = async () => {
   }
 
   IconBarContainer.AddIcon(iconBar,'discard','discard','fa','fa-trash').onclick = async () => {
-    mainLoadingContainer.root.innerText = 'discarding user updates...'
+    mainLoadingContainer.header.innerText = 'discarding updates'
     ViewContainer.DisplayView(mainViewContainer,'loading')
     try {
       await OnDiscardUserUpdates(cookie)
@@ -118,14 +118,7 @@ let OnConfigLoad = async () => {
     ViewContainer.DisplayView(editViewContainer,'topo-index')
   }
 
-  mainLoadingContainer.root.innerText = 'loading...'
-  ViewContainer.DisplayView(mainViewContainer,'loading')
-
-  // finally load the crag index and display the edit view
-  CragIndexContainer.Load(cragIndexEditContainer.cragIndex)
-  .then( () => {
-    ViewContainer.DisplayView(mainViewContainer,'edit')
-  })
+  ViewContainer.DisplayTemporaryView(mainViewContainer,'loading','edit', async () => CragIndexContainer.Load(cragIndexEditContainer.cragIndex))
 }
 
 let OnPublishUserUpdates = async (cookie) => {
