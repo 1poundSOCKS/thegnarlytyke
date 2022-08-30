@@ -3,22 +3,33 @@ const columnIndex_Index = 1;
 const columnIndex_Name = 2;
 const columnIndex_Grade = 3;
 
-let RouteTable = function(element, routes, editable, eventHandlerObject) {
+let RouteTable = function(element, routes, editable, eventHandlerObject, addHeader) {
   this.element = element;
   this.routes = routes;
   this.contentEditable = editable;
   this.eventHandlerObject = eventHandlerObject;
+  if( addHeader ) this.AddHeader()
+}
+
+RouteTable.prototype.AddHeader = function() {
+  this.header = this.element.createTHead()
+  const row = this.header.insertRow(0)
+  row.insertCell(columnIndex_ID)
+  row.insertCell(columnIndex_Index)
+  const nameCell = row.insertCell(columnIndex_Name)
+  nameCell.innerHTML = "Name"
+  const gradeCell = row.insertCell(columnIndex_Grade)
+  gradeCell.innerHTML = "Grade"
 }
 
 RouteTable.prototype.Refresh = function() {
-  let tableBody = this.element.getElementsByTagName('tbody')[0];
-  if( !tableBody ) tableBody = this.element.createTBody();
-  while( this.element.rows.length > 0 ) this.element.deleteRow(0);
+  while( this.tableBody?.rows.length > 0 ) this.tableBody.deleteRow(0);
+  if( !this.tableBody ) this.tableBody = this.element.createTBody();
   this.routes.forEach( routeInfo => this.AppendRow(routeInfo) );
 }
 
 RouteTable.prototype.AppendRow = function(routeInfo) {
-  let newRow = this.element.insertRow(this.element.rows.length);
+  let newRow = this.tableBody.insertRow(this.tableBody.rows.length);
   if( !routeInfo ) {
     newRow.insertCell(columnIndex_ID);
     newRow.insertCell(columnIndex_Index);
@@ -28,7 +39,7 @@ RouteTable.prototype.AppendRow = function(routeInfo) {
     return newRow;
   }
   newRow.insertCell(columnIndex_ID).innerText = routeInfo.id;
-  newRow.insertCell(columnIndex_Index).innerText = routeInfo ? this.element.rows.length : '#';
+  newRow.insertCell(columnIndex_Index).innerText = routeInfo ? this.tableBody.rows.length : '#';
   newRow.insertCell(columnIndex_Name).innerText = routeInfo.name;
   newRow.insertCell(columnIndex_Grade).innerText = routeInfo.grade;
   if( this.contentEditable ) this.EnableRowEdit(newRow);

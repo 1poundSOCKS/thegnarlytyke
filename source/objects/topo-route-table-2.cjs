@@ -9,6 +9,7 @@ let TopoRouteTable2 = function(parentElement, callbackObject) {
 }
 
 TopoRouteTable2.prototype.Refresh = function(topoData) {
+  this.element.innerHTML = ''
   if( topoData ) this.topo = new Topo(topoData);
   this.routeInfo = this.topo.GetSortedRouteInfo();
   this.table = new RouteTable(this.element, this.routeInfo);

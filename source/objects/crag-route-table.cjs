@@ -7,14 +7,14 @@ let CragRouteTable = function(parent,callbackObject) {
   this.parent = parent
   this.element = document.createElement('table')
   this.parent.appendChild(this.element)
-
   this.callbackObject = callbackObject
 }
 
 CragRouteTable.prototype.Refresh = function(crag, topoData, OnRouteToggled) {
+  this.element.innerHTML = ''
   if( crag ) this.crag = crag
   if( topoData ) this.topo = topoData ? new Topo(topoData) : null;
-  this.table = new RouteTable(this.element, this.crag.routes, true, this);
+  this.table = new RouteTable(this.element, this.crag.routes, true, this, true);
   this.OnRouteToggled = OnRouteToggled;
 
   if( !this.crag ) {
@@ -22,7 +22,7 @@ CragRouteTable.prototype.Refresh = function(crag, topoData, OnRouteToggled) {
     return;
   }
   this.table.Refresh();
-  Array.from(this.element.rows).forEach( row => {
+  Array.from(this.table.tableBody.rows).forEach( row => {
     if( this.topo ) {
       const routeID = this.table.GetRowID(row);
       const cragRoute = this.crag.GetMatchingRoute(routeID);
