@@ -17,7 +17,7 @@
   --default-border-color: darkgray;
   --crag-covers-column-count: 2;
   --crag-topos-column-count: 4;
-  --unselected-border-color: darkgray;
+  --unselected-border-color: lightgray;
   --selected-border-color: black;
   --message-text-color: darkgray;
 }
@@ -68,31 +68,13 @@ i {
 }
 
 .main-topo-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
+  display: grid;
+  grid-template-rows: 1 1;
   justify-content: center;
   align-items: top;
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  background-color: var(--tgt-std-background-color);
-}
-
-.main-topo-container-edit {
-  display: grid;
-  width: 100%;
-  grid-template-columns: 1fr 1fr 1.5fr;
-  gap: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  background-color: var(--tgt-std-background-color);
-}
-
-.edit-topo-container {
-  display: block;
-  margin: auto;
   background-color: var(--tgt-std-background-color);
 }
 
@@ -115,7 +97,7 @@ i {
   margin: auto;
   border-collapse: collapse;
   font-size: 2.5rem;
-  width: min(100% - 2rem, 60rem);
+  width: 100%;
   text-align: left;
 }
 
@@ -185,19 +167,13 @@ i {
   margin-top: 1rem;
 }
 
-.main-topo-image-container {
-  display: flex;
-  width: min(100% - 2rem, 60rem);
-  border-style: solid;
-  border-color: var(--unselected-border-color);
-}
-
 .main-topo-image-container-edit {
   width: 100%;
 }
 
 .main-topo-image {
   width: 100%;
+  margin: auto;
 }
 
 /* page header nav */

@@ -45,13 +45,6 @@ td:nth-child(1) {
   margin-bottom: 1rem;
 }
 
-.topo-image-container {
-  display: flex;  
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
 .topo-images-container {
   display: grid;
   grid-template-columns: repeat(var(--crag-topos-column-count),1fr);
