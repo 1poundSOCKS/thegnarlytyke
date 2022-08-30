@@ -23,8 +23,13 @@ let LoadSelectedCrag = async (container) => {
   return container.cragIndex.LoadSelectedCrag()
 }
 
+let RefreshSelectedContainer = (container) => {
+  container.cragIndex.RefreshSelectedContainer()
+}
+
 exports.Create = Create
 exports.Load = Load
 exports.Save = Save
 exports.AddCragSelectionHandler = AddCragSelectionHandler
 exports.LoadSelectedCrag = LoadSelectedCrag
+exports.RefreshSelectedContainer = RefreshSelectedContainer

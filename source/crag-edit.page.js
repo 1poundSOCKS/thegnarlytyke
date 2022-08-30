@@ -116,6 +116,7 @@ let OnConfigLoad = async () => {
   }
 
   topoIndexEditContainer.iconBar.icons.get('close').onclick = () => {
+    CragIndexContainer.RefreshSelectedContainer(cragIndexEditContainer.cragIndex)
     ViewContainer.DisplayView(editViewContainer,'crag-index')
   }
   
