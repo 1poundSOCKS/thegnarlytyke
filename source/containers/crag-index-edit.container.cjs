@@ -39,5 +39,11 @@ let LoadSelectedCrag = async (container) => {
   return CragIndexContainer.LoadSelectedCrag(container.cragIndex)
 }
 
+let UpdateSelectedCragName = (container,name) => {
+  container.cragIndex.cragIndex.selectedContainer.cragDetails.name = name
+  container.cragIndex.cragIndex.selectedContainer.crag.name = name
+}
+
 exports.Create = Create
 exports.LoadSelectedCrag = LoadSelectedCrag
+exports.UpdateSelectedCragName = UpdateSelectedCragName

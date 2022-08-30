@@ -70,6 +70,11 @@ let OnConfigLoad = async () => {
     ViewContainer.DisplayView(editViewContainer,'topo-index')
   }
 
+  topoIndexEditContainer.cragName.onchange = () => {
+    const cragName = topoIndexEditContainer.cragName.value
+    CragIndexEditContainer.UpdateSelectedCragName(cragIndexEditContainer,cragName)
+  }
+
   IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = async () => {
     mainLoadingContainer.header.innerText = 'saving'
     ViewContainer.DisplayView(mainViewContainer,'loading')

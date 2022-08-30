@@ -12,6 +12,11 @@ let Create = () => {
   IconBarContainer.AddIcon(iconBarContainer,'edit','edit','fas','fa-edit')
   IconBarContainer.AddIcon(iconBarContainer,'close','close','fas','fa-close')
 
+  const cragDetailsContainer = document.createElement('div')
+  cragDetailsContainer.classList.add('crag-details-container')
+  const cragName = document.createElement('input')
+  cragDetailsContainer.appendChild(cragName)
+
   const topoImagesContainer = TopoImagesContainer.Create()
 
   iconBarContainer.icons.get('add').onclick = () => {
@@ -31,12 +36,14 @@ let Create = () => {
   }
 
   div.appendChild(iconBarContainer.root)
+  div.appendChild(cragDetailsContainer)
   div.appendChild(topoImagesContainer.root)
 
-  return {root:div,iconBar:iconBarContainer,topoImages:topoImagesContainer}
+  return {root:div,iconBar:iconBarContainer,cragName:cragName,topoImages:topoImagesContainer}
 }
 
 let Refresh = (container,crag,imageStorage) => {
+  container.cragName.value = crag.name
   TopoImagesContainer.Refresh(container.topoImages,crag,imageStorage)
 }
 
