@@ -69,13 +69,19 @@ i {
 
 .main-topo-container {
   display: grid;
-  grid-template-rows: 1 1;
+  grid-auto-rows: repeat (2, 100%);
   justify-content: center;
   align-items: top;
   margin: auto;
   margin-top: 1rem;
   margin-bottom: 1rem;
+  width: 100%;
   background-color: var(--tgt-std-background-color);
+}
+
+.main-topo-image {
+  width: min(95vw,60rem);
+  margin: auto;
 }
 
 .topo-image-container {
@@ -167,14 +173,9 @@ i {
   margin-top: 1rem;
 }
 
-.main-topo-image-container-edit {
+/* .main-topo-image-container-edit {
   width: 100%;
-}
-
-.main-topo-image {
-  width: 100%;
-  margin: auto;
-}
+} */
 
 /* page header nav */
 .page-header {
@@ -247,17 +248,21 @@ i {
   width: 100%;
   background-color: lightgrey;
 }
+
 .crag-cover-container {
   display: flex;
   border-style: solid;
   border-color: var(--unselected-border-color);
 }
+
 .crag-cover-container.selected {
   border-color: var(--selected-border-color);
 }
+
 .crag-cover-container:hover {
   cursor: pointer;
 }
+
 .crag-cover-header {
   margin: auto;
   margin-top: 1rem;
