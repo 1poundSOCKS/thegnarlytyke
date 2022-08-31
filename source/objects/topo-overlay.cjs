@@ -119,14 +119,16 @@ TopoOverlay.prototype.DrawRouteStartPoint = function(ctx, point, index, number, 
   const row = (number == 0 ? 0 : 1)
   const secondRowCount = groupTotal - 1
   const rowPosition = (row == 0 ? 0 :  number - (secondRowCount + 1) / 2)
-  this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y + row * 0.04, index + 1, routeStartPointColor);
+  const rowShiftY = ( groupTotal % 2 == 0 ) ? 0.04 : 0.035 // ensure second row is touching the first when there's an odd number of points
+  this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y + row * rowShiftY, index + 1, routeStartPointColor);
 }
 
 TopoOverlay.prototype.DrawRouteEndPoint = function(ctx, point, index, number, groupTotal) {
   const row = (number == 0 ? 0 : 1)
   const secondRowCount = groupTotal - 1
   const rowPosition = (row == 0 ? 0 :  number - (secondRowCount + 1) / 2)
-  this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y - row * 0.04, index + 1, routeEndPointColor);
+  const rowShiftY = ( groupTotal % 2 == 0 ) ? 0.04 : 0.035 // ensure second row is touching the first when there's an odd number of points
+  this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y - row * rowShiftY, index + 1, routeEndPointColor);
 }
 
 TopoOverlay.prototype.DrawRouteJoinPoint = function(ctx, point, index) {
