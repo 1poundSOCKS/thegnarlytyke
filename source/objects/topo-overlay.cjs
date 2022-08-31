@@ -88,13 +88,21 @@ TopoOverlay.prototype.DrawRouteEndPoints = function(ctx) {
     }
   });
 
-  const endCounts = new Map();
-  indexedPoints.forEach( point => {
-    let count = endCounts.get(point.point.id);
-    if( !count ) count = 0;
-    this.DrawRouteEndPoint(ctx, point.point, point.index, count);
-    endCounts.set(point.point.id, count + 1);
-  });
+  const endGroups = new Map()
+  indexedPoints.forEach( indexedPoint => {
+    let group = endGroups.get(indexedPoint.point.id)
+    if( !group ) {
+      group = []
+      endGroups.set(indexedPoint.point.id, group)
+    }
+    group.push(indexedPoint)
+  })
+
+  endGroups.forEach( (endPoints) => {
+    endPoints.forEach( (indexedPoint,index) => {
+        this.DrawRouteEndPoint(ctx, indexedPoint.point, indexedPoint.index, index, endPoints.length);
+    })
+  })
 }
 
 TopoOverlay.prototype.DrawRouteJoinPoints = function(ctx) {
@@ -114,8 +122,11 @@ TopoOverlay.prototype.DrawRouteStartPoint = function(ctx, point, index, number, 
   this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y + row * 0.04, index + 1, routeStartPointColor);
 }
 
-TopoOverlay.prototype.DrawRouteEndPoint = function(ctx, point, index, number) {
-  this.DrawPoint(ctx, point.x, point.y - number * 0.04, index + 1, routeEndPointColor);
+TopoOverlay.prototype.DrawRouteEndPoint = function(ctx, point, index, number, groupTotal) {
+  const row = (number == 0 ? 0 : 1)
+  const secondRowCount = groupTotal - 1
+  const rowPosition = (row == 0 ? 0 :  number - (secondRowCount + 1) / 2)
+  this.DrawPoint(ctx, point.x + rowPosition * 0.03, point.y - row * 0.04, index + 1, routeEndPointColor);
 }
 
 TopoOverlay.prototype.DrawRouteJoinPoint = function(ctx, point, index) {
