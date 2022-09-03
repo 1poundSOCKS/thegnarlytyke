@@ -3,8 +3,8 @@ let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.activeItem = activeItem
   this.cookie = cookie
   this.AddItem('home','index.html')
+  this.AddItem('feed','feed.html')
   if( this.cookie?.IsUserLoggedOn() ) {
-    this.AddItem('feed','feed.html')
     if( allowEdit ) this.AddItem('edit', 'crag-edit.html')
   }
   this.AddItem('account','account.html')
