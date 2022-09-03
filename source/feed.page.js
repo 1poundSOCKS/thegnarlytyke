@@ -37,12 +37,12 @@ let OnConfigLoad = async () => {
   page.appendChild(pageHeader.root)
   page.appendChild(pageViewContainer.root)
 
-  try {
-    ViewContainer.DisplayTemporaryView(pageViewContainer,'loading','feed', async () => {
+  ViewContainer.DisplayTemporaryView(pageViewContainer,'loading','feed', async () => {
+    try {
       const feed = await LoadFeed(DataStorage)
       RefreshFeed(feedContainer,feed)
       return feed
-    })
-  }
-  catch( e ) {}
+    }
+    catch( e ) {}
+  })
 }
