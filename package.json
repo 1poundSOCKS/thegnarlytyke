@@ -10,7 +10,8 @@
     "build-crag-view": "browserify source/crag-view.page.js -o public/scripts/crag-view.page.js",
     "build-crag-edit": "browserify source/crag-edit.page.js -o public/scripts/crag-edit.page.js",
     "build-account": "browserify source/account.page.js -o public/scripts/account.page.js",
-    "build": "npm run build-crag-view && npm run build-crag-edit && npm run build-account",
+    "build-feed": "browserify source/feed.page.js -o public/scripts/feed.page.js",
+    "build": "npm run build-crag-view && npm run build-crag-edit && npm run build-account && npm run build-feed",
     "watch": "watchify source/bundle.js -o public/bundle.js -v"
   },
   "keywords": [],

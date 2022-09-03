@@ -4,6 +4,7 @@ let PageHeaderNav = function(element, activeItem, cookie, allowEdit) {
   this.cookie = cookie
   this.AddItem('home','index.html')
   if( this.cookie?.IsUserLoggedOn() ) {
+    this.AddItem('feed','feed.html')
     if( allowEdit ) this.AddItem('edit', 'crag-edit.html')
   }
   this.AddItem('account','account.html')

@@ -20,6 +20,8 @@
   --unselected-border-color: lightgray;
   --selected-border-color: black;
   --message-text-color: darkgray;
+  --feed-item-border-color: white;
+  --external-link-color: white;
 }
 
 label, input {

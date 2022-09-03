@@ -1,0 +1,40 @@
+@import "default.css";
+
+:root {
+  --feed-item-header: black;
+}
+
+.feed-container {
+  font-size: 2rem;
+  width: 100%;
+  text-align: center;
+}
+
+.feed-item-container {
+  width: 100%;
+  margin: auto;
+  margin-bottom: 1rem;
+  color: var(--feed-item-header);
+  border-width: 0.4rem;
+  border-bottom-style: solid;
+  border-bottom-color: var(--tgt-subheader-background-color);
+  border-top-style: solid;
+  border-top-color: var(--tgt-header-background-color);
+  background-color: var(--default-border-color);
+}
+
+.feed-item-header {
+  color: var(--feed-item-header);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.feed-item-container a {
+  text-decoration:none;
+  color: var(--external-link-color)
+}
+
+.feed-item-description {
+  font-size: 1.5rem;
+  margin: 0.5rem;
+}
