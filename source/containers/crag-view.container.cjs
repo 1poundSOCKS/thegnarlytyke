@@ -8,8 +8,6 @@ let Create = () => {
   const topoView = TopoViewContainer.Create()
 
   topoImagesContainer.topoMediaScroller.autoSelectOnRefresh = true
-  topoImagesContainer.topoMediaScroller.topoImage = topoView.topoImage
-  topoImagesContainer.topoMediaScroller.topoRouteTable = topoView.routeTable
 
   element.appendChild(header.root)
   element.appendChild(topoImagesContainer.root)
@@ -35,6 +33,9 @@ let CreateHeader = () => {
 }
 
 let Refresh = (container,crag,imageStorage) => {
+  container.topoImages.topoMediaScroller.OnSelectCallbackFunction = OnSelectTopo
+  container.topoImages.topoMediaScroller.onSelectCallbackObject = container
+
   return new Promise( (accept) => {
     if( container.cragNameElement ) {
       if( container.cragNameElement.nodeName.toLowerCase() === 'input' ) {
@@ -56,6 +57,10 @@ let Refresh = (container,crag,imageStorage) => {
       accept()
     })
   })
+}
+
+let OnSelectTopo = (container,crag,topo,image) => {
+  TopoViewContainer.Refresh(container.topoView,crag,topo,image)
 }
 
 exports.Create = Create

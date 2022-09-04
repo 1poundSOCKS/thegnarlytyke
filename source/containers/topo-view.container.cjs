@@ -1,5 +1,5 @@
 const TopoImage = require('../objects/topo-image.cjs')
-const TopoRouteTable2 = require('../objects/topo-route-table-2.cjs')
+const { CreateTopoRouteTableContainer, RefreshTopoRouteTableContainer } = require('./topo-route-table.container.cjs')
 
 let Create = () => {
   const element = document.createElement('div')
@@ -11,23 +11,21 @@ let Create = () => {
   const imageCanvas = document.createElement('canvas')
   imageCanvas.classList.add('main-topo-image')
   const topoImage = new TopoImage(imageCanvas, false);
-  imageContainer.appendChild(imageCanvas)
-  
-  const tableContainer = document.createElement('div')
-  tableContainer.classList.add('topo-route-table-container')
-  const topoRouteTable = new TopoRouteTable2(tableContainer)
+  imageContainer.appendChild(imageCanvas)  
+
+  const tableContainer = CreateTopoRouteTableContainer()
 
   element.appendChild(imageContainer)
-  element.appendChild(tableContainer)
+  element.appendChild(tableContainer.root)
 
-  return {root:element,topoImage:topoImage,routeTable:topoRouteTable}
+  return {root:element,topoImage:topoImage,table:tableContainer}
 }
 
-let Refresh = (container,topo,image) => {
+let Refresh = (container,crag,topo,image,editable) => {
   container.topoImage.image = image
   container.topoImage.topo = topo
   container.topoImage.Refresh()
-  container.routeTable.Refresh(topo)
+  RefreshTopoRouteTableContainer(container.table,crag,topo,editable)
 }
 
 exports.Create = Create

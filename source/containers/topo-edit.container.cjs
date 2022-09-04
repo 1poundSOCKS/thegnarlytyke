@@ -1,4 +1,3 @@
-const CragRouteTable = require('../objects/crag-route-table.cjs')
 const IconBarContainer = require('./icon-bar.container.cjs')
 const TopoViewContainer = require('./topo-view.container.cjs')
 
@@ -14,23 +13,15 @@ let Create = () => {
   const topoView = TopoViewContainer.Create()
   topoView.topoImage.contentEditable = true
   topoView.topoImage.AddMouseHandler()
-  topoView.routeTable.callbackObject = topoView.topoImage
-
-  const cragRouteTableContainer = document.createElement('div')
-  const cragRouteTable = new CragRouteTable(cragRouteTableContainer,topoView.routeTable)
-
   topoEditContainer.appendChild(topoView.root)
-  topoEditContainer.appendChild(cragRouteTableContainer)
 
   root.appendChild(iconBarContainer.root)
   root.appendChild(topoEditContainer)
-
-  return {root:root,iconBar:iconBarContainer,topoView:topoView,cragRouteTable:cragRouteTable}
+  return {root:root,iconBar:iconBarContainer,topoView:topoView}
 }
 
 let Refresh = (container,crag,topo,image) => {
-  TopoViewContainer.Refresh(container.topoView,topo,image)
-  container.cragRouteTable.Refresh(crag,topo)
+  TopoViewContainer.Refresh(container.topoView,crag,topo,image,true)
 }
 
 exports.Create = Create

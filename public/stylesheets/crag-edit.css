@@ -6,12 +6,6 @@
   justify-content: center;
 }
 
-.topo-edit-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-content: center;
-}
-
 table {
   align-items: center;
   border-collapse: collapse;

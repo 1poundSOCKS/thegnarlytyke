@@ -70,12 +70,7 @@ TopoMediaScroller.prototype.OnTopoSelected = function(topoImageContainer) {
   this.selectedTopoImageContainer = topoImageContainer
   this.selectedTopoImageContainer.Select()
   this.selectedTopo = this.crag.GetMatchingTopo(this.selectedTopoImageContainer.element.dataset.id)
-  if( this.topoImage ) {
-    this.topoImage.image = topoImageContainer.topo.image
-    this.topoImage.topo = topoImageContainer.topo
-    this.topoImage.Refresh()
-  }
-  if( this.topoRouteTable ) this.topoRouteTable.Refresh(topoImageContainer.topo)
+  if( this.OnSelectCallbackFunction ) this.OnSelectCallbackFunction(this.onSelectCallbackObject,this.crag,this.selectedTopo,topoImageContainer.topo.image)
 }
 
 TopoMediaScroller.prototype.DisplayTopoImage = function(topoCanvas, topoImage) {
