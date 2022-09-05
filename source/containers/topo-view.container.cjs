@@ -10,7 +10,7 @@ let Create = () => {
   
   const imageCanvas = document.createElement('canvas')
   imageCanvas.classList.add('main-topo-image')
-  const topoImage = new TopoImage(imageCanvas, false);
+  const topoImage = new TopoImage(imageCanvas, false)
   imageContainer.appendChild(imageCanvas)  
 
   const tableContainer = CreateTopoRouteTableContainer()
@@ -24,8 +24,13 @@ let Create = () => {
 let Refresh = (container,crag,topo,image,editable) => {
   container.topoImage.image = image
   container.topoImage.topo = topo
+  container.topoImage.routeID = null
   container.topoImage.Refresh()
-  RefreshTopoRouteTableContainer(container.table,crag,topo,editable)
+  RefreshTopoRouteTableContainer(container.table,crag,topo,editable,OnRouteSelectCallback,container)
+}
+
+let OnRouteSelectCallback = (container,routeInfo) => {
+  container.topoImage.routeID = routeInfo.id
 }
 
 exports.Create = Create

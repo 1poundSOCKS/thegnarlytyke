@@ -1,11 +1,5 @@
 @import "default.css";
 
-.route-tables-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-content: center;
-}
-
 table {
   align-items: center;
   border-collapse: collapse;
@@ -30,7 +24,11 @@ td:nth-child(1) {
   display: none;
 }
 
-.route-tables-container td:nth-child(5):hover {
+.fa-edit:hover {
+  color: white;
+}
+
+tr.row-selected {
   color: white;
 }
 
