@@ -17,6 +17,7 @@ let Crag = function(cragObject) {
 Crag.prototype.Attach = function(cragObject) {
   this.id = cragObject.id;
   this.name = cragObject.name ? cragObject.name : '';
+  this.rock_type = cragObject.rock_type ? cragObject.rock_type : ''
   this.routes = cragObject.routes ? cragObject.routes : [];
   this.topos = cragObject.topos ? cragObject.topos : [];
 }
@@ -153,6 +154,7 @@ Crag.prototype.FormatForStorage = function() {
   const cragForStorage = {};
   if( this.id ) cragForStorage.id = this.id;
   if( this.name ) cragForStorage.name = this.name;
+  if( this.rock_type ) cragForStorage.rock_type = this.rock_type
   if( this.routes ) cragForStorage.routes = this.FormatRoutesForStorage();
   if( this.topos ) cragForStorage.topos = this.FormatToposForStorage();
   return cragForStorage;
