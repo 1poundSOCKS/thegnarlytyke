@@ -1,10 +1,13 @@
 const Route = require("./route.cjs");
 const Topo = require("./topo.cjs");
 
-const routeLineStrokeStyle = "rgba(255, 255, 0, 0.6)";
-const routeStartPointColor = "rgb(40, 150, 40)";
-const routeEndPointColor = "rgb(150, 20, 20)";
-const routeJoinPointColor = "rgb(150, 150, 150)";
+const routeLineStrokeStyle            = "rgb(255, 255, 0)";
+const routeLineStrokeStyle2           = "rgb(0, 255, 255)";
+const routeLineStrokeStyle_Limestone  = "rgb(148, 16, 38)";
+const routeLineStrokeStyle_Limestone2 = "rgb(255, 255, 255)";
+const routeStartPointColor            = "rgb(40, 150, 40)";
+const routeEndPointColor              = "rgb(150, 20, 20)";
+const routeJoinPointColor             = "rgb(150, 150, 150)";
 
 let TopoOverlay = function(topo, forEditor, omitRouteNumbers) {
   this.topo = topo;
@@ -24,10 +27,6 @@ TopoOverlay.prototype.Draw = function(canvas) {
 
 TopoOverlay.prototype.DrawRouteLines = function(ctx) {
   if( !this.topo.routes ) return
-  
-  ctx.lineWidth = "4";
-  ctx.strokeStyle = routeLineStrokeStyle;
-  ctx.setLineDash([10, 10]);
 
   this.topo.routes.forEach( routeData => {
     const route = new Route(routeData)
@@ -39,10 +38,45 @@ TopoOverlay.prototype.DrawRouteLines = function(ctx) {
       return { x: point.x * ctx.canvas.width, y: point.y * ctx.canvas.height }
     })
 
+    ctx.setLineDash([10, 10]);
+    ctx.lineDashOffset = 0
+    ctx.lineWidth = "4";
+
+    const rockType = this.topo.crag.rock_type
+    switch( rockType ) {
+      case 'limestone':
+        ctx.strokeStyle = routeLineStrokeStyle_Limestone
+        break
+      default:
+        ctx.strokeStyle = routeLineStrokeStyle
+        break;
+    }
+
     ctx.moveTo((absPoints[0].x), absPoints[0].y);
 
     for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
       ctx.lineTo(absPoints[pointIndex].x, absPoints[pointIndex].y);
+    }
+
+    ctx.stroke();
+
+    ctx.setLineDash([10, 10]);
+    ctx.lineDashOffset = 10
+
+    switch( rockType ) {
+      case 'limestone':
+        ctx.strokeStyle = routeLineStrokeStyle_Limestone2
+        break
+      default:
+        ctx.strokeStyle = routeLineStrokeStyle2
+        break
+    }
+
+    ctx.moveTo((absPoints[0].x), absPoints[0].y);
+
+    for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
+      ctx.lineTo(absPoints[pointIndex].x, absPoints[pointIndex].y);
+      break;
     }
   });
 

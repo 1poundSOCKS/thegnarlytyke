@@ -133,6 +133,7 @@ Crag.prototype.UpdateAfterRestore = function() {
   const pointArray = [];
   const pointMap = new Map();
 
+  this.topos.forEach( topo => topo.crag = this )
   const toposWithRoutes = this.topos.filter( topo => topo.routes && topo.routes.length > 0 );
 
   toposWithRoutes.forEach( topo => {
