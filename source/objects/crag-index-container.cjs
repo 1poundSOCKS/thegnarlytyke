@@ -95,34 +95,6 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
   this.AddSelectionHandler(cragCoverContainer,OnCragSelectedHandler)
 }
 
-// CragIndexContainer.prototype.ShowSelectedCrag = function() {
-//   return new Promise( (accept,reject) => {
-//     if( !this.selectedContainer ) {
-//       accept(null)
-//       return
-//     }
-//     this.LoadSelectedCrag()
-//     .then( crag => {
-//       this.selectedCrag = crag
-//       if( this.cragNameElement ) {
-//         if( this.cragNameElement.nodeName.toLowerCase() === 'input' ) {
-//           this.cragNameElement.value = this.selectedContainer.cragDetails.name
-//           this.cragNameElement.onchange = () => {
-//             this.selectedContainer.cragDetails.name = this.cragNameElement.value
-//             this.selectedContainer.crag.name = this.cragNameElement.value
-//           }
-//         }
-//         else {
-//           this.cragNameElement.innerText = this.selectedContainer.cragDetails.name
-//         }
-//       }
-//       this.topoMediaScroller.Refresh(crag,this.imageStorage,true)
-//       accept(crag)
-//     })
-//     .catch( () => reject() )
-//   })
-// }
-
 CragIndexContainer.prototype.LoadSelectedCrag = async function() {
   this.selectedCrag = await this.selectedContainer.LoadCrag(this.dataStorage)
   return this.selectedCrag

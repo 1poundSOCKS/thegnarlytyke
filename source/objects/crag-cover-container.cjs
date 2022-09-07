@@ -78,6 +78,8 @@ CragCoverContainer.prototype.SaveImage = async function(imageStorage) {
 }
 
 CragCoverContainer.prototype.Refresh = function() {
+  if( this.crag ) this.cragDetails.name = this.crag.name
+  
   const ctx = this.canvas.getContext("2d");
 
   const image = this.image
