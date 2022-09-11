@@ -29,7 +29,10 @@ let Refresh = (container,crag,topo,image,editable) => {
   container.table.OnRouteSelectCallback = OnRouteSelectCallback
   container.table.OnRouteClearCallback = OnRouteClearCallback
   container.table.callbackObject = container
-  RefreshTopoRouteTableContainer(container.table,crag,topo,editable)
+  container.table.crag = crag
+  container.table.topo = topo
+  container.table.editable = editable
+  RefreshTopoRouteTableContainer(container.table/*,crag,topo,editable*/)
 }
 
 let OnRouteSelectCallback = (container,routeInfo) => {

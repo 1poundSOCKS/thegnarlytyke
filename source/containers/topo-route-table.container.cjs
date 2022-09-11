@@ -16,11 +16,11 @@ let CreateTopoRouteTableContainer = () => {
   return { root: root, table: table, tableBody: tableBody }
 }
 
-let RefreshTopoRouteTableContainer = (container, cragObj, topo, editable) => {
+let RefreshTopoRouteTableContainer = (container) => {
   container.tableBody.innerHTML = ''
-  if( !topo ) return
+  if( !container.topo ) return
 
-  const topoObj = new Topo(topo)
+  const topoObj = new Topo(container.topo)
   const routes = topoObj.GetSortedRouteInfo()
 
   const rows = routes.map( routeInfo => {
@@ -32,18 +32,20 @@ let RefreshTopoRouteTableContainer = (container, cragObj, topo, editable) => {
     return newRow;
   });
 
-  if( editable ) {
+  if( container.editable ) {
     rows.forEach( row => {
-      EnableRowEdit(container,row,topoObj)
+      EnableRowEdit(container,row)
       EnableRowSelect(container,row)
-      EnableRouteClear(container,row,topoObj)
+      EnableRouteClear(container,row)
     })
     const newRow = AddRowForNewRoute(container.tableBody)
-    EnableRowEdit(container,newRow,topoObj,cragObj)
+    EnableRowEdit(container,newRow)
   }
 }
 
-let EnableRowEdit = (container,row,topoObj,cragObj) => {
+let EnableRowEdit = (container,row) => {
+  const topoObj = new Topo(container.topo)
+
   row.cells[columnIndex_Name].setAttribute('contenteditable', true);
   DisableCellMultilineEdit(row.cells[columnIndex_Name]);
   row.cells[columnIndex_Name].addEventListener('focusout', event => {
@@ -57,12 +59,12 @@ let EnableRowEdit = (container,row,topoObj,cragObj) => {
     else {
       const name = row.cells[columnIndex_Name].innerText
       if( name.length > 0 ) {
-        const route = cragObj.AppendRoute(name,'')
+        const route = container.crag.AppendRoute(name,'')
         topoObj.AppendRoute(route)
         row.cells[columnIndex_ID].innerText = route.id
         EnableRowSelect(container,row)
         const newRow = AddRowForNewRoute(container.tableBody)
-        EnableRowEdit(container,newRow,topoObj,cragObj)
+        EnableRowEdit(container,newRow)
       }
     }
   });
@@ -85,7 +87,7 @@ let EnableRowEdit = (container,row,topoObj,cragObj) => {
         row.cells[columnIndex_ID].innerText = route.id
         EnableRowSelect(container,row)
         const newRow = AddRowForNewRoute(tableBody)
-        EnableRowEdit(container,newRow,topoObj,cragObj)
+        EnableRowEdit(container,newRow)
       }
     }
   })
@@ -107,15 +109,18 @@ let EnableRowSelect = (container,row) => {
   }
 }
 
-let EnableRouteClear = (container,row,topoObj) => {
+let EnableRouteClear = (container,row) => {
+  const topoObj = new Topo(container.topo)
+
   let cell = row.insertCell(columnIndex_Clear)
   cell.classList.add('fa')
   cell.classList.add('fa-eraser')
   cell.onclick = (event) => {
     const row = event.target.parentElement
-    const rowData = GetRowData(row,topoObj)
+    const rowData = GetRowData(row)
     topoObj.ClearRoute(rowData.id)
     if( container.OnRouteClearCallback ) container.OnRouteClearCallback(container.callbackObject,rowData)
+    RefreshTopoRouteTableContainer(container)
   }
 }
 
