@@ -3,11 +3,11 @@ const Topo = require("./topo.cjs");
 
 const routeLineStrokeStyle            = "rgb(255, 255, 0)";
 const routeLineStrokeStyle2           = "rgb(0, 255, 255)";
-const routeLineStrokeStyle_Limestone  = "rgb(148, 16, 38)";
-const routeLineStrokeStyle_Limestone2 = "rgb(255, 255, 255)";
+const routeLineStrokeStyle_Limestone  = "rgb(255, 255, 0)";
+const routeLineStrokeStyle_Limestone2 = "rgba(255, 255, 255)";
 const routeStartPointColor            = "rgb(40, 150, 40)";
 const routeEndPointColor              = "rgb(150, 20, 20)";
-const routeJoinPointColor             = "rgb(150, 150, 150)";
+const routeJoinPointColor             = "rgb(150, 150, 150, 0.6)";
 
 let TopoOverlay = function(topo, forEditor, omitRouteNumbers) {
   this.topo = topo;
@@ -29,40 +29,47 @@ TopoOverlay.prototype.DrawRouteLines = function(ctx) {
   if( !this.topo.routes ) return
 
   this.topo.routes.forEach( routeData => {
-    const route = new Route(routeData)
-    const points = route.GetResolvedPoints()
-    
-    if( points.length == 0 ) return
+    this.DrawRouteLine(ctx, routeData)
+  })
+}
 
-    const absPoints = points.map( point => {
-      return { x: point.x * ctx.canvas.width, y: point.y * ctx.canvas.height }
-    })
+TopoOverlay.prototype.DrawRouteLine = function(ctx, routeData) {
+  const route = new Route(routeData)
+  const points = route.GetResolvedPoints()
 
-    ctx.setLineDash([10, 10]);
-    ctx.lineDashOffset = 0
-    ctx.lineWidth = "4";
+  if( points.length == 0 ) return
 
-    const rockType = this.topo.crag.rock_type
-    switch( rockType ) {
-      case 'limestone':
-        ctx.strokeStyle = routeLineStrokeStyle_Limestone
-        break
-      default:
-        ctx.strokeStyle = routeLineStrokeStyle
-        break;
-    }
+  const absPoints = points.map( point => {
+    return { x: point.x * ctx.canvas.width, y: point.y * ctx.canvas.height }
+  })
 
-    ctx.moveTo((absPoints[0].x), absPoints[0].y);
+  ctx.setLineDash([10, 15]);
+  ctx.lineDashOffset = 0
+  ctx.lineWidth = "4";
 
-    for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
-      ctx.lineTo(absPoints[pointIndex].x, absPoints[pointIndex].y);
-    }
+  const rockType = this.topo.crag.rock_type
+  switch( rockType ) {
+    case 'limestone':
+      ctx.strokeStyle = routeLineStrokeStyle_Limestone
+      break
+    default:
+      ctx.strokeStyle = routeLineStrokeStyle
+      break;
+  }
 
-    ctx.stroke();
+  ctx.moveTo((absPoints[0].x), absPoints[0].y);
 
+  for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
+    ctx.lineTo(absPoints[pointIndex].x, absPoints[pointIndex].y);
+  }
+
+  ctx.stroke();
+
+  const drawSecondDashColor = false
+  if( drawSecondDashColor ) {
     ctx.setLineDash([10, 10]);
     ctx.lineDashOffset = 10
-
+  
     switch( rockType ) {
       case 'limestone':
         ctx.strokeStyle = routeLineStrokeStyle_Limestone2
@@ -71,16 +78,15 @@ TopoOverlay.prototype.DrawRouteLines = function(ctx) {
         ctx.strokeStyle = routeLineStrokeStyle2
         break
     }
-
+  
     ctx.moveTo((absPoints[0].x), absPoints[0].y);
-
+  
     for( pointIndex = 1; pointIndex < absPoints.length; pointIndex++ ) {
       ctx.lineTo(absPoints[pointIndex].x, absPoints[pointIndex].y);
-      break;
     }
-  });
-
-  ctx.stroke();
+  
+    ctx.stroke();  
+  }
 }
 
 TopoOverlay.prototype.DrawRouteStartPoints = function(ctx) {
