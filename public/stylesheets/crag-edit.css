@@ -26,10 +26,16 @@ td:nth-child(1) {
 
 .fa-edit:hover {
   color: white;
+  cursor: pointer;
+}
+
+.fa-eraser:hover {
+  color: white;
+  cursor: pointer;
 }
 
 tr.row-selected {
-  color: white;
+  color: green;
 }
 
 .crag-details-container {

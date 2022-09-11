@@ -26,11 +26,18 @@ let Refresh = (container,crag,topo,image,editable) => {
   container.topoImage.topo = topo
   container.topoImage.routeID = null
   container.topoImage.Refresh()
-  RefreshTopoRouteTableContainer(container.table,crag,topo,editable,OnRouteSelectCallback,container)
+  container.table.OnRouteSelectCallback = OnRouteSelectCallback
+  container.table.OnRouteClearCallback = OnRouteClearCallback
+  container.table.callbackObject = container
+  RefreshTopoRouteTableContainer(container.table,crag,topo,editable)
 }
 
 let OnRouteSelectCallback = (container,routeInfo) => {
   container.topoImage.routeID = routeInfo.id
+}
+
+let OnRouteClearCallback = (container,routeInfo) => {
+  container.topoImage.Refresh()
 }
 
 exports.Create = Create

@@ -153,6 +153,13 @@ Topo.prototype.SaveImage = function(imageStorage) {
   })
 }
 
+Topo.prototype.ClearRoute = function(id) {
+  const route = this.GetMatchingRoute(id)
+  if( !route ) return
+
+  route.points = []
+}
+
 module.exports = Topo;
 
 let GetNearestPointForRoute = (x, y, route) => GetNextNearestPointForRoute(x, y, route, null);

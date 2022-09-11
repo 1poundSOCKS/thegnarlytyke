@@ -5,6 +5,7 @@ const columnIndex_Index = 1;
 const columnIndex_Name = 2;
 const columnIndex_Grade = 3;
 const columnIndex_Button = 4;
+const columnIndex_Clear = 5;
 
 let CreateTopoRouteTableContainer = () => {
   const root = document.createElement('div')
@@ -15,7 +16,7 @@ let CreateTopoRouteTableContainer = () => {
   return { root: root, table: table, tableBody: tableBody }
 }
 
-let RefreshTopoRouteTableContainer = (container, cragObj, topo, editable, OnRowSelectCallback, callbackObject) => {
+let RefreshTopoRouteTableContainer = (container, cragObj, topo, editable) => {
   container.tableBody.innerHTML = ''
   if( !topo ) return
 
@@ -33,15 +34,16 @@ let RefreshTopoRouteTableContainer = (container, cragObj, topo, editable, OnRowS
 
   if( editable ) {
     rows.forEach( row => {
-      EnableRowEdit(row,topoObj,OnRowSelectCallback,callbackObject)
-      EnableRowSelect(row,OnRowSelectCallback,callbackObject)
+      EnableRowEdit(container,row,topoObj)
+      EnableRowSelect(container,row)
+      EnableRouteClear(container,row,topoObj)
     })
     const newRow = AddRowForNewRoute(container.tableBody)
-    EnableRowEdit(newRow,topoObj,cragObj,container.tableBody,OnRowSelectCallback,callbackObject)
+    EnableRowEdit(container,newRow,topoObj,cragObj)
   }
 }
 
-let EnableRowEdit = (row,topoObj,cragObj,tableBody,OnRowSelectCallback,callbackObject) => {
+let EnableRowEdit = (container,row,topoObj,cragObj) => {
   row.cells[columnIndex_Name].setAttribute('contenteditable', true);
   DisableCellMultilineEdit(row.cells[columnIndex_Name]);
   row.cells[columnIndex_Name].addEventListener('focusout', event => {
@@ -58,9 +60,9 @@ let EnableRowEdit = (row,topoObj,cragObj,tableBody,OnRowSelectCallback,callbackO
         const route = cragObj.AppendRoute(name,'')
         topoObj.AppendRoute(route)
         row.cells[columnIndex_ID].innerText = route.id
-        EnableRowSelect(row,OnRowSelectCallback,callbackObject)
-        const newRow = AddRowForNewRoute(tableBody)
-        EnableRowEdit(newRow,topoObj,cragObj,tableBody,OnRowSelectCallback,callbackObject)
+        EnableRowSelect(container,row)
+        const newRow = AddRowForNewRoute(container.tableBody)
+        EnableRowEdit(container,newRow,topoObj,cragObj)
       }
     }
   });
@@ -81,15 +83,15 @@ let EnableRowEdit = (row,topoObj,cragObj,tableBody,OnRowSelectCallback,callbackO
         const route = cragObj.AppendRoute('',grade)
         topoObj.AppendRoute(route)
         row.cells[columnIndex_ID].innerText = route.id
-        EnableRowSelect(row,OnRowSelectCallback,callbackObject)
+        EnableRowSelect(container,row)
         const newRow = AddRowForNewRoute(tableBody)
-        EnableRowEdit(newRow,topoObj,cragObj,tableBody,OnRowSelectCallback,callbackObject)
+        EnableRowEdit(container,newRow,topoObj,cragObj)
       }
     }
   })
 }
 
-let EnableRowSelect = (row,OnRowSelectCallback,callbackObject) => {
+let EnableRowSelect = (container,row) => {
   let cell = row.insertCell(columnIndex_Button)
   cell.classList.add('fa')
   cell.classList.add('fa-edit')
@@ -100,12 +102,28 @@ let EnableRowSelect = (row,OnRowSelectCallback,callbackObject) => {
       row.classList.remove('row-selected')
     })
     row.classList.add('row-selected')
-    const rowData = {
-      id: row.cells[columnIndex_ID].innerText,
-      name: row.cells[columnIndex_Name].innerText,
-      grade: row.cells[columnIndex_Grade].innerText
-    }
-    if( OnRowSelectCallback ) OnRowSelectCallback(callbackObject,rowData)
+    const rowData = GetRowData(row)
+    if( container.OnRouteSelectCallback ) container.OnRouteSelectCallback(container.callbackObject,rowData)
+  }
+}
+
+let EnableRouteClear = (container,row,topoObj) => {
+  let cell = row.insertCell(columnIndex_Clear)
+  cell.classList.add('fa')
+  cell.classList.add('fa-eraser')
+  cell.onclick = (event) => {
+    const row = event.target.parentElement
+    const rowData = GetRowData(row,topoObj)
+    topoObj.ClearRoute(rowData.id)
+    if( container.OnRouteClearCallback ) container.OnRouteClearCallback(container.callbackObject,rowData)
+  }
+}
+
+let GetRowData = row => {
+  return {
+    id: row.cells[columnIndex_ID].innerText,
+    name: row.cells[columnIndex_Name].innerText,
+    grade: row.cells[columnIndex_Grade].innerText
   }
 }
 
