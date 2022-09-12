@@ -96,7 +96,7 @@ CragIndexContainer.prototype.AddNewCrag = async function(OnCragSelectedHandler) 
 }
 
 CragIndexContainer.prototype.LoadSelectedCrag = async function() {
-  this.selectedCrag = await this.selectedContainer.LoadCrag(this.dataStorage)
+  this.selectedCrag = await this.selectedContainer?.LoadCrag(this.dataStorage)
   return this.selectedCrag
 }
 

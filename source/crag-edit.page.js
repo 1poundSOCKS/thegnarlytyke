@@ -66,8 +66,13 @@ let OnConfigLoad = async () => {
     editLoadingContainer.header.innerText = 'loading'
     ViewContainer.DisplayView(editViewContainer,'loading')
     const crag = await CragIndexEditContainer.LoadSelectedCrag(cragIndexEditContainer)
-    TopoIndexEditContainer.Refresh(topoIndexEditContainer,crag,ImageStorage)
-    ViewContainer.DisplayView(editViewContainer,'topo-index')
+    if( crag ) {
+      TopoIndexEditContainer.Refresh(topoIndexEditContainer,crag,ImageStorage)
+      ViewContainer.DisplayView(editViewContainer,'topo-index')
+    }
+    else {
+      ViewContainer.DisplayView(editViewContainer,'crag-index')
+    }
   }
 
   IconBarContainer.AddIcon(iconBar,'save','save','fas','fa-save').onclick = async () => {
