@@ -1,7 +1,7 @@
 const TopoImage = require('../objects/topo-image.cjs')
 const { CreateTopoRouteTableContainer, RefreshTopoRouteTableContainer } = require('./topo-route-table.container.cjs')
 
-let Create = () => {
+let CreateTopoViewContainer = () => {
   const element = document.createElement('div')
   element.classList.add('main-topo-container')
   
@@ -21,17 +21,20 @@ let Create = () => {
   return {root:element,topoImage:topoImage,table:tableContainer}
 }
 
-let Refresh = (container,crag,topo,image,editable) => {
+let RefreshTopoViewContainer = (container,crag,topo,image,editable) => {
   container.topoImage.image = image
   container.topoImage.topo = topo
   container.topoImage.routeID = null
+  container.topoImage.OnRouteChangedCallback = OnRouteChangedCallback
+  container.topoImage.callbackObject = container
   container.topoImage.Refresh()
-  container.table.OnRouteSelectCallback = OnRouteSelectCallback
-  container.table.OnRouteClearCallback = OnRouteClearCallback
-  container.table.callbackObject = container
+
   container.table.crag = crag
   container.table.topo = topo
   container.table.editable = editable
+  container.table.OnRouteSelectCallback = OnRouteSelectCallback
+  container.table.OnRouteClearCallback = OnRouteClearCallback
+  container.table.callbackObject = container
   RefreshTopoRouteTableContainer(container.table/*,crag,topo,editable*/)
 }
 
@@ -43,5 +46,9 @@ let OnRouteClearCallback = (container,routeInfo) => {
   container.topoImage.Refresh()
 }
 
-exports.Create = Create
-exports.Refresh = Refresh
+let OnRouteChangedCallback = (container, routeInfo) => {
+  RefreshTopoRouteTableContainer(container.table)
+}
+
+exports.CreateTopoViewContainer = CreateTopoViewContainer
+exports.RefreshTopoViewContainer = RefreshTopoViewContainer

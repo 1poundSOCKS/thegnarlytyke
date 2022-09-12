@@ -108,6 +108,7 @@ TopoImage.prototype.OnMouseUp = function(event) {
     }
   }
   this.Refresh();
+  if( this.OnRouteChangedCallback ) this.OnRouteChangedCallback(this.callbackObject)
 }
 
 TopoImage.prototype.OnMouseLeave = function(event) {

@@ -1,11 +1,11 @@
 const TopoImagesContainer = require('./topo-images.container.cjs')
-const TopoViewContainer = require('./topo-view.container.cjs')
+const { CreateTopoViewContainer, RefreshTopoViewContainer } = require('./topo-view.container.cjs')
 
 let Create = () => {
   const element = document.createElement('div')
   const header = CreateHeader()
   const topoImagesContainer = TopoImagesContainer.Create()
-  const topoView = TopoViewContainer.Create()
+  const topoView = CreateTopoViewContainer()
 
   topoImagesContainer.topoMediaScroller.autoSelectOnRefresh = true
 
@@ -60,7 +60,7 @@ let Refresh = (container,crag,imageStorage) => {
 }
 
 let OnSelectTopo = (container,crag,topo,image) => {
-  TopoViewContainer.Refresh(container.topoView,crag,topo,image)
+  RefreshTopoViewContainer(container.topoView,crag,topo,image)
 }
 
 exports.Create = Create

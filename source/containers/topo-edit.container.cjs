@@ -1,5 +1,5 @@
 const IconBarContainer = require('./icon-bar.container.cjs')
-const TopoViewContainer = require('./topo-view.container.cjs')
+const { CreateTopoViewContainer, RefreshTopoViewContainer } = require('./topo-view.container.cjs')
 
 let Create = () => {
   const root = document.createElement('div')
@@ -10,7 +10,7 @@ let Create = () => {
   const topoEditContainer = document.createElement('div')
   topoEditContainer.classList.add('topo-edit-container')
 
-  const topoView = TopoViewContainer.Create()
+  const topoView = CreateTopoViewContainer()
   topoView.topoImage.contentEditable = true
   topoView.topoImage.AddMouseHandler()
   topoEditContainer.appendChild(topoView.root)
@@ -21,7 +21,7 @@ let Create = () => {
 }
 
 let Refresh = (container,crag,topo,image) => {
-  TopoViewContainer.Refresh(container.topoView,crag,topo,image,true)
+  RefreshTopoViewContainer(container.topoView,crag,topo,image,true)
 }
 
 exports.Create = Create

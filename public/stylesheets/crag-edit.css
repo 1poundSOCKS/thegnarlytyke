@@ -34,8 +34,8 @@ td:nth-child(1) {
   cursor: pointer;
 }
 
-tr.row-selected {
-  color: green;
+tr.row-selected td:nth-child(-n+4) {
+  color: white;
 }
 
 .crag-details-container {
