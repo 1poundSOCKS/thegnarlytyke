@@ -1,12 +1,12 @@
 import sys
 import boto3
 
+local_feed_datafile = sys.argv[1]
+environment = sys.argv[2]
+
 s3 = boto3.resource('s3')
 BUCKET = "dev.data.thegnarlytyke.com"
-local_feed_datafile = sys.argv[1]
 s3_object_id = "data/feed.json"
-
-environment = sys.argv[2]
 
 if environment == 'dev':
     BUCKET = "dev.data.thegnarlytyke.com"
