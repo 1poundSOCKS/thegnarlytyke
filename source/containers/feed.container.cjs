@@ -40,12 +40,8 @@ let CreateFeedItemContainer = (item) => {
   link.setAttribute('target','_blank') // open in a new tab
   link.innerText = item.title
   linkContainer.appendChild(link)
-  // const descContainer = document.createElement('div')
-  // descContainer.classList.add('feed-item-description')
-  // descContainer.innerText = item.description
   root.appendChild(type)
   root.appendChild(linkContainer)
-  // root.appendChild(descContainer)
   return { root: root }
 }
 
